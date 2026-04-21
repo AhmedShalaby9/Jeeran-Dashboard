@@ -109,22 +109,22 @@ $bg:            #f4f6f8;
 
 // ── Right Panel ──────────────────────────────────────────
 .login-right {
-  width: 480px;
+  width: 620px;
   background: $bg;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
+  padding: 2.5rem;
 
   @media (max-width: 768px) { width: 100%; }
 }
 
 .login-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 520px;
   background: $white;
   border-radius: 16px;
-  padding: 2.5rem;
+  padding: 3rem;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
 }
 
