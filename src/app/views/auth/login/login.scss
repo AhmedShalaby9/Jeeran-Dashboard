@@ -1,0 +1,251 @@
+// ── Brand Colors (from Jeeran logo) ─────────────────────
+$primary:       #1e3a6e;   // dark navy blue
+$primary-light: #e8ecf5;   // light tint of navy
+$primary-dark:  #152c54;   // deeper navy
+$accent:        #b8a882;   // beige / gold
+$text-dark:     #1a1f2e;
+$text-muted:    #6b7280;
+$border:        #e5e7eb;
+$white:         #ffffff;
+$bg:            #f4f6f8;
+
+// ── Layout ───────────────────────────────────────────────
+.login-wrapper {
+  display: flex;
+  min-height: 100vh;
+}
+
+// ── Left Panel ───────────────────────────────────────────
+.login-left {
+  flex: 1;
+  background: linear-gradient(150deg, $primary-dark 0%, $primary 55%, #2a5298 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  position: relative;
+  overflow: hidden;
+
+  @media (max-width: 768px) { display: none; }
+}
+
+.brand {
+  text-align: center;
+  color: $white;
+  z-index: 1;
+
+  .brand-logo-img {
+    width: 160px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    filter: brightness(0) invert(1);   // makes logo white on dark bg
+    drop-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .brand-tagline {
+    font-size: 1rem;
+    color: $accent;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin: 0;
+  }
+}
+
+// CSS buildings illustration
+.brand-illustration {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 2rem;
+  opacity: 0.12;
+}
+
+.ground {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.building {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 4px 4px 0 0;
+
+  &.building-1 { width: 55px;  height: 130px; }
+  &.building-2 { width: 80px;  height: 190px; }
+  &.building-3 { width: 65px;  height: 155px; }
+  &.building-4 { width: 45px;  height: 105px; }
+}
+
+// Decorative circles
+.login-left::before,
+.login-left::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+}
+.login-left::before {
+  width: 400px;
+  height: 400px;
+  top: -100px;
+  right: -100px;
+}
+.login-left::after {
+  width: 300px;
+  height: 300px;
+  bottom: 60px;
+  left: -80px;
+}
+
+// ── Right Panel ──────────────────────────────────────────
+.login-right {
+  width: 480px;
+  background: $bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+
+  @media (max-width: 768px) { width: 100%; }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: $white;
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.07);
+}
+
+// ── Login Header ─────────────────────────────────────────
+.login-header {
+  margin-bottom: 2rem;
+
+  .card-logo {
+    width: 110px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    display: block;
+  }
+
+  h2 { font-size: 1.6rem; font-weight: 700; color: $text-dark; margin: 0 0 0.4rem; }
+  p  { color: $text-muted; font-size: 0.95rem; margin: 0; }
+}
+
+// ── Form ─────────────────────────────────────────────────
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: $text-dark;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.forgot-link {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: $primary;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .input-icon {
+    position: absolute;
+    left: 0.85rem;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem 2.8rem;
+    border: 1.5px solid $border;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    color: $text-dark;
+    background: $white;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    box-sizing: border-box;
+
+    &::placeholder { color: #b0b7c3; }
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px $primary-light;
+    }
+  }
+}
+
+.toggle-password {
+  position: absolute;
+  right: 0.85rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $text-muted;
+  display: flex;
+  align-items: center;
+  padding: 0;
+
+  &:hover { color: $primary; }
+}
+
+// ── Submit Button ─────────────────────────────────────────
+.btn-login {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.85rem;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+
+  &:hover  { background: $primary-dark; }
+  &:active { transform: scale(0.98); }
+}
+
+// ── Accent divider ────────────────────────────────────────
+.accent-bar {
+  width: 40px;
+  height: 3px;
+  background: $accent;
+  border-radius: 2px;
+  margin: 0.75rem 0 1.5rem;
+}
