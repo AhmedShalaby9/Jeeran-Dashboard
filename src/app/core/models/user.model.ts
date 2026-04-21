@@ -1,12 +1,10 @@
-// MODEL — defines the shape of data used across the app
+// MODEL — defines the shape of user data
 
 export interface User {
   id: number;
-  phone: string;
   name: string;
   email: string;
-  user_type: 'admin' | 'agent' | 'user';
-  is_profile_complete: boolean;
+  user_type: 'admin' | 'super_admin';
 }
 
 export interface LoginCredentials {

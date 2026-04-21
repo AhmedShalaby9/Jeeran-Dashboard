@@ -1,0 +1,124 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>New Package</h1>
+        <p>Create a new subscription package</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" *ngIf="errorMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <form class="form-card" (ngSubmit)="onSubmit()">
+
+    <div class="form-section">
+      <h2 class="section-title">Basic Info</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Name <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.name" name="name" placeholder="e.g. Starter" />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <input type="text" [(ngModel)]="form.description" name="description" placeholder="e.g. For new agents" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Price (EGP) <span class="required">*</span></label>
+          <div class="input-prefix-wrap">
+            <span class="input-prefix">EGP</span>
+            <input type="number" [(ngModel)]="form.price" name="price" placeholder="0.00" min="0" step="0.01" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Duration (days) <span class="required">*</span></label>
+          <input type="number" [(ngModel)]="form.duration_days" name="duration_days" placeholder="30" min="1" />
+        </div>
+        <div class="form-group">
+          <label>Available Listings</label>
+          <input type="number" [(ngModel)]="form.available_listings" name="available_listings" placeholder="0" min="0" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Features Section -->
+    <div class="form-section">
+      <h2 class="section-title">Features</h2>
+      <p class="section-desc">Add the features included in this package. Press Enter or click Add.</p>
+
+      <div class="feature-input-row">
+        <input
+          type="text"
+          [(ngModel)]="featureInput"
+          name="featureInput"
+          placeholder="e.g. 5 active listings / month"
+          (keydown)="onFeatureKeydown($event)"
+          class="feature-input"
+        />
+        <button type="button" class="btn-add-feature" (click)="addFeature()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add
+        </button>
+      </div>
+
+      <div class="features-list" *ngIf="form.features && form.features.length > 0">
+        <div class="feature-item" *ngFor="let f of form.features; let i = index">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{{ f }}</span>
+          <button type="button" class="btn-remove-feature" (click)="removeFeature(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <p class="features-empty" *ngIf="!form.features || form.features.length === 0">
+        No features added yet.
+      </p>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Create Package</span>
+        <span *ngIf="isSubmitting" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </form>
+
+</div>

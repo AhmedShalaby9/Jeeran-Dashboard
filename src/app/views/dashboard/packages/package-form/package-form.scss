@@ -1,0 +1,218 @@
+@use '../../shared-page';
+
+$primary:     #1e3a6e;
+$primary-dark:#152c54;
+$accent:      #b8a882;
+$white:       #ffffff;
+$bg:          #f4f6f8;
+$text-dark:   #1a1f2e;
+$text-muted:  #6b7280;
+$border:      #e5e7eb;
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.85rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  background: $white;
+  color: $text-muted;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { color: $text-dark; border-color: #9ca3af; }
+}
+
+.form-card {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  overflow: hidden;
+}
+
+.form-section {
+  padding: 1.75rem 2rem;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 0.25rem;
+}
+
+.section-desc {
+  font-size: 0.85rem;
+  color: $text-muted;
+  margin: 0 0 1.25rem;
+}
+
+.form-divider {
+  border: none;
+  border-top: 1px solid $border;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  input {
+    padding: 0.7rem 0.9rem;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: $text-dark;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+
+    &::placeholder { color: #b0b7c3; }
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+  }
+}
+
+.required { color: #ef4444; }
+
+.input-prefix-wrap {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+
+  .input-prefix {
+    padding: 0.7rem 0.85rem;
+    background: $bg;
+    color: $text-muted;
+    font-size: 0.82rem;
+    font-weight: 600;
+    border-right: 1.5px solid $border;
+    white-space: nowrap;
+  }
+
+  input {
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0;
+    flex: 1;
+  }
+}
+
+// ── Features Section ──────────────────────────────────────
+.feature-input-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.feature-input {
+  flex: 1;
+  padding: 0.7rem 0.9rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: $text-dark;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &::placeholder { color: #b0b7c3; }
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.btn-add-feature {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.7rem 1.1rem;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+
+  &:hover { background: $primary-dark; }
+}
+
+.features-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.85rem;
+  background: #f0f4ff;
+  border: 1px solid #dbe4f8;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: $primary;
+
+  svg { flex-shrink: 0; color: $accent; }
+  span { flex: 1; }
+}
+
+.btn-remove-feature {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+
+  &:hover { color: #dc2626; background: #fee2e2; }
+}
+
+.features-empty {
+  font-size: 0.85rem;
+  color: $text-muted;
+  font-style: italic;
+  padding: 0.5rem 0;
+}
+
+// ── Form Actions ──────────────────────────────────────────
+.form-actions {
+  padding: 1.25rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  background: $bg;
+  border-top: 1px solid $border;
+}

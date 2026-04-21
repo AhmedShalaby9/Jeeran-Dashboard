@@ -1,0 +1,231 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ article?.title || 'Article Detail' }}</h1>
+        <p>{{ article?.published_by ? 'By ' + article?.published_by : '' }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="article && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading article...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && article">
+
+    <!-- Success Toast -->
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditMode">
+      <div class="detail-card">
+
+        <div class="detail-section">
+          <h2 class="section-title">Article Info</h2>
+          <div class="info-grid">
+            <div class="info-item full-width">
+              <span class="info-label">Title</span>
+              <span class="info-value">{{ article.title }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Published By</span>
+              <span class="info-value">{{ article.published_by || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Published At</span>
+              <span class="info-value">{{ article.published_at | date:'medium' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="badge" [class.badge-active]="article.is_active" [class.badge-inactive]="!article.is_active">
+                {{ article.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Content</h2>
+          <p class="article-content">{{ article.content }}</p>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Media</h2>
+          <div class="media-gallery" *ngIf="article.media && article.media.length > 0">
+            <div class="gallery-item" *ngFor="let url of article.media; let i = index">
+              <div class="gallery-thumb">
+                <video *ngIf="isVideo(url)" [src]="url" class="thumb-media" controls></video>
+                <img *ngIf="!isVideo(url)" [src]="url" [alt]="'media-' + i" class="thumb-media" />
+              </div>
+              <div class="gallery-meta">
+                <span class="media-type-badge">{{ isVideo(url) ? 'Video' : 'Image' }}</span>
+                <span class="media-url-text" [title]="url">{{ url }}</span>
+              </div>
+            </div>
+          </div>
+          <p class="no-media" *ngIf="!article.media || article.media.length === 0">No media attached.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <div class="form-section">
+          <h2 class="section-title">Edit Article Info</h2>
+
+          <div class="form-group">
+            <label>Title <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="editForm.title" name="title" placeholder="Article title" />
+          </div>
+
+          <div class="form-group">
+            <label>Content <span class="required">*</span></label>
+            <textarea [(ngModel)]="editForm.content" name="content" rows="6" placeholder="Article content..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Published By</label>
+              <input type="text" [(ngModel)]="editForm.published_by" name="published_by" placeholder="Author name" />
+            </div>
+            <div class="form-group">
+              <label>Publish Date</label>
+              <input type="datetime-local" [(ngModel)]="editForm.published_at" name="published_at" />
+            </div>
+            <div class="form-group check-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
+                <span>Active</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <h2 class="section-title">Media</h2>
+          <p class="section-desc">Add image or video URLs. Press Enter or click Add.</p>
+
+          <div class="media-input-row">
+            <input type="text" [(ngModel)]="mediaInput" name="mediaInput"
+              placeholder="https://example.com/image.jpg"
+              (keydown)="onMediaKeydown($event)" class="media-input" />
+            <button type="button" class="btn-add" (click)="addMedia()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add
+            </button>
+          </div>
+
+          <div class="media-list" *ngIf="editForm.media.length > 0">
+            <div class="media-item" *ngFor="let url of editForm.media; let i = index">
+              <div class="media-thumb">
+                <video *ngIf="isVideo(url)" [src]="url" class="thumb"></video>
+                <img *ngIf="!isVideo(url)" [src]="url" class="thumb" [alt]="'media-' + i" />
+              </div>
+              <span class="media-url" [title]="url">{{ url }}</span>
+              <span class="media-type">{{ isVideo(url) ? 'Video' : 'Image' }}</span>
+              <button type="button" class="btn-remove" (click)="removeMedia(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="empty-hint" *ngIf="editForm.media.length === 0">No media added yet.</p>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- ── Delete Confirmation Modal ── -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Article</h3>
+      <p>Are you sure you want to delete <strong>{{ article?.title }}</strong>? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deleteArticle()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

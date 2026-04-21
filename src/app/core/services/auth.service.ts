@@ -1,26 +1,46 @@
-// SERVICE (Controller) — handles all auth-related logic
-// No logic yet — will be wired to the API later
+// SERVICE — handles login, token storage, and session
 
 import { Injectable } from '@angular/core';
-import { LoginCredentials } from '../models/user.model';
+import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { Observable, tap } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { LoginCredentials, AuthResponse, User } from '../models/user.model';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
+  private readonly TOKEN_KEY = 'jeeran_token';
+  private readonly USER_KEY  = 'jeeran_user';
 
-  login(credentials: LoginCredentials): void {
-    // TODO: call POST /api/auth/login
-    console.log('Login called with:', credentials);
+  constructor(private http: HttpClient, private router: Router) {}
+
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    return this.http
+      .post<AuthResponse>(`${environment.apiUrl}/auth/admin/login`, credentials)
+      .pipe(
+        tap((res) => {
+          localStorage.setItem(this.TOKEN_KEY, res.token);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(res.data));
+        })
+      );
   }
 
   logout(): void {
-    // TODO: clear token and redirect
-    console.log('Logout called');
+    localStorage.removeItem(this.TOKEN_KEY);
+    localStorage.removeItem(this.USER_KEY);
+    this.router.navigate(['/login']);
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  getCurrentUser(): User | null {
+    const raw = localStorage.getItem(this.USER_KEY);
+    return raw ? JSON.parse(raw) : null;
   }
 
   isLoggedIn(): boolean {
-    // TODO: check token from localStorage
-    return false;
+    return !!this.getToken();
   }
 }

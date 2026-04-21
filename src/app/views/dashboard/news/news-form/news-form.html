@@ -1,0 +1,112 @@
+<div class="page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>New Article</h1>
+        <p>Create a new news article</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="errorMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <form class="form-card" (ngSubmit)="onSubmit()">
+
+    <!-- Basic Info -->
+    <div class="form-section">
+      <h2 class="section-title">Article Info</h2>
+
+      <div class="form-group">
+        <label>Title <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.title" name="title" placeholder="Article title" />
+      </div>
+
+      <div class="form-group">
+        <label>Content <span class="required">*</span></label>
+        <textarea [(ngModel)]="form.content" name="content" rows="5" placeholder="Article content..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Published By</label>
+          <input type="text" [(ngModel)]="form.published_by" name="published_by" placeholder="Author name" />
+        </div>
+        <div class="form-group">
+          <label>Publish Date</label>
+          <input type="datetime-local" [(ngModel)]="form.published_at" name="published_at" />
+        </div>
+        <div class="form-group check-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
+            <span>Active</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Media Section -->
+    <div class="form-section">
+      <h2 class="section-title">Media</h2>
+      <p class="section-desc">Add image or video URLs. Press Enter or click Add.</p>
+
+      <div class="media-input-row">
+        <input type="text" [(ngModel)]="mediaInput" name="mediaInput"
+          placeholder="https://example.com/image.jpg"
+          (keydown)="onMediaKeydown($event)" class="media-input" />
+        <button type="button" class="btn-add" (click)="addMedia()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Add
+        </button>
+      </div>
+
+      <div class="media-list" *ngIf="form.media.length > 0">
+        <div class="media-item" *ngFor="let url of form.media; let i = index">
+          <div class="media-thumb">
+            <video *ngIf="isVideo(url)" [src]="url" class="thumb"></video>
+            <img *ngIf="!isVideo(url)" [src]="url" class="thumb" [alt]="'media-' + i" />
+          </div>
+          <span class="media-url" [title]="url">{{ url }}</span>
+          <span class="media-type">{{ isVideo(url) ? 'Video' : 'Image' }}</span>
+          <button type="button" class="btn-remove" (click)="removeMedia(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <p class="empty-hint" *ngIf="form.media.length === 0">No media added yet.</p>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Publish Article</span>
+        <span *ngIf="isSubmitting" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </form>
+</div>

@@ -1,0 +1,230 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ pkg?.name || 'Package Detail' }}</h1>
+        <p>{{ pkg?.description || '' }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="pkg && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+          <path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading package...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && pkg">
+
+    <!-- Success Toast -->
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditMode">
+      <div class="detail-card">
+
+        <div class="detail-section">
+          <h2 class="section-title">Package Info</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ pkg.name }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Description</span>
+              <span class="info-value">{{ pkg.description || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Price</span>
+              <span class="info-value price">{{ pkg.price }} EGP</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Duration</span>
+              <span class="info-value">{{ pkg.duration_days }} days</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Available Listings</span>
+              <span class="info-value">{{ pkg.available_listings }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="badge" [class.badge-active]="pkg.is_active" [class.badge-inactive]="!pkg.is_active">
+                {{ pkg.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Features</h2>
+          <div class="features-view" *ngIf="pkg.features && pkg.features.length > 0">
+            <div class="feature-item" *ngFor="let f of pkg.features">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              {{ f }}
+            </div>
+          </div>
+          <p class="no-features" *ngIf="!pkg.features || pkg.features.length === 0">No features defined.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <div class="form-section">
+          <h2 class="section-title">Edit Package Info</h2>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Name <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.name" name="name" />
+            </div>
+            <div class="form-group">
+              <label>Description</label>
+              <input type="text" [(ngModel)]="editForm.description" name="description" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (EGP) <span class="required">*</span></label>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">EGP</span>
+                <input type="number" [(ngModel)]="editForm.price" name="price" min="0" step="0.01" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Duration (days) <span class="required">*</span></label>
+              <input type="number" [(ngModel)]="editForm.duration_days" name="duration_days" min="1" />
+            </div>
+            <div class="form-group">
+              <label>Available Listings</label>
+              <input type="number" [(ngModel)]="editForm.available_listings" name="available_listings" min="0" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <h2 class="section-title">Features</h2>
+          <p class="section-desc">Press Enter or click Add to insert a feature.</p>
+
+          <div class="feature-input-row">
+            <input type="text" [(ngModel)]="featureInput" name="featureInput"
+              placeholder="e.g. 20 active listings / month"
+              (keydown)="onFeatureKeydown($event)" class="feature-input" />
+            <button type="button" class="btn-add-feature" (click)="addFeature()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add
+            </button>
+          </div>
+
+          <div class="features-list" *ngIf="editForm.features && editForm.features.length > 0">
+            <div class="feature-item-edit" *ngFor="let f of editForm.features; let i = index">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>{{ f }}</span>
+              <button type="button" class="btn-remove-feature" (click)="removeFeature(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- ── Delete Confirmation Modal ── -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Package</h3>
+      <p>Are you sure you want to delete <strong>{{ pkg?.name }}</strong>? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deletePackage()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

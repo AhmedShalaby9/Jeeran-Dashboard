@@ -247,6 +247,40 @@ $bg:            #f4f6f8;
 }
 
 // ── Accent divider ────────────────────────────────────────
+// ── Error Message ─────────────────────────────────────────
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+
+// ── Spinner ───────────────────────────────────────────────
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.btn-login:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
+// ── Accent bar ────────────────────────────────────────────
 .accent-bar {
   width: 40px;
   height: 3px;
