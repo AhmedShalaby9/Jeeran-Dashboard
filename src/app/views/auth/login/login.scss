@@ -17,7 +17,7 @@ $bg:            #f4f6f8;
 
 // ── Left Panel ───────────────────────────────────────────
 .login-left {
-  flex: 1;
+  flex: 4;
   background: linear-gradient(150deg, $primary-dark 0%, $primary 55%, #2a5298 100%);
   display: flex;
   flex-direction: column;
@@ -109,19 +109,24 @@ $bg:            #f4f6f8;
 
 // ── Right Panel ──────────────────────────────────────────
 .login-right {
-  width: 620px;
+  flex: 2;
+  min-width: 380px;
   background: $bg;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2.5rem;
 
-  @media (max-width: 768px) { width: 100%; }
+  @media (max-width: 768px) {
+    flex: none;
+    width: 100%;
+    min-width: unset;
+  }
 }
 
 .login-card {
   width: 100%;
-  max-width: 520px;
+  max-width: 420px;
   background: $white;
   border-radius: 16px;
   padding: 3rem;
