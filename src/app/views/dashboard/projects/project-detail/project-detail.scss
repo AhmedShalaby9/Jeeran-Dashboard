@@ -1,0 +1,315 @@
+@use '../../shared-page';
+
+$primary:     #1e3a6e;
+$primary-dark:#152c54;
+$accent:      #b8a882;
+$white:       #ffffff;
+$bg:          #f4f6f8;
+$text-dark:   #1a1f2e;
+$text-muted:  #6b7280;
+$border:      #e5e7eb;
+
+.header-left    { display: flex; align-items: center; gap: 1rem; }
+.header-actions { display: flex; gap: 0.75rem; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.5rem 0.85rem; border: 1.5px solid $border; border-radius: 8px;
+  background: $white; color: $text-muted; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: $text-dark; border-color: #9ca3af; }
+}
+
+.detail-card    { background: $white; border-radius: 12px; border: 1px solid $border; }
+.detail-section { padding: 1.75rem 2rem; }
+.detail-divider { border: none; border-top: 1px solid $border; }
+
+.section-title {
+  font-size: 1rem; font-weight: 700; color: $text-dark; margin: 0 0 1.25rem;
+}
+
+// ── Info Grid ─────────────────────────────────────────────
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.info-item  { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.info-label {
+  font-size: 0.78rem; font-weight: 600; color: $text-muted;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.info-value { font-size: 0.95rem; color: $text-dark; font-weight: 500; }
+
+.badge {
+  display: inline-block; padding: 0.25rem 0.65rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; width: fit-content;
+  &.badge-active   { background: #dcfce7; color: #16a34a; }
+  &.badge-inactive { background: #fee2e2; color: #dc2626; }
+}
+
+// ── Gallery Grid ──────────────────────────────────────────
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.gallery-thumb {
+  aspect-ratio: 4/3;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid $border;
+  background: #e9ecf3;
+}
+
+.gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.no-content {
+  font-size: 0.85rem; color: $text-muted; font-style: italic;
+}
+
+// ── Feature View Cards ────────────────────────────────────
+.features-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.feature-view-card {
+  padding: 1.1rem 1.25rem;
+  background: #f8f9ff;
+  border: 1px solid #dbe4f8;
+  border-radius: 10px;
+}
+
+.fvc-header {
+  margin-bottom: 0.5rem;
+}
+
+.fvc-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.fvc-title-en {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $primary;
+}
+
+.fvc-title-ar {
+  font-size: 0.85rem;
+  color: $text-muted;
+  display: block;
+}
+
+.fvc-subtitles {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: $text-dark;
+  font-weight: 500;
+}
+
+.fvc-sub-ar { color: $text-muted; }
+
+.fvc-descs { margin-bottom: 0.75rem; }
+
+.fvc-desc {
+  font-size: 0.85rem;
+  color: $text-muted;
+  margin: 0 0 0.25rem;
+  line-height: 1.5;
+}
+
+.fvc-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.fvc-thumb {
+  width: 80px;
+  height: 60px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid $border;
+  background: #e9ecf3;
+}
+
+.fvc-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+// ── Edit Form ─────────────────────────────────────────────
+.form-card    { background: $white; border-radius: 12px; border: 1px solid $border; }
+.form-section { padding: 1.75rem 2rem; }
+.form-divider { border: none; border-top: 1px solid $border; }
+
+.section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  &:last-child { margin-bottom: 0; }
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 0.4rem;
+
+  label { font-size: 0.82rem; font-weight: 600; color: $text-dark; }
+
+  input, textarea {
+    padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+    font-size: 0.9rem; color: $text-dark; outline: none; width: 100%; box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit;
+    &::placeholder { color: #b0b7c3; }
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+  }
+
+  textarea { resize: vertical; min-height: 90px; }
+}
+
+.check-group { justify-content: flex-end; padding-bottom: 0.25rem; }
+
+.checkbox-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.9rem; font-weight: 500; color: $text-dark; cursor: pointer;
+  input[type="checkbox"] { width: 16px; height: 16px; accent-color: $primary; cursor: pointer; }
+}
+
+.required { color: #ef4444; }
+
+.url-input-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+
+.url-input {
+  flex: 1; padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+  font-size: 0.9rem; color: $text-dark; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &::placeholder { color: #b0b7c3; }
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.btn-add {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.7rem 1.1rem; background: $primary; color: $white;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  &:hover { background: $primary-dark; }
+}
+
+.thumb-grid { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.5rem; }
+
+.thumb-item {
+  position: relative; width: 80px; height: 80px; border-radius: 8px;
+  overflow: hidden; border: 1px solid $border; flex-shrink: 0;
+}
+
+.thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.btn-remove-thumb {
+  position: absolute; top: 3px; right: 3px; background: rgba(0,0,0,0.6);
+  border: none; border-radius: 50%; width: 20px; height: 20px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: $white; transition: background 0.15s;
+  &:hover { background: #dc2626; }
+}
+
+.empty-hint { font-size: 0.85rem; color: $text-muted; font-style: italic; }
+
+.features-list { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+
+.feature-card {
+  padding: 0.85rem 1.1rem; background: #f0f4ff;
+  border: 1px solid #dbe4f8; border-radius: 10px;
+}
+
+.feature-card-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem;
+}
+
+.feature-title-en { font-size: 0.9rem; font-weight: 700; color: $primary; display: block; }
+.feature-title-ar { font-size: 0.82rem; color: $text-muted; display: block; }
+
+.feature-card-meta { display: flex; align-items: center; gap: 0.5rem; }
+
+.feature-img-count {
+  font-size: 0.72rem; background: #eff3fb; color: $primary;
+  padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 600;
+}
+
+.btn-remove-feature {
+  background: none; border: none; cursor: pointer; color: #9ca3af;
+  display: flex; align-items: center; padding: 3px; border-radius: 4px;
+  transition: color 0.15s, background 0.15s;
+  &:hover { color: #dc2626; background: #fee2e2; }
+}
+
+.feature-subtitle { font-size: 0.82rem; color: $text-muted; margin: 0; }
+
+.feature-builder {
+  margin-top: 0.75rem; padding: 1.25rem;
+  background: $bg; border: 1.5px dashed $border; border-radius: 10px;
+}
+
+.builder-title { font-size: 0.9rem; font-weight: 700; color: $text-dark; margin: 0 0 1rem; }
+.builder-actions { display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem; }
+
+.btn-add-feature {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.6rem 1rem; background: $primary; color: $white;
+  border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s; white-space: nowrap;
+  &:hover { background: $primary-dark; }
+}
+
+.form-actions {
+  padding: 1.25rem 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;
+  background: $bg; border-top: 1px solid $border;
+}
+
+// ── Delete Modal ──────────────────────────────────────────
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+}
+
+.modal-confirm {
+  background: $white; border-radius: 14px; padding: 2rem;
+  width: 100%; max-width: 420px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  h3 { font-size: 1.1rem; font-weight: 700; color: $text-dark; margin: 0.75rem 0 0.5rem; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0 0 1.5rem; line-height: 1.5; }
+}
+
+.modal-icon {
+  width: 56px; height: 56px; background: #fee2e2; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #dc2626;
+}
+
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+
+.btn-danger-solid {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.4rem; background: #dc2626; color: $white;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+  &:hover    { background: #b91c1c; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}

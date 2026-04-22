@@ -1,0 +1,342 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ project?.name_en || project?.name_ar || 'Project' }}</h1>
+        <p dir="rtl" *ngIf="project?.name_ar">{{ project?.name_ar }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="project && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading project...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && project">
+
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditMode">
+
+      <div class="detail-card">
+
+        <!-- Info -->
+        <div class="detail-section">
+          <h2 class="section-title">Project Info</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Name (English)</span>
+              <span class="info-value">{{ project.name_en || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Name (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ project.name_ar }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="badge" [class.badge-active]="project.is_active" [class.badge-inactive]="!project.is_active">
+                {{ project.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Created At</span>
+              <span class="info-value">{{ project.created_at | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Gallery -->
+        <div class="detail-section">
+          <h2 class="section-title">Gallery ({{ project.gallery?.length || 0 }} images)</h2>
+          <div class="gallery-grid" *ngIf="project.gallery && project.gallery.length > 0">
+            <div class="gallery-thumb" *ngFor="let url of project.gallery; let i = index">
+              <img [src]="url" [alt]="'gallery-' + i" class="gallery-img" />
+            </div>
+          </div>
+          <p class="no-content" *ngIf="!project.gallery || project.gallery.length === 0">No gallery images.</p>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Features -->
+        <div class="detail-section">
+          <h2 class="section-title">Features ({{ project.features?.length || 0 }})</h2>
+
+          <div class="features-view" *ngIf="project.features && project.features.length > 0">
+            <div class="feature-view-card" *ngFor="let f of project.features; let i = index">
+
+              <div class="fvc-header">
+                <div class="fvc-titles">
+                  <span class="fvc-title-en">{{ f.title_en || '—' }}</span>
+                  <span class="fvc-title-ar" dir="rtl">{{ f.title_ar || '—' }}</span>
+                </div>
+              </div>
+
+              <div class="fvc-subtitles" *ngIf="f.subtitle_en || f.subtitle_ar">
+                <span *ngIf="f.subtitle_en">{{ f.subtitle_en }}</span>
+                <span *ngIf="f.subtitle_ar" dir="rtl" class="fvc-sub-ar">{{ f.subtitle_ar }}</span>
+              </div>
+
+              <div class="fvc-descs" *ngIf="f.desc_en || f.desc_ar">
+                <p *ngIf="f.desc_en" class="fvc-desc">{{ f.desc_en }}</p>
+                <p *ngIf="f.desc_ar" class="fvc-desc" dir="rtl">{{ f.desc_ar }}</p>
+              </div>
+
+              <div class="fvc-images" *ngIf="f.images && f.images.length > 0">
+                <div class="fvc-thumb" *ngFor="let img of f.images; let j = index">
+                  <img [src]="img" [alt]="'feat-' + i + '-img-' + j" class="fvc-img" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <p class="no-content" *ngIf="!project.features || project.features.length === 0">No features defined.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h2 class="section-title">Project Info</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Arabic Name <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.name_ar" name="name_ar" dir="rtl" />
+            </div>
+            <div class="form-group">
+              <label>English Name</label>
+              <input type="text" [(ngModel)]="editForm.name_en" name="name_en" />
+            </div>
+            <div class="form-group check-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
+                <span>Active</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Gallery -->
+        <div class="form-section">
+          <h2 class="section-title">Gallery</h2>
+          <div class="url-input-row">
+            <input type="text" [(ngModel)]="galleryInput" name="galleryInput"
+              placeholder="https://example.com/photo.jpg"
+              (keydown)="onGalleryKeydown($event)" class="url-input" />
+            <button type="button" class="btn-add" (click)="addGalleryImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add
+            </button>
+          </div>
+          <div class="thumb-grid" *ngIf="editForm.gallery.length > 0">
+            <div class="thumb-item" *ngFor="let url of editForm.gallery; let i = index">
+              <img [src]="url" [alt]="'gallery-' + i" class="thumb-img" />
+              <button type="button" class="btn-remove-thumb" (click)="removeGalleryImage(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="empty-hint" *ngIf="editForm.gallery.length === 0">No images yet.</p>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Features -->
+        <div class="form-section">
+          <div class="section-header">
+            <h2 class="section-title">Features</h2>
+            <button type="button" class="btn-add-feature" (click)="openFeatureForm()" *ngIf="!showFeatureForm">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add Feature
+            </button>
+          </div>
+
+          <div class="features-list" *ngIf="editForm.features.length > 0">
+            <div class="feature-card" *ngFor="let f of editForm.features; let i = index">
+              <div class="feature-card-header">
+                <div>
+                  <span class="feature-title-en">{{ f.title_en || '—' }}</span>
+                  <span class="feature-title-ar" dir="rtl">{{ f.title_ar || '—' }}</span>
+                </div>
+                <div class="feature-card-meta">
+                  <span class="feature-img-count" *ngIf="f.images.length > 0">{{ f.images.length }} img</span>
+                  <button type="button" class="btn-remove-feature" (click)="removeFeature(i)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <p class="feature-subtitle">{{ f.subtitle_en }}</p>
+            </div>
+          </div>
+          <p class="empty-hint" *ngIf="editForm.features.length === 0 && !showFeatureForm">No features yet.</p>
+
+          <!-- Feature builder -->
+          <div class="feature-builder" *ngIf="showFeatureForm">
+            <h3 class="builder-title">New Feature</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Title (Arabic) <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="newFeature.title_ar" name="edit_feat_title_ar" dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Title (English)</label>
+                <input type="text" [(ngModel)]="newFeature.title_en" name="edit_feat_title_en" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Subtitle (Arabic)</label>
+                <input type="text" [(ngModel)]="newFeature.subtitle_ar" name="edit_feat_subtitle_ar" dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Subtitle (English)</label>
+                <input type="text" [(ngModel)]="newFeature.subtitle_en" name="edit_feat_subtitle_en" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Description (Arabic)</label>
+                <textarea [(ngModel)]="newFeature.desc_ar" name="edit_feat_desc_ar" rows="3" dir="rtl"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Description (English)</label>
+                <textarea [(ngModel)]="newFeature.desc_en" name="edit_feat_desc_en" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Feature Images</label>
+              <div class="url-input-row">
+                <input type="text" [(ngModel)]="featureImageInput" name="edit_feat_img"
+                  placeholder="https://example.com/feature.jpg"
+                  (keydown)="onFeatureImageKeydown($event)" class="url-input" />
+                <button type="button" class="btn-add" (click)="addFeatureImage()">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                  </svg>
+                  Add
+                </button>
+              </div>
+              <div class="thumb-grid" *ngIf="newFeature.images.length > 0">
+                <div class="thumb-item" *ngFor="let url of newFeature.images; let i = index">
+                  <img [src]="url" [alt]="'new-feat-img-' + i" class="thumb-img" />
+                  <button type="button" class="btn-remove-thumb" (click)="removeFeatureImage(i)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="builder-actions">
+              <button type="button" class="btn-secondary" (click)="cancelFeature()">Cancel</button>
+              <button type="button" class="btn-primary" (click)="addFeature()">Add Feature</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Project</h3>
+      <p>Are you sure you want to delete <strong>{{ project?.name_en || project?.name_ar }}</strong>? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deleteProject()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
