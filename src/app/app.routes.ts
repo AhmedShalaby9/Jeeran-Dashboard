@@ -13,6 +13,9 @@ import { BannerDetailComponent } from './views/dashboard/banners/banner-detail/b
 import { ProjectsComponent } from './views/dashboard/projects/projects';
 import { ProjectFormComponent } from './views/dashboard/projects/project-form/project-form';
 import { ProjectDetailComponent } from './views/dashboard/projects/project-detail/project-detail';
+import { UsersComponent } from './views/dashboard/users/users';
+import { UserFormComponent } from './views/dashboard/users/user-form/user-form';
+import { UserDetailComponent } from './views/dashboard/users/user-detail/user-detail';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -38,6 +41,11 @@ export const routes: Routes = [
       { path: 'projects',          component: ProjectsComponent },
       { path: 'projects/new',      component: ProjectFormComponent },
       { path: 'projects/:id',      component: ProjectDetailComponent },
+
+      // Users
+      { path: 'users',             component: UsersComponent },
+      { path: 'users/new',         component: UserFormComponent },
+      { path: 'users/:id',         component: UserDetailComponent },
 
       { path: '',                  redirectTo: 'packages', pathMatch: 'full' },
     ],

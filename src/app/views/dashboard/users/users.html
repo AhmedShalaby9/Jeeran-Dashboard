@@ -1,0 +1,95 @@
+<div class="page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Users</h1>
+      <p>Manage platform users and admins</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Admin
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <select [(ngModel)]="filterType" (ngModelChange)="onFilterChange()" name="filterType">
+      <option value="">All Types</option>
+      <option value="buyer">Buyer</option>
+      <option value="seller">Seller</option>
+      <option value="admin">Admin</option>
+      <option value="super_admin">Super Admin</option>
+    </select>
+
+    <select [(ngModel)]="filterActive" (ngModelChange)="onFilterChange()" name="filterActive">
+      <option value="">All Status</option>
+      <option value="true">Active</option>
+      <option value="false">Inactive</option>
+    </select>
+
+    <div class="search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" [(ngModel)]="filterSearch" (ngModelChange)="onFilterChange()"
+        name="filterSearch" placeholder="Search by name, phone or email..." />
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card" *ngIf="!isLoading">
+    <table class="users-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td class="td-id">{{ user.id }}</td>
+          <td class="td-name">{{ user.name }}</td>
+          <td class="td-muted">{{ user.email }}</td>
+          <td class="td-muted">{{ user.phone || '—' }}</td>
+          <td>
+            <span class="type-badge type-{{ user.user_type }}">{{ user.user_type | titlecase }}</span>
+          </td>
+          <td>
+            <span class="badge" [class.badge-active]="user.is_active" [class.badge-inactive]="!user.is_active">
+              {{ user.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn-view" (click)="goToDetail(user.id)">
+              View
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="users.length === 0">
+          <td colspan="7" class="empty-row">No users found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
