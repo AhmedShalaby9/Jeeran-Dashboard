@@ -1,0 +1,399 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ property?.title || 'Property' }}</h1>
+        <p>{{ property?.property_type }} · {{ property?.property_status }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="property && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading property...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && property">
+
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditMode">
+      <div class="detail-layout">
+
+        <!-- Left: images -->
+        <div class="images-panel" *ngIf="property.images && property.images.length > 0">
+          <img [src]="property.images[0]" [alt]="property.title" class="main-image" />
+          <div class="thumb-strip" *ngIf="property.images.length > 1">
+            <img *ngFor="let img of property.images.slice(1)" [src]="img" class="strip-thumb" />
+          </div>
+        </div>
+        <div class="images-panel images-placeholder" *ngIf="!property.images || property.images.length === 0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <p>No images</p>
+        </div>
+
+        <!-- Right: details -->
+        <div class="detail-card">
+
+          <!-- Pricing & status -->
+          <div class="detail-section">
+            <div class="price-row">
+              <span class="price-tag" dir="rtl">{{ formatPrice(property.price) }}</span>
+              <div class="status-pills">
+                <span class="type-pill">{{ property.property_type }}</span>
+                <span class="status-pill" [ngClass]="statusClass(property.property_status)">
+                  {{ property.property_status }}
+                </span>
+                <span class="featured-pill" *ngIf="property.is_featured">
+                  ★ Featured
+                </span>
+              </div>
+            </div>
+
+            <div class="specs-row">
+              <div class="spec-item" *ngIf="property.size">
+                <span class="spec-val">{{ property.size }}</span>
+                <span class="spec-lbl">م²</span>
+              </div>
+              <div class="spec-sep" *ngIf="property.size && property.bedrooms">|</div>
+              <div class="spec-item" *ngIf="property.bedrooms">
+                <span class="spec-val">{{ property.bedrooms }}</span>
+                <span class="spec-lbl">غرف</span>
+              </div>
+              <div class="spec-sep" *ngIf="property.bedrooms && property.bathrooms">|</div>
+              <div class="spec-item" *ngIf="property.bathrooms">
+                <span class="spec-val">{{ property.bathrooms }}</span>
+                <span class="spec-lbl">حمام</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-divider"></div>
+
+          <!-- Info grid -->
+          <div class="detail-section">
+            <h2 class="section-title">Listing Details</h2>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Title</span>
+                <span class="info-value" dir="rtl">{{ property.title }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Slug</span>
+                <span class="info-value">{{ property.slug || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Status</span>
+                <span class="badge" [class.badge-active]="property.is_active" [class.badge-inactive]="!property.is_active">
+                  {{ property.is_active ? 'Active' : 'Inactive' }}
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Project ID</span>
+                <span class="info-value">{{ property.project_id || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Country</span>
+                <span class="info-value">{{ property.country || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">State / City</span>
+                <span class="info-value">{{ property.state || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Legacy Code</span>
+                <span class="info-value">{{ property.legacy_code || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Views</span>
+                <span class="info-value">{{ property.views_count }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Published At</span>
+                <span class="info-value">{{ (property.published_at | date:'medium') || '—' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Created At</span>
+                <span class="info-value">{{ property.created_at | date:'medium' }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-divider" *ngIf="property.content"></div>
+
+          <!-- Description -->
+          <div class="detail-section" *ngIf="property.content">
+            <h2 class="section-title">Description</h2>
+            <p class="desc-text" dir="rtl">{{ property.content }}</p>
+          </div>
+
+          <div class="detail-divider" *ngIf="property.agent_name || property.agent_mobile"></div>
+
+          <!-- Agent -->
+          <div class="detail-section" *ngIf="property.agent_name || property.agent_mobile">
+            <h2 class="section-title">Agent</h2>
+            <div class="agent-card">
+              <div class="agent-avatar" *ngIf="property.agent_picture">
+                <img [src]="property.agent_picture" alt="agent" />
+              </div>
+              <div class="agent-avatar agent-avatar-placeholder" *ngIf="!property.agent_picture">
+                {{ property.agent_name?.charAt(0) || '?' }}
+              </div>
+              <div class="agent-info">
+                <p class="agent-name">{{ property.agent_name || '—' }}</p>
+                <p class="agent-contact" *ngIf="property.agent_mobile">{{ property.agent_mobile }}</p>
+                <p class="agent-contact" *ngIf="property.agent_email">{{ property.agent_email }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-divider" *ngIf="property.video_url"></div>
+
+          <!-- Video -->
+          <div class="detail-section" *ngIf="property.video_url">
+            <h2 class="section-title">Video</h2>
+            <a [href]="property.video_url" target="_blank" class="video-link">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              Watch Video
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <!-- Basic Info -->
+        <div class="form-section">
+          <h2 class="section-title">Basic Info</h2>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Title <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.title" name="title" dir="rtl" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Slug</label>
+              <input type="text" [(ngModel)]="editForm.slug" name="slug" />
+            </div>
+            <div class="form-group">
+              <label>Property Type <span class="required">*</span></label>
+              <select [(ngModel)]="editForm.property_type" name="property_type">
+                <option *ngFor="let t of propertyTypes" [value]="t">{{ t }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Status</label>
+              <select [(ngModel)]="editForm.property_status" name="property_status">
+                <option *ngFor="let s of propertyStatuses" [value]="s">{{ s }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Price (EGP)</label>
+              <input type="number" [(ngModel)]="editForm.price" name="price" />
+            </div>
+            <div class="form-group">
+              <label>Size (m²)</label>
+              <input type="number" [(ngModel)]="editForm.size" name="size" />
+            </div>
+            <div class="form-group">
+              <label>Bedrooms</label>
+              <input type="number" [(ngModel)]="editForm.bedrooms" name="bedrooms" />
+            </div>
+            <div class="form-group">
+              <label>Bathrooms</label>
+              <input type="number" [(ngModel)]="editForm.bathrooms" name="bathrooms" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Country</label>
+              <input type="text" [(ngModel)]="editForm.country" name="country" />
+            </div>
+            <div class="form-group">
+              <label>State / City</label>
+              <input type="text" [(ngModel)]="editForm.state" name="state" />
+            </div>
+            <div class="form-group">
+              <label>Project ID</label>
+              <input type="number" [(ngModel)]="editForm.project_id" name="project_id" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label>Description</label>
+              <textarea [(ngModel)]="editForm.content" name="content" rows="4" dir="rtl"></textarea>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group check-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="editForm.is_featured" name="is_featured" />
+                <span>Featured</span>
+              </label>
+            </div>
+            <div class="form-group check-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
+                <span>Active</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Images -->
+        <div class="form-section">
+          <h2 class="section-title">Images</h2>
+          <div class="url-input-row">
+            <input type="text" [(ngModel)]="imageInput" name="imageInput"
+              placeholder="https://example.com/photo.jpg"
+              (keydown)="onImageKeydown($event)" class="url-input" />
+            <button type="button" class="btn-add" (click)="addImage()">Add</button>
+          </div>
+          <div class="thumb-grid" *ngIf="editForm.images && editForm.images.length > 0">
+            <div class="thumb-item" *ngFor="let url of editForm.images; let i = index">
+              <img [src]="url" class="thumb-img" />
+              <button type="button" class="btn-remove-thumb" (click)="removeImage(i)">×</button>
+            </div>
+          </div>
+          <p class="empty-hint" *ngIf="!editForm.images || editForm.images.length === 0">No images added.</p>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Agent -->
+        <div class="form-section">
+          <h2 class="section-title">Agent</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Agent Name</label>
+              <input type="text" [(ngModel)]="editForm.agent_name" name="agent_name" />
+            </div>
+            <div class="form-group">
+              <label>Mobile</label>
+              <input type="text" [(ngModel)]="editForm.agent_mobile" name="agent_mobile" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp</label>
+              <input type="text" [(ngModel)]="editForm.agent_whatsapp" name="agent_whatsapp" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="editForm.agent_email" name="agent_email" />
+            </div>
+            <div class="form-group">
+              <label>Picture URL</label>
+              <input type="text" [(ngModel)]="editForm.agent_picture" name="agent_picture" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Video -->
+        <div class="form-section">
+          <h2 class="section-title">Video</h2>
+          <div class="form-group">
+            <label>Video URL</label>
+            <input type="text" [(ngModel)]="editForm.video_url" name="video_url" />
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Property</h3>
+      <p>Are you sure you want to delete <strong>{{ property?.title }}</strong>? This cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deleteProperty()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

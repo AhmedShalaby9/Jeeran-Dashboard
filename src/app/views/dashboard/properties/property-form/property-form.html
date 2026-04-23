@@ -1,0 +1,577 @@
+<div class="page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>New Property</h1>
+        <p>Fill in the details step by step to list a new property</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global error -->
+  <div class="error-msg" *ngIf="globalError">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ globalError }}
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!--  STEPPER WRAPPER                                       -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="stepper-shell">
+
+    <!-- ── Step Indicator ── -->
+    <div class="step-track">
+      <div class="step-connector-bg"></div>
+      <div class="step-connector-fill" [style.width.%]="(currentStep / (steps.length - 1)) * 100"></div>
+
+      <button
+        *ngFor="let step of steps"
+        class="step-node"
+        [class.active]="step.index === currentStep"
+        [class.done]="step.index < currentStep"
+        (click)="goToStep(step.index)"
+        type="button"
+      >
+        <!-- Done checkmark -->
+        <span class="node-icon" *ngIf="step.index < currentStep">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </span>
+
+        <!-- Step number / icon when pending or active -->
+        <span class="node-icon" *ngIf="step.index >= currentStep">
+
+          <!-- Step 0: Info -->
+          <ng-container *ngIf="step.icon === 'info'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="8"/>
+              <line x1="12" y1="12" x2="12" y2="16"/>
+            </svg>
+          </ng-container>
+
+          <!-- Step 1: Pin -->
+          <ng-container *ngIf="step.icon === 'pin'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </ng-container>
+
+          <!-- Step 2: Camera -->
+          <ng-container *ngIf="step.icon === 'camera'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </ng-container>
+
+          <!-- Step 3: Agent -->
+          <ng-container *ngIf="step.icon === 'agent'">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </ng-container>
+
+        </span>
+
+        <div class="node-label">
+          <span class="node-title">{{ step.label }}</span>
+          <span class="node-sub">{{ step.sublabel }}</span>
+        </div>
+      </button>
+    </div>
+
+    <!-- ── Step Panel ── -->
+    <div class="step-panel">
+
+      <!-- Step error banner -->
+      <div class="step-error" *ngIf="stepErrors[currentStep]">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ stepErrors[currentStep] }}
+      </div>
+
+      <!-- ─────────────────────────────────── -->
+      <!-- STEP 0 — Basic Info                 -->
+      <!-- ─────────────────────────────────── -->
+      <div class="step-content" *ngIf="currentStep === 0">
+
+        <div class="step-heading">
+          <div class="step-heading-icon step-heading-info">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Basic Information</h2>
+            <p>Start with the core details of the listing</p>
+          </div>
+        </div>
+
+        <div class="field-grid">
+
+          <div class="field-group span-2">
+            <label>Property Title <span class="req">*</span></label>
+            <input type="text" [(ngModel)]="form.title" name="title"
+              placeholder="فيلا Q1 بمساحة أرض 332 متر" dir="rtl"
+              (blur)="autoSlug()" />
+          </div>
+
+          <div class="field-group">
+            <label>Slug (URL)</label>
+            <input type="text" [(ngModel)]="form.slug" name="slug"
+              placeholder="villa-q1-332m" />
+          </div>
+
+          <div class="field-group">
+            <label>Legacy Code</label>
+            <input type="text" [(ngModel)]="form.legacy_code" name="legacy_code"
+              placeholder="1160" />
+          </div>
+
+        </div>
+
+        <div class="field-grid field-grid-3">
+
+          <div class="field-group">
+            <label>Property Type <span class="req">*</span></label>
+            <div class="type-chips">
+              <button type="button"
+                *ngFor="let t of propertyTypes"
+                class="type-chip"
+                [class.selected]="form.property_type === t"
+                (click)="form.property_type = t">
+                {{ t }}
+              </button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Listing Status <span class="req">*</span></label>
+            <div class="status-chips">
+              <button type="button"
+                *ngFor="let s of propertyStatuses"
+                class="status-chip"
+                [class.selected]="form.property_status === s"
+                [class.chip-sale]="s === 'للبيع'"
+                [class.chip-rent]="s === 'للإيجار'"
+                [class.chip-reserved]="s === 'محجوز'"
+                [class.chip-sold]="s === 'مباع'"
+                (click)="form.property_status = s">
+                {{ s }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="field-grid">
+
+          <div class="field-group">
+            <label>Price (EGP) <span class="req">*</span></label>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">ج.م</span>
+              <input type="number" [(ngModel)]="form.price" name="price"
+                placeholder="4400000" min="0" />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Area Size (m²)</label>
+            <div class="input-suffix-wrap">
+              <input type="number" [(ngModel)]="form.size" name="size"
+                placeholder="195" min="0" />
+              <span class="input-suffix">م²</span>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Bedrooms</label>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" (click)="form.bedrooms = ((form.bedrooms || 0) > 0 ? (form.bedrooms || 0) - 1 : 0)">−</button>
+              <span class="counter-val">{{ form.bedrooms || 0 }}</span>
+              <button type="button" class="counter-btn" (click)="form.bedrooms = (form.bedrooms || 0) + 1">+</button>
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>Bathrooms</label>
+            <div class="counter-group">
+              <button type="button" class="counter-btn" (click)="form.bathrooms = ((form.bathrooms || 0) > 0 ? (form.bathrooms || 0) - 1 : 0)">−</button>
+              <span class="counter-val">{{ form.bathrooms || 0 }}</span>
+              <button type="button" class="counter-btn" (click)="form.bathrooms = (form.bathrooms || 0) + 1">+</button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Price preview -->
+        <div class="price-preview" *ngIf="form.price > 0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span dir="rtl">{{ form.price | number }} ج.م</span>
+          <span class="price-type-tag">{{ form.property_type }}</span>
+          <span class="price-status-tag" [ngClass]="'tag-' + form.property_status">{{ form.property_status }}</span>
+        </div>
+
+      </div>
+
+      <!-- ─────────────────────────────────── -->
+      <!-- STEP 1 — Location & Details         -->
+      <!-- ─────────────────────────────────── -->
+      <div class="step-content" *ngIf="currentStep === 1">
+
+        <div class="step-heading">
+          <div class="step-heading-icon step-heading-pin">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Location & Details</h2>
+            <p>Where is the property located and additional info</p>
+          </div>
+        </div>
+
+        <div class="field-grid">
+
+          <div class="field-group">
+            <label>Country</label>
+            <select [(ngModel)]="form.country" name="country">
+              <option *ngFor="let c of countries" [value]="c">{{ c }}</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label>State / City</label>
+            <input type="text" [(ngModel)]="form.state" name="state"
+              placeholder="القاهرة" dir="rtl" />
+          </div>
+
+          <div class="field-group">
+            <label>Project ID</label>
+            <input type="number" [(ngModel)]="form.project_id" name="project_id"
+              placeholder="2" min="1" />
+          </div>
+
+        </div>
+
+        <div class="field-grid">
+          <div class="field-group span-2">
+            <label>Description</label>
+            <textarea [(ngModel)]="form.content" name="content" rows="5"
+              placeholder="وصف تفصيلي للعقار..." dir="rtl"></textarea>
+          </div>
+          <div class="field-group span-2">
+            <label>Description (HTML)</label>
+            <textarea [(ngModel)]="form.content_html" name="content_html" rows="4"
+              placeholder="<p>HTML content...</p>"></textarea>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field-group">
+            <label>Published At</label>
+            <input type="datetime-local" [(ngModel)]="form.published_at" name="published_at" />
+          </div>
+          <div class="field-group">
+            <label>Views Count</label>
+            <input type="number" [(ngModel)]="form.views_count" name="views_count" placeholder="0" min="0" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─────────────────────────────────── -->
+      <!-- STEP 2 — Media                      -->
+      <!-- ─────────────────────────────────── -->
+      <div class="step-content" *ngIf="currentStep === 2">
+
+        <div class="step-heading">
+          <div class="step-heading-icon step-heading-camera">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Photos & Media</h2>
+            <p>Add property images and a video link</p>
+          </div>
+        </div>
+
+        <!-- Image URL input -->
+        <div class="media-input-section">
+          <label class="media-label">Property Images</label>
+          <p class="media-hint">Paste image URLs one at a time and press Enter or click Add</p>
+          <div class="url-input-row">
+            <input type="text" [(ngModel)]="imageInput" name="imageInput"
+              placeholder="https://example.com/photo.jpg"
+              (keydown)="onImageKeydown($event)" class="url-input" />
+            <button type="button" class="btn-add" (click)="addImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add
+            </button>
+          </div>
+
+          <!-- Image gallery preview -->
+          <div class="image-gallery" *ngIf="form.images.length > 0">
+            <div class="gallery-item" *ngFor="let url of form.images; let i = index">
+              <div class="gallery-item-cover">
+                <img [src]="url" [alt]="'img-' + i" />
+                <span class="gallery-num" *ngIf="i === 0">Cover</span>
+              </div>
+              <button type="button" class="gallery-remove" (click)="removeImage(i)"
+                title="Remove image">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="media-empty" *ngIf="form.images.length === 0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p>No images added yet</p>
+          </div>
+        </div>
+
+        <!-- Video URL -->
+        <div class="media-input-section">
+          <label class="media-label">Video URL</label>
+          <p class="media-hint">Optional — link to a property walkthrough video</p>
+          <div class="video-input-wrap">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <input type="text" [(ngModel)]="form.video_url" name="video_url"
+              placeholder="https://example.com/property-tour.mp4" />
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─────────────────────────────────── -->
+      <!-- STEP 3 — Agent & Settings           -->
+      <!-- ─────────────────────────────────── -->
+      <div class="step-content" *ngIf="currentStep === 3">
+
+        <div class="step-heading">
+          <div class="step-heading-icon step-heading-agent">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <h2>Agent & Settings</h2>
+            <p>Responsible agent contact info and publishing options</p>
+          </div>
+        </div>
+
+        <!-- Agent card preview -->
+        <div class="agent-preview" *ngIf="form.agent_name || form.agent_picture">
+          <div class="agent-avatar">
+            <img *ngIf="form.agent_picture" [src]="form.agent_picture" alt="agent" />
+            <span *ngIf="!form.agent_picture">{{ form.agent_name?.charAt(0) || '?' }}</span>
+          </div>
+          <div class="agent-preview-info">
+            <p class="agent-pname">{{ form.agent_name || '—' }}</p>
+            <p class="agent-pcontact">{{ form.agent_mobile || '' }}</p>
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field-group">
+            <label>Agent Name</label>
+            <input type="text" [(ngModel)]="form.agent_name" name="agent_name"
+              placeholder="Mahmoud Khalil" />
+          </div>
+          <div class="field-group">
+            <label>Mobile</label>
+            <input type="text" [(ngModel)]="form.agent_mobile" name="agent_mobile"
+              placeholder="+201005464855" />
+          </div>
+          <div class="field-group">
+            <label>WhatsApp</label>
+            <input type="text" [(ngModel)]="form.agent_whatsapp" name="agent_whatsapp"
+              placeholder="+201005464855" />
+          </div>
+        </div>
+
+        <div class="field-grid">
+          <div class="field-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="form.agent_email" name="agent_email"
+              placeholder="agent@example.com" />
+          </div>
+          <div class="field-group span-1">
+            <label>Agent Picture URL</label>
+            <input type="text" [(ngModel)]="form.agent_picture" name="agent_picture"
+              placeholder="https://example.com/agent.jpg" />
+          </div>
+        </div>
+
+        <div class="settings-divider">
+          <span>Publishing Settings</span>
+        </div>
+
+        <div class="toggles-grid">
+          <label class="toggle-card" [class.toggle-on]="form.is_active">
+            <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
+            <div class="toggle-body">
+              <div class="toggle-icon-wrap" [class.icon-active]="form.is_active">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path *ngIf="form.is_active" d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline *ngIf="form.is_active" points="22 4 12 14.01 9 11.01"/>
+                  <circle *ngIf="!form.is_active" cx="12" cy="12" r="10"/>
+                  <line *ngIf="!form.is_active" x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                </svg>
+              </div>
+              <div>
+                <p class="toggle-title">Active Listing</p>
+                <p class="toggle-desc">{{ form.is_active ? 'Visible to users on the site' : 'Hidden from public view' }}</p>
+              </div>
+            </div>
+            <div class="pill-switch" [class.on]="form.is_active"></div>
+          </label>
+
+          <label class="toggle-card" [class.toggle-on]="form.is_featured">
+            <input type="checkbox" [(ngModel)]="form.is_featured" name="is_featured" />
+            <div class="toggle-body">
+              <div class="toggle-icon-wrap" [class.icon-featured]="form.is_featured">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              </div>
+              <div>
+                <p class="toggle-title">Featured Property</p>
+                <p class="toggle-desc">{{ form.is_featured ? 'Highlighted in featured sections' : 'Standard listing' }}</p>
+              </div>
+            </div>
+            <div class="pill-switch" [class.on]="form.is_featured"></div>
+          </label>
+        </div>
+
+        <!-- Summary card -->
+        <div class="summary-card">
+          <h3 class="summary-title">Listing Summary</h3>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Title</span>
+              <span class="summary-val" dir="rtl">{{ form.title || '—' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Type</span>
+              <span class="summary-val">{{ form.property_type }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Status</span>
+              <span class="summary-val">{{ form.property_status }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Price</span>
+              <span class="summary-val" dir="rtl">{{ form.price | number }} ج.م</span>
+            </div>
+            <div class="summary-item" *ngIf="form.size">
+              <span class="summary-label">Size</span>
+              <span class="summary-val">{{ form.size }} م²</span>
+            </div>
+            <div class="summary-item" *ngIf="form.state">
+              <span class="summary-label">Location</span>
+              <span class="summary-val" dir="rtl">{{ form.state }}{{ form.country ? '، ' + form.country : '' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Images</span>
+              <span class="summary-val">{{ form.images.length }} photo{{ form.images.length !== 1 ? 's' : '' }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Agent</span>
+              <span class="summary-val">{{ form.agent_name || '—' }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── Step Navigation ── -->
+      <div class="step-nav">
+        <button type="button" class="btn-secondary" (click)="prev()" *ngIf="currentStep > 0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Previous
+        </button>
+        <div class="step-dots">
+          <span *ngFor="let s of steps"
+            class="dot"
+            [class.dot-active]="s.index === currentStep"
+            [class.dot-done]="s.index < currentStep"
+            (click)="goToStep(s.index)">
+          </span>
+        </div>
+        <button type="button" class="btn-primary" (click)="next()" *ngIf="currentStep < steps.length - 1">
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <button type="button" class="btn-submit" (click)="onSubmit()" *ngIf="currentStep === steps.length - 1"
+          [disabled]="isSubmitting">
+          <span *ngIf="!isSubmitting">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Publish Property
+          </span>
+          <span *ngIf="isSubmitting" class="spinner-sm"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

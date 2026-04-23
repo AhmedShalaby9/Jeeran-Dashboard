@@ -16,6 +16,9 @@ import { ProjectDetailComponent } from './views/dashboard/projects/project-detai
 import { UsersComponent } from './views/dashboard/users/users';
 import { UserFormComponent } from './views/dashboard/users/user-form/user-form';
 import { UserDetailComponent } from './views/dashboard/users/user-detail/user-detail';
+import { PropertiesComponent } from './views/dashboard/properties/properties';
+import { PropertyFormComponent } from './views/dashboard/properties/property-form/property-form';
+import { PropertyDetailComponent } from './views/dashboard/properties/property-detail/property-detail';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -46,6 +49,11 @@ export const routes: Routes = [
       { path: 'users',             component: UsersComponent },
       { path: 'users/new',         component: UserFormComponent },
       { path: 'users/:id',         component: UserDetailComponent },
+
+      // Properties
+      { path: 'properties',        component: PropertiesComponent },
+      { path: 'properties/new',    component: PropertyFormComponent },
+      { path: 'properties/:id',    component: PropertyDetailComponent },
 
       { path: '',                  redirectTo: 'packages', pathMatch: 'full' },
     ],

@@ -1,0 +1,195 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Properties</h1>
+      <p>Manage real-estate listings and their details</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Property
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="filter-search">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" [(ngModel)]="searchQ" placeholder="Search properties..." (keydown.enter)="applyFilters()" />
+    </div>
+    <select [(ngModel)]="typeFilter" (change)="applyFilters()">
+      <option value="">All Types</option>
+      <option *ngFor="let t of propertyTypes" [value]="t">{{ t }}</option>
+    </select>
+    <select [(ngModel)]="statusFilter" (change)="applyFilters()">
+      <option value="">All Statuses</option>
+      <option *ngFor="let s of propertyStatuses" [value]="s">{{ s }}</option>
+    </select>
+    <button class="btn-filter" (click)="applyFilters()">Apply</button>
+    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter">
+      Clear
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading properties...</p>
+  </div>
+
+  <div class="props-grid" *ngIf="!isLoading">
+
+    <div class="prop-card" *ngFor="let item of properties" (click)="goToDetail(item.id)">
+
+      <!-- Cover image -->
+      <div class="prop-cover">
+        <img *ngIf="item.images && item.images.length > 0"
+          [src]="item.images[0]" [alt]="item.title" class="cover-img" />
+        <div *ngIf="!item.images || item.images.length === 0" class="cover-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+
+        <div class="prop-badges-cover">
+          <span class="type-badge">{{ item.property_type }}</span>
+          <span class="status-badge" [ngClass]="statusClass(item.property_status)">
+            {{ item.property_status }}
+          </span>
+        </div>
+
+        <span class="img-count-badge" *ngIf="item.images && item.images.length > 1">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          {{ item.images.length }}
+        </span>
+
+        <span class="featured-badge" *ngIf="item.is_featured">
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          Featured
+        </span>
+      </div>
+
+      <!-- Card body -->
+      <div class="prop-body">
+        <h3 class="prop-title" dir="rtl">{{ item.title }}</h3>
+        <p class="prop-price">{{ formatPrice(item.price) }}</p>
+
+        <div class="prop-specs">
+          <span class="spec" *ngIf="item.size">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+            </svg>
+            {{ item.size }} م²
+          </span>
+          <span class="spec" *ngIf="item.bedrooms">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 4v16"/><path d="M2 8h18a2 2 0 0 1 2 2v10"/><path d="M2 17h20"/>
+              <path d="M6 8v9"/>
+            </svg>
+            {{ item.bedrooms }} غرف
+          </span>
+          <span class="spec" *ngIf="item.bathrooms">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5"/>
+              <line x1="10" y1="5" x2="8" y2="7"/><line x1="2" y1="12" x2="22" y2="12"/>
+            </svg>
+            {{ item.bathrooms }} حمام
+          </span>
+          <span class="spec" *ngIf="item.state">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+            </svg>
+            {{ item.state }}
+          </span>
+        </div>
+
+        <div class="prop-footer">
+          <span class="active-dot" [class.active]="item.is_active" [class.inactive]="!item.is_active"></span>
+          <span class="active-label">{{ item.is_active ? 'Active' : 'Inactive' }}</span>
+          <span class="prop-date">{{ item.created_at | date:'mediumDate' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="empty-state" *ngIf="properties.length === 0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <p>No properties found.</p>
+      <button class="btn-primary" (click)="goToNew()">Add First Property</button>
+    </div>
+
+  </div>
+
+  <!-- ── Pagination ── -->
+  <div class="pagination-bar" *ngIf="!isLoading && total > 0">
+
+    <div class="pagination-info">
+      Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ total }}</strong> properties
+    </div>
+
+    <div class="pagination-controls">
+
+      <!-- Prev -->
+      <button class="page-btn page-btn-nav"
+        (click)="goToPage(currentPage - 1)"
+        [disabled]="currentPage === 1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+
+      <!-- Page numbers -->
+      <ng-container *ngFor="let p of pageNumbers">
+        <span class="page-gap" *ngIf="p === -1">…</span>
+        <button *ngIf="p !== -1"
+          class="page-btn"
+          [class.page-btn-active]="p === currentPage"
+          (click)="goToPage(p)">
+          {{ p }}
+        </button>
+      </ng-container>
+
+      <!-- Next -->
+      <button class="page-btn page-btn-nav"
+        (click)="goToPage(currentPage + 1)"
+        [disabled]="currentPage === totalPages">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+
+    </div>
+
+    <div class="pagination-size">
+      <label>Per page</label>
+      <select [(ngModel)]="limit" (change)="onPageSizeChange()">
+        <option *ngFor="let s of pageSizes" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,360 @@
+@use '../../shared-page';
+
+$primary:      #1e3a6e;
+$primary-dark: #152c54;
+$accent:       #b8a882;
+$white:        #ffffff;
+$bg:           #f4f6f8;
+$text-dark:    #1a1f2e;
+$text-muted:   #6b7280;
+$border:       #e5e7eb;
+
+.header-left { display: flex; align-items: center; gap: 1rem; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.5rem 0.85rem; border: 1.5px solid $border; border-radius: 8px;
+  background: $white; color: $text-muted; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: $text-dark; border-color: #9ca3af; }
+}
+
+.header-actions { display: flex; align-items: center; gap: 0.6rem; }
+
+// ── Detail Layout ──────────────────────────────────────────
+.detail-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.images-panel {
+  background: $white;
+  border-radius: 14px;
+  border: 1px solid $border;
+  overflow: hidden;
+
+  &.images-placeholder {
+    height: 260px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+  }
+}
+
+.main-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.thumb-strip {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 0.5rem;
+  gap: 0.5rem;
+}
+
+.strip-thumb {
+  width: 72px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid $border;
+}
+
+// ── Detail Card ────────────────────────────────────────────
+.detail-card {
+  background: $white;
+  border-radius: 14px;
+  border: 1px solid $border;
+  overflow: hidden;
+}
+
+.detail-section  { padding: 1.5rem 2rem; }
+.detail-divider  { border: none; border-top: 1px solid $border; }
+.section-title   { font-size: 0.95rem; font-weight: 700; color: $text-dark; margin: 0 0 1rem; }
+
+// ── Pricing section ────────────────────────────────────────
+.price-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.price-tag {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: $primary;
+}
+
+.status-pills {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.type-pill {
+  padding: 0.25rem 0.7rem;
+  background: #eef1f9;
+  color: $primary;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+.status-pill {
+  padding: 0.25rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 20px;
+  &.status-sale     { background: #dcfce7; color: #16a34a; }
+  &.status-rent     { background: #dbeafe; color: #2563eb; }
+  &.status-reserved { background: #fef9c3; color: #ca8a04; }
+  &.status-sold     { background: #f3f4f6; color: #6b7280; }
+}
+
+.featured-pill {
+  padding: 0.25rem 0.7rem;
+  background: #fef3c7;
+  color: #d97706;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 20px;
+}
+
+.specs-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.spec-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.25rem;
+}
+
+.spec-val {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: $text-dark;
+}
+
+.spec-lbl {
+  font-size: 0.78rem;
+  color: $text-muted;
+}
+
+.spec-sep {
+  color: $border;
+  font-size: 1.1rem;
+}
+
+// ── Info Grid ──────────────────────────────────────────────
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.info-item { display: flex; flex-direction: column; gap: 0.2rem; }
+.info-label { font-size: 0.75rem; font-weight: 600; color: $text-muted; text-transform: uppercase; letter-spacing: 0.04em; }
+.info-value { font-size: 0.9rem; color: $text-dark; font-weight: 500; }
+
+.badge {
+  display: inline-block; padding: 0.2rem 0.6rem; border-radius: 20px;
+  font-size: 0.72rem; font-weight: 600;
+  &.badge-active   { background: #dcfce7; color: #16a34a; }
+  &.badge-inactive { background: #fee2e2; color: #dc2626; }
+}
+
+// ── Description ────────────────────────────────────────────
+.desc-text {
+  font-size: 0.9rem;
+  color: $text-dark;
+  line-height: 1.7;
+  margin: 0;
+}
+
+// ── Agent ──────────────────────────────────────────────────
+.agent-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: $bg;
+  border-radius: 10px;
+  border: 1px solid $border;
+}
+
+.agent-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  border: 2px solid $border;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+
+  &.agent-avatar-placeholder {
+    background: $primary;
+    color: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 700;
+  }
+}
+
+.agent-info { flex: 1; }
+.agent-name    { font-size: 0.95rem; font-weight: 700; color: $text-dark; margin: 0 0 0.15rem; }
+.agent-contact { font-size: 0.82rem; color: $text-muted; margin: 0.1rem 0 0; }
+
+.video-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $primary;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: 1.5px solid $primary;
+  border-radius: 8px;
+  transition: all 0.15s;
+  &:hover { background: $primary; color: $white; }
+}
+
+// ── Edit Form ──────────────────────────────────────────────
+.form-card    { background: $white; border-radius: 12px; border: 1px solid $border; }
+.form-section { padding: 1.75rem 2rem; }
+.form-divider { border: none; border-top: 1px solid $border; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  &:last-child { margin-bottom: 0; }
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 0.4rem;
+
+  &.full { grid-column: 1 / -1; }
+
+  label { font-size: 0.82rem; font-weight: 600; color: $text-dark; }
+
+  input, textarea, select {
+    padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+    font-size: 0.9rem; color: $text-dark; outline: none; width: 100%; font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box;
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+    &::placeholder { color: #b0b7c3; }
+  }
+
+  select { appearance: auto; background: $white; cursor: pointer; }
+  textarea { resize: vertical; min-height: 90px; }
+}
+
+.check-group { justify-content: flex-end; padding-bottom: 0.25rem; }
+
+.checkbox-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.9rem; font-weight: 500; color: $text-dark; cursor: pointer;
+  input[type="checkbox"] { width: 16px; height: 16px; accent-color: $primary; cursor: pointer; }
+}
+
+.required { color: #ef4444; }
+
+.url-input-row {
+  display: flex; gap: 0.75rem; margin-bottom: 1rem;
+}
+
+.url-input {
+  flex: 1; padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+  font-size: 0.9rem; color: $text-dark; outline: none;
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+  &::placeholder { color: #b0b7c3; }
+}
+
+.btn-add {
+  padding: 0.7rem 1.1rem; background: $primary; color: $white;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  &:hover { background: $primary-dark; }
+}
+
+.thumb-grid { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-bottom: 0.5rem; }
+
+.thumb-item {
+  position: relative; width: 80px; height: 80px;
+  border-radius: 8px; overflow: hidden; border: 1px solid $border; flex-shrink: 0;
+}
+
+.thumb-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.btn-remove-thumb {
+  position: absolute; top: 3px; right: 3px;
+  background: rgba(0,0,0,0.6); border: none; border-radius: 50%;
+  width: 20px; height: 20px; display: flex; align-items: center;
+  justify-content: center; cursor: pointer; color: $white; font-size: 14px;
+  &:hover { background: #dc2626; }
+}
+
+.empty-hint { font-size: 0.85rem; color: $text-muted; font-style: italic; }
+
+.form-actions {
+  padding: 1.25rem 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;
+  background: $bg; border-top: 1px solid $border;
+}
+
+// ── Delete Modal ───────────────────────────────────────────
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000;
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+}
+
+.modal-confirm {
+  background: $white; border-radius: 16px; padding: 2.5rem 2rem;
+  max-width: 420px; width: 100%; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+
+  h3 { font-size: 1.1rem; font-weight: 700; color: $text-dark; margin: 0.75rem 0 0.5rem; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0 0 1.5rem; line-height: 1.5; }
+}
+
+.modal-icon {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: #fee2e2; color: #dc2626;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto;
+}
+
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+
+.btn-danger-solid {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.25rem; background: #dc2626; color: $white;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; transition: background 0.15s;
+  &:hover { background: #b91c1c; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
