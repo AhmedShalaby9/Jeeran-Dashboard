@@ -53,6 +53,30 @@
 
     <div class="form-divider"></div>
 
+    <!-- ── Main Image ── -->
+    <div class="form-section">
+      <h2 class="section-title">Main Image</h2>
+      <p class="section-desc">Cover image shown on the project card.</p>
+
+      <app-media-uploader
+        folder="projects"
+        [multiple]="false"
+        (uploaded)="onMainImageUploaded($event)">
+      </app-media-uploader>
+
+      <div class="url-fallback">
+        <span class="or-label">or paste URL</span>
+        <input type="text" [(ngModel)]="form.main_image" name="main_image"
+          placeholder="https://example.com/project-cover.jpg" />
+      </div>
+
+      <div class="main-image-preview" *ngIf="form.main_image">
+        <img [src]="form.main_image" alt="main image preview" />
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
     <!-- ── Gallery ── -->
     <div class="form-section">
       <h2 class="section-title">Gallery</h2>

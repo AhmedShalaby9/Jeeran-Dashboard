@@ -15,11 +15,12 @@ import { MediaUploaderComponent } from '../../../../shared/components/media-uplo
 })
 export class ProjectFormComponent {
   form: CreateProjectDto = {
-    name_ar:   '',
-    name_en:   '',
-    gallery:   [],
-    features:  [],
-    is_active: true,
+    name_ar:    '',
+    name_en:    '',
+    main_image: null,
+    gallery:    [],
+    features:   [],
+    is_active:  true,
   };
 
   // Gallery input
@@ -95,6 +96,10 @@ export class ProjectFormComponent {
 
   removeFeature(index: number): void {
     this.form.features.splice(index, 1);
+  }
+
+  onMainImageUploaded(urls: string[]): void {
+    if (urls.length) this.form.main_image = urls[0];
   }
 
   onGalleryUploaded(urls: string[]): void {

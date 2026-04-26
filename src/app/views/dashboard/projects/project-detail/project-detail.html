@@ -83,6 +83,16 @@
 
         <div class="detail-divider"></div>
 
+        <!-- Main Image -->
+        <div class="detail-section" *ngIf="project.main_image">
+          <h2 class="section-title">Main Image</h2>
+          <div class="main-image-view">
+            <img [src]="project.main_image" [alt]="project.name_en" />
+          </div>
+        </div>
+
+        <div class="detail-divider" *ngIf="project.main_image"></div>
+
         <!-- Gallery -->
         <div class="detail-section">
           <h2 class="section-title">Gallery ({{ project.gallery?.length || 0 }} images)</h2>
@@ -268,6 +278,20 @@
                 <span>Active</span>
               </label>
             </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Main Image -->
+        <div class="form-section">
+          <h2 class="section-title">Main Image</h2>
+          <div class="form-group">
+            <input type="text" [(ngModel)]="editForm.main_image" name="main_image"
+              placeholder="https://example.com/project-cover.jpg" />
+          </div>
+          <div class="main-image-view" *ngIf="editForm.main_image">
+            <img [src]="editForm.main_image" alt="main image preview" />
           </div>
         </div>
 

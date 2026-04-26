@@ -28,6 +28,19 @@ $border:      #e5e7eb;
   font-size: 1rem; font-weight: 700; color: $text-dark; margin: 0 0 1.25rem;
 }
 
+// ── Main Image ────────────────────────────────────────────
+.main-image-view {
+  img {
+    width: 100%;
+    max-width: 360px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid $border;
+    display: block;
+  }
+}
+
 // ── Info Grid ─────────────────────────────────────────────
 .info-grid {
   display: grid;

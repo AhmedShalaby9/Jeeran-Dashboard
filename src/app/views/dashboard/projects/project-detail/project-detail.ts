@@ -35,7 +35,7 @@ export class ProjectDetailComponent implements OnInit {
   readonly propsPageSizes = [10, 20, 50];
 
   editForm: CreateProjectDto = {
-    name_ar: '', name_en: '', gallery: [], features: [], is_active: true,
+    name_ar: '', name_en: '', main_image: null, gallery: [], features: [], is_active: true,
   };
 
   // Gallery edit
@@ -155,11 +155,12 @@ export class ProjectDetailComponent implements OnInit {
   enableEdit(): void {
     if (!this.project) return;
     this.editForm = {
-      name_ar:   this.project.name_ar,
-      name_en:   this.project.name_en,
-      gallery:   [...this.project.gallery],
-      features:  this.project.features.map(f => ({ ...f, images: [...f.images] })),
-      is_active: this.project.is_active,
+      name_ar:    this.project.name_ar,
+      name_en:    this.project.name_en,
+      main_image: this.project.main_image,
+      gallery:    [...this.project.gallery],
+      features:   this.project.features.map(f => ({ ...f, images: [...f.images] })),
+      is_active:  this.project.is_active,
     };
     this.errorMessage    = '';
     this.showFeatureForm = false;
