@@ -37,7 +37,7 @@ export class PropertyFormComponent {
     content:         '',
     content_html:    '',
     property_type:   'فيلا',
-    property_status: 'للبيع',
+    property_status: 'for_sale',
     price:           0,
     size:            null,
     bedrooms:        null,
@@ -65,7 +65,12 @@ export class PropertyFormComponent {
   globalError     = '';
 
   readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'استوديو', 'محل', 'مكتب', 'عيادة', 'أرض'];
-  readonly propertyStatuses = ['للبيع', 'للإيجار', 'محجوز', 'مباع'];
+  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
+  readonly statusLabels: Record<string, string> = {
+    for_sale:           'For Sale',
+    for_rent:           'For Rent',
+    for_rent_furnished: 'For Rent (Furnished)',
+  };
   readonly countries        = ['مصر', 'السعودية', 'الإمارات', 'الكويت', 'الأردن', 'البحرين', 'قطر', 'عُمان'];
 
   constructor(

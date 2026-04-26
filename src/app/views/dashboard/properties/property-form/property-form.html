@@ -177,12 +177,11 @@
                 *ngFor="let s of propertyStatuses"
                 class="status-chip"
                 [class.selected]="form.property_status === s"
-                [class.chip-sale]="s === 'للبيع'"
-                [class.chip-rent]="s === 'للإيجار'"
-                [class.chip-reserved]="s === 'محجوز'"
-                [class.chip-sold]="s === 'مباع'"
+                [class.chip-sale]="s === 'for_sale'"
+                [class.chip-rent]="s === 'for_rent'"
+                [class.chip-rent-furnished]="s === 'for_rent_furnished'"
                 (click)="form.property_status = s">
-                {{ s }}
+                {{ statusLabels[s] }}
               </button>
             </div>
           </div>

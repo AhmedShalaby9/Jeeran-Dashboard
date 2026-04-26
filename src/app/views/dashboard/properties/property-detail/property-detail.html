@@ -12,7 +12,7 @@
       </button>
       <div>
         <h1>{{ property?.title || 'Property' }}</h1>
-        <p>{{ property?.property_type }} · {{ property?.property_status }}</p>
+        <p>{{ property?.property_type }} · {{ statusLabels[property?.property_status ?? ''] || property?.property_status }}</p>
       </div>
     </div>
     <div class="header-actions" *ngIf="property && !isEditMode">
@@ -91,7 +91,7 @@
               <div class="status-pills">
                 <span class="type-pill">{{ property.property_type }}</span>
                 <span class="status-pill" [ngClass]="statusClass(property.property_status)">
-                  {{ property.property_status }}
+                  {{ statusLabels[property.property_status] || property.property_status }}
                 </span>
                 <span class="featured-pill" *ngIf="property.is_featured">
                   ★ Featured
@@ -250,7 +250,7 @@
             <div class="form-group">
               <label>Status</label>
               <select [(ngModel)]="editForm.property_status" name="property_status">
-                <option *ngFor="let s of propertyStatuses" [value]="s">{{ s }}</option>
+                <option *ngFor="let s of propertyStatuses" [value]="s">{{ statusLabels[s] }}</option>
               </select>
             </div>
           </div>

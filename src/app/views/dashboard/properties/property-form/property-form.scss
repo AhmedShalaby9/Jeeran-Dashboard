@@ -286,10 +286,9 @@ $border:       #e5e7eb;
 
   &:hover { transform: translateY(-1px); }
 
-  &.chip-sale.selected     { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
-  &.chip-rent.selected     { background: #dbeafe; border-color: #2563eb; color: #2563eb; }
-  &.chip-reserved.selected { background: #fef9c3; border-color: #ca8a04; color: #ca8a04; }
-  &.chip-sold.selected     { background: #f3f4f6; border-color: #6b7280; color: #6b7280; }
+  &.chip-sale.selected          { background: #dcfce7; border-color: #16a34a; color: #16a34a; }
+  &.chip-rent.selected          { background: #dbeafe; border-color: #2563eb; color: #2563eb; }
+  &.chip-rent-furnished.selected { background: #fff7ed; border-color: #c2410c; color: #c2410c; }
 }
 
 // ── Counter ────────────────────────────────────────────────
@@ -354,10 +353,9 @@ $border:       #e5e7eb;
 .price-type-tag { background: $primary; color: $white; }
 
 .price-status-tag {
-  &.tag-للبيع   { background: #dcfce7; color: #16a34a; }
-  &.tag-للإيجار { background: #dbeafe; color: #2563eb; }
-  &.tag-محجوز   { background: #fef9c3; color: #ca8a04; }
-  &.tag-مباع    { background: #f3f4f6; color: #6b7280; }
+  &.tag-for_sale           { background: #dcfce7; color: #16a34a; }
+  &.tag-for_rent           { background: #dbeafe; color: #2563eb; }
+  &.tag-for_rent_furnished { background: #fff7ed; color: #c2410c; }
 }
 
 // ── Media section ──────────────────────────────────────────

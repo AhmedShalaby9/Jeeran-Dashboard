@@ -31,7 +31,12 @@ export class PropertiesComponent implements OnInit {
   statusFilter = '';
 
   readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'محل', 'مكتب', 'عيادة'];
-  readonly propertyStatuses = ['للبيع', 'للإيجار', 'محجوز', 'مباع'];
+  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
+  readonly statusLabels: Record<string, string> = {
+    for_sale:           'For Sale',
+    for_rent:           'For Rent',
+    for_rent_furnished: 'For Rent (Furnished)',
+  };
 
   constructor(
     private propertyService: PropertyService,
@@ -137,10 +142,9 @@ export class PropertiesComponent implements OnInit {
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      'للبيع':   'status-sale',
-      'للإيجار': 'status-rent',
-      'محجوز':   'status-reserved',
-      'مباع':    'status-sold',
+      for_sale:           'status-sale',
+      for_rent:           'status-rent',
+      for_rent_furnished: 'status-rent-furnished',
     };
     return map[status] || '';
   }

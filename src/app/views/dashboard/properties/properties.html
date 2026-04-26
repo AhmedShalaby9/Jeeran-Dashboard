@@ -29,7 +29,7 @@
     </select>
     <select [(ngModel)]="statusFilter" (change)="applyFilters()">
       <option value="">All Statuses</option>
-      <option *ngFor="let s of propertyStatuses" [value]="s">{{ s }}</option>
+      <option *ngFor="let s of propertyStatuses" [value]="s">{{ statusLabels[s] }}</option>
     </select>
     <button class="btn-filter" (click)="applyFilters()">Apply</button>
     <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter">
@@ -61,7 +61,7 @@
         <div class="prop-badges-cover">
           <span class="type-badge">{{ item.property_type }}</span>
           <span class="status-badge" [ngClass]="statusClass(item.property_status)">
-            {{ item.property_status }}
+            {{ statusLabels[item.property_status] || item.property_status }}
           </span>
         </div>
 
