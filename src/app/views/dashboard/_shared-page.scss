@@ -116,6 +116,22 @@ $border:      #e5e7eb;
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
+// ── Media uploader "or paste URL" fallback ────────────────
+.url-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.or-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 .error-msg {
   display: flex;
   align-items: center;

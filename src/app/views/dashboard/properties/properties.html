@@ -186,7 +186,7 @@
     <div class="pagination-size">
       <label>Per page</label>
       <select [(ngModel)]="limit" (change)="onPageSizeChange()">
-        <option *ngFor="let s of pageSizes" [value]="s">{{ s }}</option>
+        <option *ngFor="let s of pageSizes" [ngValue]="s">{{ s }}</option>
       </select>
     </div>
 

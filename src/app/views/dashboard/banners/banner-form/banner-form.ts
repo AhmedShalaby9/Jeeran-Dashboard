@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BannerService } from '../../../../core/services/banner.service';
 import { CreateBannerDto } from '../../../../core/models/banner.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-banner-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent],
   templateUrl: './banner-form.html',
   styleUrl: './banner-form.scss',
 })
@@ -49,6 +50,10 @@ export class BannerFormComponent {
         this.cdr.detectChanges();
       },
     });
+  }
+
+  onImageUploaded(urls: string[]): void {
+    if (urls.length) this.form.image_url = urls[0];
   }
 
   goBack(): void {

@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectService } from '../../../../core/services/project.service';
 import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent],
   templateUrl: './project-form.html',
   styleUrl: './project-form.scss',
 })
@@ -94,6 +95,14 @@ export class ProjectFormComponent {
 
   removeFeature(index: number): void {
     this.form.features.splice(index, 1);
+  }
+
+  onGalleryUploaded(urls: string[]): void {
+    urls.forEach(url => this.form.gallery.push(url));
+  }
+
+  onFeatureImagesUploaded(urls: string[]): void {
+    urls.forEach(url => this.newFeature.images.push(url));
   }
 
   // ── Submit ────────────────────────────────────────────────

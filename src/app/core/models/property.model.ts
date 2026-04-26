@@ -61,12 +61,23 @@ export interface CreatePropertyDto {
   agent_picture?:   string | null;
 }
 
+export interface PropertyPagination {
+  page:  number;
+  limit: number;
+  total: number;
+  pages: number;
+  sort?: string;
+  order?: string;
+}
+
 export interface PropertyListResponse {
-  success: boolean;
-  data:    Property[];
-  total?:  number;
-  page?:   number;
-  limit?:  number;
+  success:     boolean;
+  data:        Property[];
+  pagination?: PropertyPagination;
+  // legacy flat fields (fallback)
+  total?:      number;
+  page?:       number;
+  limit?:      number;
 }
 
 export interface PropertyResponse {

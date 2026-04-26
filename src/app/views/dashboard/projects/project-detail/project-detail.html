@@ -131,6 +131,109 @@
           <p class="no-content" *ngIf="!project.features || project.features.length === 0">No features defined.</p>
         </div>
 
+        <div class="detail-divider"></div>
+
+        <!-- Properties -->
+        <div class="detail-section">
+          <h2 class="section-title">
+            Properties
+            <span class="props-count-badge" *ngIf="propsTotal > 0">{{ propsTotal }}</span>
+          </h2>
+
+          <!-- Loading -->
+          <div class="props-loading" *ngIf="propsLoading">
+            <div class="spinner-sm"></div>
+            <span>Loading properties…</span>
+          </div>
+
+          <ng-container *ngIf="!propsLoading">
+
+            <div class="props-grid" *ngIf="properties.length > 0">
+              <div class="prop-card" *ngFor="let item of properties" (click)="goToProperty(item.id)">
+
+                <!-- Cover -->
+                <div class="prop-cover">
+                  <img *ngIf="item.images && item.images.length > 0"
+                    [src]="item.images[0]" [alt]="item.title" class="cover-img" />
+                  <div *ngIf="!item.images || item.images.length === 0" class="cover-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                      <polyline points="9 22 9 12 15 12 15 22"/>
+                    </svg>
+                  </div>
+                  <div class="prop-badges-cover">
+                    <span class="type-badge">{{ item.property_type }}</span>
+                    <span class="status-badge" [ngClass]="propStatusClass(item.property_status)">
+                      {{ item.property_status }}
+                    </span>
+                  </div>
+                  <span class="featured-badge" *ngIf="item.is_featured">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
+                      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                    </svg>
+                    Featured
+                  </span>
+                </div>
+
+                <!-- Body -->
+                <div class="prop-body">
+                  <h3 class="prop-title" dir="rtl">{{ item.title }}</h3>
+                  <p class="prop-price">{{ formatPrice(item.price) }}</p>
+                  <div class="prop-specs">
+                    <span class="spec" *ngIf="item.size">{{ item.size }} م²</span>
+                    <span class="spec" *ngIf="item.bedrooms">{{ item.bedrooms }} غرف</span>
+                    <span class="spec" *ngIf="item.bathrooms">{{ item.bathrooms }} حمام</span>
+                    <span class="spec" *ngIf="item.state">{{ item.state }}</span>
+                  </div>
+                  <div class="prop-footer">
+                    <span class="active-dot" [class.active]="item.is_active" [class.inactive]="!item.is_active"></span>
+                    <span class="active-label">{{ item.is_active ? 'Active' : 'Inactive' }}</span>
+                    <span class="prop-date">{{ item.created_at | date:'mediumDate' }}</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <p class="no-content" *ngIf="properties.length === 0">No properties linked to this project.</p>
+
+            <!-- Pagination -->
+            <div class="pagination-bar" *ngIf="propsTotal > 0">
+              <div class="pagination-info">
+                Showing <strong>{{ propsRangeStart }}–{{ propsRangeEnd }}</strong> of <strong>{{ propsTotal }}</strong>
+              </div>
+              <div class="pagination-controls">
+                <button class="page-btn page-btn-nav" (click)="propsGoToPage(propsPage - 1)" [disabled]="propsPage === 1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                </button>
+                <ng-container *ngFor="let p of propsPageNumbers">
+                  <span class="page-gap" *ngIf="p === -1">…</span>
+                  <button *ngIf="p !== -1" class="page-btn"
+                    [class.page-btn-active]="p === propsPage"
+                    (click)="propsGoToPage(p)">{{ p }}</button>
+                </ng-container>
+                <button class="page-btn page-btn-nav" (click)="propsGoToPage(propsPage + 1)" [disabled]="propsPage === propsTotalPages">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="pagination-size">
+                <label>Per page</label>
+                <select [(ngModel)]="propsLimit" (change)="propsOnPageSizeChange()">
+                  <option *ngFor="let s of propsPageSizes" [ngValue]="s">{{ s }}</option>
+                </select>
+              </div>
+            </div>
+
+          </ng-container>
+        </div>
+
       </div>
     </div>
 

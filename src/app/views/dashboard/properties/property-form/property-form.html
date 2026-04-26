@@ -328,21 +328,30 @@
           </div>
         </div>
 
-        <!-- Image URL input -->
+        <!-- Image upload -->
         <div class="media-input-section">
           <label class="media-label">Property Images</label>
-          <p class="media-hint">Paste image URLs one at a time and press Enter or click Add</p>
-          <div class="url-input-row">
-            <input type="text" [(ngModel)]="imageInput" name="imageInput"
-              placeholder="https://example.com/photo.jpg"
-              (keydown)="onImageKeydown($event)" class="url-input" />
-            <button type="button" class="btn-add" (click)="addImage()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              Add
-            </button>
+
+          <app-media-uploader
+            folder="properties"
+            [multiple]="true"
+            (uploaded)="onImagesUploaded($event)">
+          </app-media-uploader>
+
+          <div class="url-fallback">
+            <span class="or-label">or paste URL</span>
+            <div class="url-input-row">
+              <input type="text" [(ngModel)]="imageInput" name="imageInput"
+                placeholder="https://example.com/photo.jpg"
+                (keydown)="onImageKeydown($event)" class="url-input" />
+              <button type="button" class="btn-add" (click)="addImage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add
+              </button>
+            </div>
           </div>
 
           <!-- Image gallery preview -->
@@ -444,9 +453,17 @@
               placeholder="agent@example.com" />
           </div>
           <div class="field-group span-1">
-            <label>Agent Picture URL</label>
-            <input type="text" [(ngModel)]="form.agent_picture" name="agent_picture"
-              placeholder="https://example.com/agent.jpg" />
+            <label>Agent Picture</label>
+            <app-media-uploader
+              folder="properties"
+              [multiple]="false"
+              (uploaded)="onAgentPictureUploaded($event)">
+            </app-media-uploader>
+            <div class="url-fallback">
+              <span class="or-label">or paste URL</span>
+              <input type="text" [(ngModel)]="form.agent_picture" name="agent_picture"
+                placeholder="https://example.com/agent.jpg" />
+            </div>
           </div>
         </div>
 

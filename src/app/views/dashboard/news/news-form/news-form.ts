@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NewsService } from '../../../../core/services/news.service';
 import { CreateNewsDto } from '../../../../core/models/news.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-news-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent],
   templateUrl: './news-form.html',
   styleUrl: './news-form.scss',
 })
@@ -49,6 +50,10 @@ export class NewsFormComponent {
 
   onMediaKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter') { event.preventDefault(); this.addMedia(); }
+  }
+
+  onMediaUploaded(urls: string[]): void {
+    urls.forEach(url => this.form.media.push(url));
   }
 
   onSubmit(): void {

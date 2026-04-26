@@ -1,0 +1,56 @@
+.uploader-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hidden-input {
+  display: none;
+}
+
+.btn-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 1.1rem;
+  background: #f0f4ff;
+  color: #1e3a6e;
+  border: 1.5px solid #c7d3f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+
+  &:hover:not(:disabled) {
+    background: #e2eaff;
+    border-color: #1e3a6e;
+  }
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
+}
+
+.upload-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid #c7d3f0;
+  border-top-color: #1e3a6e;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.upload-error {
+  font-size: 0.8rem;
+  color: #dc2626;
+  margin: 0;
+}

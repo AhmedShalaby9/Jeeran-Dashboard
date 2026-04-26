@@ -57,10 +57,8 @@ export class PropertiesComponent implements OnInit {
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
         this.properties = res.data;
-
-        // The API may return total directly, or we fall back to data length
-        this.total      = res.total ?? res.data.length;
-        this.totalPages = Math.ceil(this.total / this.limit) || 1;
+        this.total      = res.pagination?.total ?? res.total ?? res.data.length;
+        this.totalPages = this.total > 0 ? Math.ceil(this.total / Number(this.limit)) : 1;
         this.buildPageNumbers();
 
         this.isLoading = false;

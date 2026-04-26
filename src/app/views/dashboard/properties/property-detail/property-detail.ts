@@ -25,6 +25,9 @@ export class PropertyDetailComponent implements OnInit {
   editForm: Partial<CreatePropertyDto> = {};
   imageInput = '';
 
+  // Lightbox
+  lightboxIndex: number | null = null;
+
   readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'محل', 'مكتب', 'عيادة'];
   readonly propertyStatuses = ['للبيع', 'للإيجار', 'محجوز', 'مباع'];
 
@@ -163,6 +166,22 @@ export class PropertyDetailComponent implements OnInit {
       'مباع':    'status-sold',
     };
     return map[status] || '';
+  }
+
+  openLightbox(index: number): void  { this.lightboxIndex = index; }
+  closeLightbox(): void               { this.lightboxIndex = null; }
+  lightboxPrev(): void {
+    if (this.lightboxIndex === null || !this.property) return;
+    this.lightboxIndex = (this.lightboxIndex - 1 + this.property.images.length) % this.property.images.length;
+  }
+  lightboxNext(): void {
+    if (this.lightboxIndex === null || !this.property) return;
+    this.lightboxIndex = (this.lightboxIndex + 1) % this.property.images.length;
+  }
+  onLightboxKey(event: KeyboardEvent): void {
+    if (event.key === 'Escape')     this.closeLightbox();
+    if (event.key === 'ArrowLeft')  this.lightboxPrev();
+    if (event.key === 'ArrowRight') this.lightboxNext();
   }
 
   goBack(): void { this.router.navigate(['/dashboard/properties']); }

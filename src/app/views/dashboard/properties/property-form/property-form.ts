@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
 import { CreatePropertyDto } from '../../../../core/models/property.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 interface StepMeta {
   index:    number;
@@ -15,7 +16,7 @@ interface StepMeta {
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent],
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss',
 })
@@ -129,6 +130,14 @@ export class PropertyFormComponent {
 
   onImageKeydown(e: KeyboardEvent): void {
     if (e.key === 'Enter') { e.preventDefault(); this.addImage(); }
+  }
+
+  onImagesUploaded(urls: string[]): void {
+    urls.forEach(url => this.form.images.push(url));
+  }
+
+  onAgentPictureUploaded(urls: string[]): void {
+    if (urls.length) this.form.agent_picture = urls[0];
   }
 
   // ── Auto-slug ─────────────────────────────────────────────

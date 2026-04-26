@@ -32,9 +32,17 @@
       <p class="section-desc">Provide the banner image URL.</p>
 
       <div class="form-group">
-        <label>Image URL <span class="required">*</span></label>
-        <input type="text" [(ngModel)]="form.image_url" name="image_url"
-          placeholder="https://example.com/banner.jpg" />
+        <label>Image <span class="required">*</span></label>
+        <app-media-uploader
+          folder="banners"
+          [multiple]="false"
+          (uploaded)="onImageUploaded($event)">
+        </app-media-uploader>
+        <div class="url-fallback">
+          <span class="or-label">or paste URL</span>
+          <input type="text" [(ngModel)]="form.image_url" name="image_url"
+            placeholder="https://example.com/banner.jpg" />
+        </div>
       </div>
 
       <!-- Image Preview -->
