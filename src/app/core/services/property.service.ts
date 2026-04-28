@@ -17,6 +17,7 @@ export interface PropertyFilters {
   min_price?:   number;
   max_price?:   number;
   bedrooms?:    number;
+  agent_name?:  string;
   q?:           string;
   sort?:        string;
   order?:       'ASC' | 'DESC';
@@ -58,5 +59,9 @@ export class PropertyService {
     return this.http.delete<{ success: boolean; message: string }>(`${this.url}/${id}`, {
       headers: this.headers(),
     });
+  }
+
+  getSimilar(id: number): Observable<PropertyListResponse> {
+    return this.http.get<PropertyListResponse>(`${this.url}/${id}/similar`, { headers: this.headers() });
   }
 }

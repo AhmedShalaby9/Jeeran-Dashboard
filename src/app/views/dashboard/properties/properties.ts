@@ -29,6 +29,7 @@ export class PropertiesComponent implements OnInit {
   searchQ      = '';
   typeFilter   = '';
   statusFilter = '';
+  agentFilter  = '';
 
   readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'محل', 'مكتب', 'عيادة'];
   readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
@@ -55,9 +56,10 @@ export class PropertiesComponent implements OnInit {
       page:  this.currentPage,
       limit: this.limit,
     };
-    if (this.searchQ.trim()) f.q      = this.searchQ.trim();
-    if (this.typeFilter)      f.type   = this.typeFilter;
-    if (this.statusFilter)    f.status = this.statusFilter;
+    if (this.searchQ.trim())    f.q          = this.searchQ.trim();
+    if (this.typeFilter)        f.type       = this.typeFilter;
+    if (this.statusFilter)      f.status     = this.statusFilter;
+    if (this.agentFilter.trim()) f.agent_name = this.agentFilter.trim();
 
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
@@ -125,6 +127,7 @@ export class PropertiesComponent implements OnInit {
     this.searchQ     = '';
     this.typeFilter  = '';
     this.statusFilter = '';
+    this.agentFilter  = '';
     this.currentPage  = 1;
     this.load();
   }
