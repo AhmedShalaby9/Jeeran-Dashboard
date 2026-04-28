@@ -78,8 +78,7 @@ export class PropertiesComponent implements OnInit {
     });
   }
 
-  // Build a smart window of page numbers around the current page
-  buildPageNumbers(): void {
+   buildPageNumbers(): void {
     const total = this.totalPages;
     const cur   = this.currentPage;
     const delta = 2; // pages each side of current
