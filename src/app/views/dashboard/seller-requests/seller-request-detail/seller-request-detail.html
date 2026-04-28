@@ -1,0 +1,132 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>Seller Request #{{ request?.id }}</h1>
+        <p>Review and take action on this seller request</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading request...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && request">
+
+    <!-- Success / Error toasts -->
+    <div class="success-msg" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+    <div class="error-msg" *ngIf="errorMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      {{ errorMessage }}
+    </div>
+
+    <!-- Detail card -->
+    <div class="detail-card">
+
+      <div class="detail-section">
+        <h2 class="section-title">Request Details</h2>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">Status</span>
+            <span class="badge badge-lg" [ngClass]="'badge-' + request.status">
+              {{ request.status | titlecase }}
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Submitted</span>
+            <span class="detail-value">{{ request.created_at | date:'medium' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Last Updated</span>
+            <span class="detail-value">{{ request.updated_at | date:'medium' }}</span>
+          </div>
+          <div class="detail-item" *ngIf="request.notes">
+            <span class="detail-label">Notes</span>
+            <span class="detail-value">{{ request.notes }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-divider"></div>
+
+      <div class="detail-section">
+        <h2 class="section-title">User Information</h2>
+
+        <div class="detail-grid">
+          <div class="detail-item">
+            <span class="detail-label">User ID</span>
+            <span class="detail-value">#{{ request.user_id }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Name</span>
+            <span class="detail-value">{{ request.user?.name || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Email</span>
+            <span class="detail-value">{{ request.user?.email || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Phone</span>
+            <span class="detail-value">{{ request.user?.phone || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action bar — only for pending requests -->
+      <ng-container *ngIf="request.status === 'pending'">
+        <div class="detail-divider"></div>
+        <div class="action-bar">
+          <p class="action-hint">This request is awaiting your decision.</p>
+          <div class="action-buttons">
+            <button class="btn-approve" (click)="approve()" [disabled]="isActing">
+              <span *ngIf="!isActing">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Approve
+              </span>
+              <span *ngIf="isActing" class="spinner-sm"></span>
+            </button>
+            <button class="btn-reject" (click)="reject()" [disabled]="isActing">
+              <span *ngIf="!isActing">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                Reject
+              </span>
+              <span *ngIf="isActing" class="spinner-sm"></span>
+            </button>
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+
+  </ng-container>
+
+</div>

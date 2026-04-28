@@ -1,0 +1,106 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Seller Requests</h1>
+      <p>Review and action user requests to become a seller</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <select [(ngModel)]="statusFilter" (ngModelChange)="onFilterChange()" name="statusFilter">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="approved">Approved</option>
+      <option value="rejected">Rejected</option>
+    </select>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading requests...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card" *ngIf="!isLoading">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let req of requests">
+          <td class="td-id">{{ req.id }}</td>
+          <td class="td-name">{{ req.user?.name || '—' }}</td>
+          <td class="td-muted">{{ req.user?.email || '—' }}</td>
+          <td class="td-muted">{{ req.user?.phone || '—' }}</td>
+          <td>
+            <span class="badge" [ngClass]="statusClass(req.status)">{{ statusLabel(req.status) }}</span>
+          </td>
+          <td class="td-muted">{{ req.created_at | date:'mediumDate' }}</td>
+          <td>
+            <button class="btn-view" (click)="goToDetail(req.id)">
+              View
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="requests.length === 0">
+          <td colspan="7" class="empty-row">No requests found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination-bar" *ngIf="!isLoading && total > 0">
+
+    <div class="pagination-info">
+      Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ total }}</strong> requests
+    </div>
+
+    <div class="pagination-controls">
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+      </button>
+
+      <ng-container *ngFor="let p of pageNumbers">
+        <span class="page-gap" *ngIf="p === -1">…</span>
+        <button *ngIf="p !== -1" class="page-btn" [class.page-btn-active]="p === currentPage" (click)="goToPage(p)">
+          {{ p }}
+        </button>
+      </ng-container>
+
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="pagination-size">
+      <label>Per page</label>
+      <select [(ngModel)]="limit" (change)="onPageSizeChange()">
+        <option *ngFor="let s of pageSizes" [ngValue]="s">{{ s }}</option>
+      </select>
+    </div>
+
+  </div>
+
+</div>

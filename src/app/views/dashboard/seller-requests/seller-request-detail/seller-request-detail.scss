@@ -1,0 +1,113 @@
+@use '../../shared-page';
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.detail-section {
+  padding: 1.5rem;
+}
+
+.detail-divider {
+  height: 1px;
+  background: #e5e7eb;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.25rem;
+  margin-top: 1rem;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: #1a1f2e;
+  font-weight: 500;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &.badge-lg {
+    padding: 0.35rem 0.9rem;
+    font-size: 0.85rem;
+  }
+
+  &.badge-pending  { background: #fef3c7; color: #92400e; }
+  &.badge-approved { background: #dcfce7; color: #16a34a; }
+  &.badge-rejected { background: #fee2e2; color: #dc2626; }
+}
+
+.action-bar {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: #fafafa;
+  border-radius: 0 0 12px 12px;
+}
+
+.action-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-approve,
+.btn-reject {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.15s, transform 0.1s;
+
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:not(:disabled):hover { transform: translateY(-1px); }
+
+  span { display: inline-flex; align-items: center; gap: 0.4rem; }
+}
+
+.btn-approve {
+  background: #16a34a;
+  color: white;
+  &:not(:disabled):hover { background: #15803d; }
+}
+
+.btn-reject {
+  background: #dc2626;
+  color: white;
+  &:not(:disabled):hover { background: #b91c1c; }
+}
