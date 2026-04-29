@@ -1,25 +1,62 @@
 @use '../../shared-page';
 
+$primary:      #1e3a6e;
+$primary-dark: #152c54;
+$accent:       #b8a882;
+$white:        #ffffff;
+$bg:           #f4f6f8;
+$text-dark:    #1a1f2e;
+$text-muted:   #6b7280;
+$border:       #e5e7eb;
+
 .header-left {
   display: flex;
   align-items: center;
   gap: 1rem;
 }
 
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 0.85rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  background: $white;
+  color: $text-muted;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover { color: $text-dark; border-color: #9ca3af; }
+}
+
+.detail-card {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+}
+
 .detail-section {
-  padding: 1.5rem;
+  padding: 1.75rem 2rem;
 }
 
 .detail-divider {
-  height: 1px;
-  background: #e5e7eb;
+  border: none;
+  border-top: 1px solid $border;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 1.25rem;
 }
 
 .detail-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 1.25rem;
-  margin-top: 1rem;
 }
 
 .detail-item {
@@ -29,16 +66,16 @@
 }
 
 .detail-label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #6b7280;
+  color: $text-muted;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .detail-value {
-  font-size: 0.9rem;
-  color: #1a1f2e;
+  font-size: 0.95rem;
+  color: $text-dark;
   font-weight: 500;
 }
 
@@ -48,6 +85,7 @@
   border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
+  width: fit-content;
 
   &.badge-lg {
     padding: 0.35rem 0.9rem;
@@ -59,20 +97,35 @@
   &.badge-rejected { background: #fee2e2; color: #dc2626; }
 }
 
+.success-msg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  color: #16a34a;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
 .action-bar {
-  padding: 1.5rem;
+  padding: 1.25rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 1rem;
-  background: #fafafa;
+  background: $bg;
+  border-top: 1px solid $border;
   border-radius: 0 0 12px 12px;
 }
 
 .action-hint {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: $text-muted;
   margin: 0;
 }
 
