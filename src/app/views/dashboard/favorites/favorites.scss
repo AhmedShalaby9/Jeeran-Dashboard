@@ -1,0 +1,146 @@
+@use '../shared-page';
+
+$primary:      #1e3a6e;
+$accent:       #b8a882;
+$white:        #ffffff;
+$bg:           #f4f6f8;
+$text-dark:    #1a1f2e;
+$text-muted:   #6b7280;
+$border:       #e5e7eb;
+
+// ── Favorites Grid ─────────────────────────────────────────
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.favorite-card {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s;
+
+  &:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+}
+
+// ── Cover ──────────────────────────────────────────────────
+.fav-cover {
+  position: relative;
+  aspect-ratio: 16/10;
+  background: #e9ecf3;
+  overflow: hidden;
+}
+
+.fav-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fav-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+}
+
+.fav-heart {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: rgba(239,68,68,0.9);
+  color: $white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ── Body ───────────────────────────────────────────────────
+.fav-body {
+  padding: 1rem;
+  flex: 1;
+}
+
+.fav-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 0.4rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fav-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.fav-type {
+  font-size: 0.72rem;
+  background: #eff3fb;
+  color: $primary;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.fav-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $primary;
+}
+
+.fav-date {
+  font-size: 0.78rem;
+  color: $text-muted;
+  margin: 0;
+}
+
+// ── Remove Button ──────────────────────────────────────────
+.btn-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.6rem 1rem;
+  background: #fef2f2;
+  color: #dc2626;
+  border: none;
+  border-top: 1px solid #fee2e2;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: #fee2e2; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+// ── Empty ─────────────────────────────────────────────────
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 4rem 2rem;
+  color: $text-muted;
+  text-align: center;
+
+  p { margin: 0; font-size: 0.95rem; }
+  .sub-hint { font-size: 0.85rem; color: #9ca3af; }
+}

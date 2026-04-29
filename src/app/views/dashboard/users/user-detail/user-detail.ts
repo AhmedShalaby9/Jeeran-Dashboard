@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
 import { User } from '../../../../core/models/user.model';
-import { FavoriteService, FavoriteItem } from '../../../../core/services/favorite.service';
+import { FavoriteService } from '../../../../core/services/favorite.service';
+import { FavoriteItem, FavoritesResponse } from '../../../../core/models/favorite.model';
 
 @Component({
   selector: 'app-user-detail',
@@ -69,7 +70,7 @@ export class UserDetailComponent implements OnInit {
   loadFavorites(userId: number): void {
     this.favsLoading = true;
     this.favoriteService.getUserFavorites(userId, this.favsPage, this.favsLimit).subscribe({
-      next: (res) => {
+      next: (res: FavoritesResponse) => {
         this.favorites      = res.data;
         this.favsTotal      = res.pagination?.total ?? res.total ?? res.data.length;
         this.favsTotalPages = this.favsTotal > 0 ? Math.ceil(this.favsTotal / Number(this.favsLimit)) : 1;
