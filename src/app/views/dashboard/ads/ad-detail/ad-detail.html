@@ -1,0 +1,238 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ ad?.title || 'Ad Detail' }}</h1>
+        <p>{{ ad?.name }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="ad && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+      </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+  </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading ad...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && ad">
+
+    <!-- Success Toast -->
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- ── VIEW MODE ── -->
+    <div *ngIf="!isEditMode">
+      <div class="detail-card">
+
+        <div class="detail-section">
+          <h2 class="section-title">Ad Info</h2>
+          <div class="info-grid">
+            <div class="info-item full-width">
+              <span class="info-label">Title</span>
+              <span class="info-value">{{ ad.title }}</span>
+            </div>
+            <div class="info-item full-width">
+              <span class="info-label">Name (Company)</span>
+              <span class="info-value">{{ ad.name }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Phone Number</span>
+              <span class="info-value">{{ ad.phone_number || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">WhatsApp Number</span>
+              <span class="info-value">{{ ad.whatsapp_number || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="badge" [class.badge-active]="ad.is_active" [class.badge-inactive]="!ad.is_active">
+                {{ ad.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Description</h2>
+          <p class="ad-description">{{ ad.description }}</p>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Images</h2>
+          <div class="media-gallery" *ngIf="ad.images && ad.images.length > 0">
+            <div class="gallery-item" *ngFor="let url of ad.images; let i = index">
+              <div class="gallery-thumb">
+                <img [src]="url" [alt]="'image-' + i" class="thumb-media" />
+              </div>
+              <div class="gallery-meta">
+                <span class="media-type-badge">Image</span>
+                <span class="media-url-text" [title]="url">{{ url }}</span>
+              </div>
+            </div>
+          </div>
+          <p class="no-media" *ngIf="!ad.images || ad.images.length === 0">No images attached.</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── EDIT MODE ── -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <div class="form-section">
+          <h2 class="section-title">Edit Ad Info</h2>
+
+          <div class="form-group">
+            <label>Title <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="editForm.title" name="title" placeholder="Ad title" />
+          </div>
+
+          <div class="form-group">
+            <label>Name (Company) <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="editForm.name" name="name" placeholder="Company or advertiser name" />
+          </div>
+
+          <div class="form-group">
+            <label>Description <span class="required">*</span></label>
+            <textarea [(ngModel)]="editForm.description" name="description" rows="6" placeholder="Ad description..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="text" [(ngModel)]="editForm.phone_number" name="phone_number" placeholder="+201000000100" />
+            </div>
+            <div class="form-group">
+              <label>WhatsApp Number</label>
+              <input type="text" [(ngModel)]="editForm.whatsapp_number" name="whatsapp_number" placeholder="+201000000100" />
+            </div>
+            <div class="form-group check-group">
+              <label class="checkbox-label">
+                <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
+                <span>Active</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <h2 class="section-title">Images</h2>
+          <p class="section-desc">Add image URLs. Press Enter or click Add.</p>
+
+          <div class="media-input-row">
+            <input type="text" [(ngModel)]="imageInput" name="imageInput"
+              placeholder="https://example.com/image.jpg"
+              (keydown)="onImageKeydown($event)" class="media-input" />
+            <button type="button" class="btn-add" (click)="addImage()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              Add
+            </button>
+          </div>
+
+          <div class="media-list" *ngIf="editForm.images.length > 0">
+            <div class="media-item" *ngFor="let url of editForm.images; let i = index">
+              <div class="media-thumb">
+                <img [src]="url" class="thumb" [alt]="'image-' + i" />
+              </div>
+              <span class="media-url" [title]="url">{{ url }}</span>
+              <span class="media-type">Image</span>
+              <button type="button" class="btn-remove" (click)="removeImage(i)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+          <p class="empty-hint" *ngIf="editForm.images.length === 0">No images added yet.</p>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- ── Delete Confirmation Modal ── -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Ad</h3>
+      <p>Are you sure you want to delete <strong>{{ ad?.title }}</strong>? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deleteAd()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
