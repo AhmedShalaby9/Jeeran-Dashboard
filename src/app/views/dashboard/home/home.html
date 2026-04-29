@@ -1,0 +1,205 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Dashboard</h1>
+      <p>Overview of your platform at a glance</p>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading stats...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && stats">
+
+    <!-- Top Summary Cards -->
+    <div class="stats-grid">
+
+      <div class="stat-card users">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.users.total }}</span>
+          <span class="stat-label">Total Users</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.users.buyers }} Buyers</span>
+          <span>{{ stats.users.sellers }} Sellers</span>
+          <span>{{ stats.users.admins }} Admins</span>
+        </div>
+      </div>
+
+      <div class="stat-card properties">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.properties.total }}</span>
+          <span class="stat-label">Properties</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.properties.active }} Active</span>
+          <span>{{ stats.properties.pending }} Pending</span>
+          <span>{{ stats.properties.featured }} Featured</span>
+        </div>
+      </div>
+
+      <div class="stat-card subscriptions">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/><path d="M9 21V9"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.subscriptions.total }}</span>
+          <span class="stat-label">Subscriptions</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.subscriptions.active }} Active</span>
+          <span>{{ stats.subscriptions.expired }} Expired</span>
+          <span>{{ stats.subscriptions.cancelled }} Cancelled</span>
+        </div>
+      </div>
+
+      <div class="stat-card ads">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.ads.total }}</span>
+          <span class="stat-label">Ads</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.ads.active }} Active</span>
+        </div>
+      </div>
+
+      <div class="stat-card projects">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.projects.total }}</span>
+          <span class="stat-label">Projects</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.projects.active }} Active</span>
+        </div>
+      </div>
+
+      <div class="stat-card news">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+            <path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.news.total }}</span>
+          <span class="stat-label">News</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.news.active }} Active</span>
+        </div>
+      </div>
+
+      <div class="stat-card banners">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.banners.total }}</span>
+          <span class="stat-label">Banners</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.banners.active }} Active</span>
+        </div>
+      </div>
+
+      <div class="stat-card seller-requests">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <polyline points="16 11 18 13 22 9"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.seller_requests.total }}</span>
+          <span class="stat-label">Seller Requests</span>
+        </div>
+        <div class="stat-breakdown">
+          <span>{{ stats.seller_requests.pending }} Pending</span>
+          <span>{{ stats.seller_requests.approved }} Approved</span>
+          <span>{{ stats.seller_requests.rejected }} Rejected</span>
+        </div>
+      </div>
+
+      <div class="stat-card favorites">
+        <div class="stat-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">{{ stats.favorites.total }}</span>
+          <span class="stat-label">Favorites</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Properties Breakdown -->
+    <div class="section-card" *ngIf="stats.properties.by_type">
+      <h2 class="section-title">Properties by Type</h2>
+      <div class="breakdown-grid">
+        <div class="breakdown-item" *ngFor="let item of stats.properties.by_type | keyvalue">
+          <span class="breakdown-label">{{ item.key }}</span>
+          <span class="breakdown-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card" *ngIf="stats.properties.by_status">
+      <h2 class="section-title">Properties by Status</h2>
+      <div class="breakdown-grid">
+        <div class="breakdown-item" *ngFor="let item of stats.properties.by_status | keyvalue">
+          <span class="breakdown-label">{{ item.key | titlecase }}</span>
+          <span class="breakdown-value">{{ item.value }}</span>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

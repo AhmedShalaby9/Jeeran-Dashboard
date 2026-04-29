@@ -25,6 +25,7 @@ import { PropertyDetailComponent } from './views/dashboard/properties/property-d
 import { SellerRequestsComponent } from './views/dashboard/seller-requests/seller-requests';
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
 import { authGuard } from './core/guards/auth.guard';
+import { HomeComponent } from './views/dashboard/home/home';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -33,6 +34,7 @@ export const routes: Routes = [
     component: DashboardComponent,
     canActivate: [authGuard],
     children: [
+      { path: 'home',              component: HomeComponent },
       { path: 'packages',          component: PackagesComponent },
       { path: 'packages/new',      component: PackageFormComponent },
       { path: 'packages/:id',      component: PackageDetailComponent },
@@ -69,7 +71,7 @@ export const routes: Routes = [
       { path: 'ads/new',           component: AdFormComponent },
       { path: 'ads/:id',           component: AdDetailComponent },
 
-      { path: '',                  redirectTo: 'packages', pathMatch: 'full' },
+      { path: '',                  redirectTo: 'home', pathMatch: 'full' },
     ],
   },
   { path: '',   redirectTo: 'dashboard', pathMatch: 'full' },

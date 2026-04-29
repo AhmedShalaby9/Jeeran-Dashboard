@@ -1,0 +1,143 @@
+@use '../shared-page';
+
+$primary:      #1e3a6e;
+$primary-dark: #152c54;
+$accent:       #b8a882;
+$white:        #ffffff;
+$bg:           #f4f6f8;
+$text-dark:    #1a1f2e;
+$text-muted:   #6b7280;
+$border:       #e5e7eb;
+
+// ── Stats Grid ─────────────────────────────────────────────
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background: $white;
+  border-radius: 14px;
+  border: 1px solid $border;
+  padding: 1.35rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  transition: box-shadow 0.2s, transform 0.15s;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+    transform: translateY(-2px);
+  }
+
+  // Accent left border per category
+  &.users            { border-left: 4px solid #3b82f6; .stat-icon { background: #eff6ff; color: #3b82f6; } }
+  &.properties       { border-left: 4px solid #10b981; .stat-icon { background: #ecfdf5; color: #10b981; } }
+  &.subscriptions    { border-left: 4px solid #8b5cf6; .stat-icon { background: #f5f3ff; color: #8b5cf6; } }
+  &.ads              { border-left: 4px solid #f59e0b; .stat-icon { background: #fffbeb; color: #f59e0b; } }
+  &.projects         { border-left: 4px solid #06b6d4; .stat-icon { background: #ecfeff; color: #06b6d4; } }
+  &.news             { border-left: 4px solid #ec4899; .stat-icon { background: #fdf2f8; color: #ec4899; } }
+  &.banners          { border-left: 4px solid #6366f1; .stat-icon { background: #eef2ff; color: #6366f1; } }
+  &.seller-requests  { border-left: 4px solid #14b8a6; .stat-icon { background: #f0fdfa; color: #14b8a6; } }
+  &.favorites        { border-left: 4px solid #ef4444; .stat-icon { background: #fef2f2; color: #ef4444; } }
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.stat-value {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: $text-dark;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.stat-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid $border;
+  font-size: 0.78rem;
+  color: $text-muted;
+
+  span {
+    position: relative;
+    &:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: -0.55rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #d1d5db;
+    }
+  }
+}
+
+// ── Section Card ───────────────────────────────────────────
+.section-card {
+  background: $white;
+  border-radius: 14px;
+  border: 1px solid $border;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.25rem;
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0 0 1rem;
+  }
+}
+
+// ── Breakdown Grid ─────────────────────────────────────────
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 0.75rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  background: $bg;
+  border-radius: 10px;
+  border: 1px solid $border;
+}
+
+.breakdown-label {
+  font-size: 0.85rem;
+  color: $text-muted;
+  font-weight: 500;
+}
+
+.breakdown-value {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $primary;
+}
