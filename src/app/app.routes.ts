@@ -26,7 +26,6 @@ import { SellerRequestsComponent } from './views/dashboard/seller-requests/selle
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
-import { FavoritesComponent } from './views/dashboard/favorites/favorites';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -71,9 +70,6 @@ export const routes: Routes = [
       { path: 'ads',               component: AdsComponent },
       { path: 'ads/new',           component: AdFormComponent },
       { path: 'ads/:id',           component: AdDetailComponent },
-
-      // Favorites
-      { path: 'favorites',           component: FavoritesComponent },
 
       { path: '',                  redirectTo: 'home', pathMatch: 'full' },
     ],
