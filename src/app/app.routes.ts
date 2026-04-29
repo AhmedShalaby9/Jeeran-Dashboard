@@ -7,6 +7,9 @@ import { PackageDetailComponent } from './views/dashboard/packages/package-detai
 import { NewsComponent } from './views/dashboard/news/news';
 import { NewsFormComponent } from './views/dashboard/news/news-form/news-form';
 import { NewsDetailComponent } from './views/dashboard/news/news-detail/news-detail';
+import { AdsComponent } from './views/dashboard/ads/ads';
+import { AdFormComponent } from './views/dashboard/ads/ad-form/ad-form';
+import { AdDetailComponent } from './views/dashboard/ads/ad-detail/ad-detail';
 import { BannersComponent } from './views/dashboard/banners/banners';
 import { BannerFormComponent } from './views/dashboard/banners/banner-form/banner-form';
 import { BannerDetailComponent } from './views/dashboard/banners/banner-detail/banner-detail';
@@ -54,6 +57,11 @@ export const routes: Routes = [
       { path: 'properties',        component: PropertiesComponent },
       { path: 'properties/new',    component: PropertyFormComponent },
       { path: 'properties/:id',    component: PropertyDetailComponent },
+
+      // Ads
+      { path: 'ads',               component: AdsComponent },
+      { path: 'ads/new',           component: AdFormComponent },
+      { path: 'ads/:id',           component: AdDetailComponent },
 
       { path: '',                  redirectTo: 'packages', pathMatch: 'full' },
     ],

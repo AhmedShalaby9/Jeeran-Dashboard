@@ -1,0 +1,126 @@
+<div class="page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>New Ad</h1>
+        <p>Create a new advertisement</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="errorMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <form class="form-card" (ngSubmit)="onSubmit()">
+
+    <!-- Basic Info -->
+    <div class="form-section">
+      <h2 class="section-title">Ad Info</h2>
+
+      <div class="form-group">
+        <label>Title <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.title" name="title" placeholder="Ad title" />
+      </div>
+
+      <div class="form-group">
+        <label>Name (Company) <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.name" name="name" placeholder="Company or advertiser name" />
+      </div>
+
+      <div class="form-group">
+        <label>Description <span class="required">*</span></label>
+        <textarea [(ngModel)]="form.description" name="description" rows="5" placeholder="Ad description..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="text" [(ngModel)]="form.phone_number" name="phone_number" placeholder="+201000000100" />
+        </div>
+        <div class="form-group">
+          <label>WhatsApp Number</label>
+          <input type="text" [(ngModel)]="form.whatsapp_number" name="whatsapp_number" placeholder="+201000000100" />
+        </div>
+        <div class="form-group check-group">
+          <label class="checkbox-label">
+            <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
+            <span>Active</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Images Section -->
+    <div class="form-section">
+      <h2 class="section-title">Images</h2>
+      <p class="section-desc">Add image URLs. Press Enter or click Add.</p>
+
+      <app-media-uploader
+        folder="ads"
+        [multiple]="true"
+        accept="image/*"
+        (uploaded)="onImagesUploaded($event)">
+      </app-media-uploader>
+
+      <div class="url-fallback">
+        <span class="or-label">or paste URL</span>
+        <div class="media-input-row">
+          <input type="text" [(ngModel)]="imageInput" name="imageInput"
+            placeholder="https://example.com/image.jpg"
+            (keydown)="onImageKeydown($event)" class="media-input" />
+          <button type="button" class="btn-add" (click)="addImage()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            Add
+          </button>
+        </div>
+      </div>
+
+      <div class="media-list" *ngIf="form.images.length > 0">
+        <div class="media-item" *ngFor="let url of form.images; let i = index">
+          <div class="media-thumb">
+            <img [src]="url" class="thumb" [alt]="'image-' + i" />
+          </div>
+          <span class="media-url" [title]="url">{{ url }}</span>
+          <span class="media-type">Image</span>
+          <button type="button" class="btn-remove" (click)="removeImage(i)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <p class="empty-hint" *ngIf="form.images.length === 0">No images added yet.</p>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Create Ad</span>
+        <span *ngIf="isSubmitting" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </form>
+</div>
