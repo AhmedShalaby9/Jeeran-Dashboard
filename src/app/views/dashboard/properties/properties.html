@@ -25,11 +25,15 @@
     </div>
     <select [(ngModel)]="typeFilter" (change)="applyFilters()">
       <option value="">All Types</option>
-      <option *ngFor="let t of propertyTypes" [value]="t">{{ t }}</option>
+      <option *ngFor="let t of propertyTypes" [value]="t.value">{{ t.label }}</option>
     </select>
     <select [(ngModel)]="statusFilter" (change)="applyFilters()">
       <option value="">All Statuses</option>
       <option *ngFor="let s of propertyStatuses" [value]="s">{{ statusLabels[s] }}</option>
+    </select>
+    <select [(ngModel)]="projectFilter" (change)="applyFilters()">
+      <option [ngValue]="null">All Projects</option>
+      <option *ngFor="let p of projects" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
     </select>
     <div class="filter-search">
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -40,7 +44,7 @@
       <input type="text" [(ngModel)]="agentFilter" placeholder="Filter by agent..." (keydown.enter)="applyFilters()" />
     </div>
     <button class="btn-filter" (click)="applyFilters()">Apply</button>
-    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || agentFilter">
+    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || agentFilter || projectFilter">
       Clear
     </button>
   </div>
@@ -67,7 +71,7 @@
         </div>
 
         <div class="prop-badges-cover">
-          <span class="type-badge">{{ item.property_type }}</span>
+          <span class="type-badge">{{ typeLabels[item.property_type] || item.property_type }}</span>
           <span class="status-badge" [ngClass]="statusClass(item.property_status)">
             {{ statusLabels[item.property_status] || item.property_status }}
           </span>
@@ -92,7 +96,7 @@
 
       <!-- Card body -->
       <div class="prop-body">
-        <h3 class="prop-title" dir="rtl">{{ item.title }}</h3>
+        <h3 class="prop-title" dir="rtl">{{ item.title_ar || item.title_en || item.title }}</h3>
         <p class="prop-price">{{ formatPrice(item.price) }}</p>
 
         <div class="prop-specs">

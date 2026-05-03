@@ -60,13 +60,22 @@
         <span>Users</span>
       </a>
 
-      <a class="nav-item" routerLink="/dashboard/properties" routerLinkActive="active">
+      <a class="nav-item" routerLink="/dashboard/properties" routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
           <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
         </svg>
         <span>Properties</span>
+      </a>
+      <a class="nav-item nav-sub" routerLink="/dashboard/properties/approvals" routerLinkActive="active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <span>Approvals</span>
       </a>
 
       <a class="nav-item" routerLink="/dashboard/seller-requests" routerLinkActive="active">
@@ -86,6 +95,14 @@
           <path d="M2 12l10 5 10-5"/>
         </svg>
         <span>Ads</span>
+      </a>
+
+      <a class="nav-item" routerLink="/dashboard/chat" routerLinkActive="active">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <span>Chat</span>
       </a>
     </nav>
 

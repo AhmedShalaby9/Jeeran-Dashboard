@@ -493,6 +493,99 @@ $border:       #e5e7eb;
 .agent-pname    { font-size: 0.9rem; font-weight: 700; color: $text-dark; margin: 0 0 0.1rem; }
 .agent-pcontact { font-size: 0.82rem; color: $text-muted; margin: 0; }
 
+// ── Translate row ──────────────────────────────────────────
+.translate-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+}
+
+.translate-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 500;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-translate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  background: #f0f4ff;
+  border: 1.5px solid #c8d3f0;
+  color: $primary;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  min-width: 140px;
+  justify-content: center;
+
+  &:hover:not(:disabled) {
+    background: $primary;
+    color: $white;
+    border-color: $primary;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.spinner-xs {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin-xs 0.7s linear infinite;
+}
+
+@keyframes spin-xs {
+  to { transform: rotate(360deg); }
+}
+
+.field-optional {
+  font-size: 0.7rem;
+  color: $text-muted;
+  font-weight: 400;
+  margin-left: 0.3rem;
+}
+
+// ── Agent defaults bar ─────────────────────────────────────
+.agent-defaults-bar {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  gap: 0.75rem; padding: 0.75rem 1rem;
+  background: #f0f4ff; border: 1px solid #c8d3f0; border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.agent-defaults-hint {
+  display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.78rem; color: $primary; font-weight: 500;
+}
+
+.btn-reset-agent {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.85rem;
+  background: $white; border: 1.5px solid $primary;
+  color: $primary; border-radius: 6px;
+  font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { background: $primary; color: $white; }
+}
+
 // ── Settings toggles ───────────────────────────────────────
 .settings-divider {
   display: flex; align-items: center; gap: 1rem;

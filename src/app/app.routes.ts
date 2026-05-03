@@ -22,8 +22,11 @@ import { UserDetailComponent } from './views/dashboard/users/user-detail/user-de
 import { PropertiesComponent } from './views/dashboard/properties/properties';
 import { PropertyFormComponent } from './views/dashboard/properties/property-form/property-form';
 import { PropertyDetailComponent } from './views/dashboard/properties/property-detail/property-detail';
+import { PropertyApprovalsComponent } from './views/dashboard/properties/property-approvals/property-approvals';
 import { SellerRequestsComponent } from './views/dashboard/seller-requests/seller-requests';
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
+import { ChatComponent } from './views/dashboard/chat/chat';
+import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
 
@@ -58,9 +61,10 @@ export const routes: Routes = [
       { path: 'users/:id',         component: UserDetailComponent },
 
       // Properties
-      { path: 'properties',        component: PropertiesComponent },
-      { path: 'properties/new',    component: PropertyFormComponent },
-      { path: 'properties/:id',    component: PropertyDetailComponent },
+      { path: 'properties',              component: PropertiesComponent },
+      { path: 'properties/new',          component: PropertyFormComponent },
+      { path: 'properties/approvals',    component: PropertyApprovalsComponent },
+      { path: 'properties/:id',          component: PropertyDetailComponent },
 
       // Seller Requests
       { path: 'seller-requests',     component: SellerRequestsComponent },
@@ -70,6 +74,10 @@ export const routes: Routes = [
       { path: 'ads',               component: AdsComponent },
       { path: 'ads/new',           component: AdFormComponent },
       { path: 'ads/:id',           component: AdDetailComponent },
+
+      // Chat
+      { path: 'chat',              component: ChatComponent },
+      { path: 'chat/:id',          component: ChatDetailComponent },
 
       { path: '',                  redirectTo: 'home', pathMatch: 'full' },
     ],

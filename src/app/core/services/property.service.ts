@@ -14,6 +14,7 @@ export interface PropertyFilters {
   status?:      string;
   project_id?:  number;
   is_featured?: boolean;
+  is_approved?: 'true' | 'false' | 'null'; // 'null' = pending
   min_price?:   number;
   max_price?:   number;
   bedrooms?:    number;
@@ -63,5 +64,13 @@ export class PropertyService {
 
   getSimilar(id: number): Observable<PropertyListResponse> {
     return this.http.get<PropertyListResponse>(`${this.url}/${id}/similar`, { headers: this.headers() });
+  }
+
+  approve(id: number): Observable<PropertyResponse> {
+    return this.http.patch<PropertyResponse>(`${this.url}/${id}/approve`, {}, { headers: this.headers() });
+  }
+
+  reject(id: number): Observable<PropertyResponse> {
+    return this.http.patch<PropertyResponse>(`${this.url}/${id}/reject`, {}, { headers: this.headers() });
   }
 }

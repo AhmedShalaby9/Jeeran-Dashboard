@@ -1,0 +1,237 @@
+@use '../shared-page';
+
+$primary:      #1e3a6e;
+$primary-dark: #152c54;
+$accent:       #b8a882;
+$white:     #ffffff;
+$bg:        #f4f6f8;
+$text-dark: #1a1f2e;
+$text-muted:#6b7280;
+$border:    #e5e7eb;
+
+// ── Filter Bar ────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.25rem;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+
+  label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+}
+
+.filter-input,
+.filter-select {
+  padding: 0.55rem 0.8rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: $text-dark;
+  outline: none;
+  background: $white;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.filter-select { cursor: pointer; padding-right: 1.5rem; }
+
+.filter-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-bottom: 1px;
+}
+
+.btn-apply {
+  padding: 0.55rem 1.1rem;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover { background: $primary-dark; }
+}
+
+.btn-clear {
+  padding: 0.55rem 1rem;
+  background: none;
+  color: $text-muted;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: #dc2626; border-color: #dc2626; }
+}
+
+// ── Table ─────────────────────────────────────────────────
+.sessions-table-wrap {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  overflow: hidden;
+}
+
+.sessions-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: $bg;
+    border-bottom: 1px solid $border;
+  }
+
+  th {
+    padding: 0.75rem 1.1rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.9rem 1.1rem;
+    font-size: 0.875rem;
+    color: $text-dark;
+    border-bottom: 1px solid $border;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+}
+
+.session-row {
+  cursor: pointer;
+  transition: background 0.12s;
+  &:hover { background: #f8f9ff; }
+}
+
+// ── User Cell ─────────────────────────────────────────────
+.user-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: $primary;
+  color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.user-name  { font-size: 0.875rem; font-weight: 600; color: $text-dark; margin: 0; }
+.user-email { font-size: 0.78rem;  color: $text-muted; margin: 0; }
+
+// ── Other cells ───────────────────────────────────────────
+.title-cell {
+  max-width: 260px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.phone-cell { color: $text-muted; font-size: 0.82rem; }
+.date-cell  { color: $text-muted; font-size: 0.82rem; white-space: nowrap; }
+
+.arrow-cell {
+  color: #d1d5db;
+  width: 32px;
+  text-align: right;
+}
+
+// ── Subscription Badge ────────────────────────────────────
+.sub-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.sub-active { background: #dcfce7; color: #16a34a; }
+.sub-none   { color: $text-muted; }
+
+// ── Empty ─────────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  color: $text-muted;
+  text-align: center;
+
+  p { margin: 0; font-size: 0.95rem; }
+}
+
+// ── Pagination ────────────────────────────────────────────
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pagination-info {
+  font-size: 0.82rem;
+  color: $text-muted;
+}
+
+.pagination-btns {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $white;
+  font-size: 0.82rem;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) { border-color: $primary; color: $primary; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.active   { background: $primary; color: $white; border-color: $primary; font-weight: 600; }
+}
+
+.page-gap { color: $text-muted; font-size: 0.82rem; padding: 0 0.25rem; }

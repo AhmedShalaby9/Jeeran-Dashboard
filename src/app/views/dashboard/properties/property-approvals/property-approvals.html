@@ -1,0 +1,244 @@
+<div class="page">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <div>
+      <h1>Property Approvals</h1>
+      <p>Review and approve or reject seller-submitted listings</p>
+    </div>
+  </div>
+
+  <!-- ── Toast ── -->
+  <div class="toast" *ngIf="toast" [class.toast-success]="toast.type === 'success'" [class.toast-error]="toast.type === 'error'">
+    <svg *ngIf="toast.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    <svg *ngIf="toast.type === 'error'" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+      fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ toast.message }}
+  </div>
+
+  <!-- ── Tab bar ── -->
+  <div class="tab-bar">
+    <button class="tab-btn" [class.active]="activeTab === 'pending'"  (click)="setTab('pending')">
+      <span class="tab-dot dot-pending"></span>
+      Pending
+      <span class="tab-count" *ngIf="countsLoaded">{{ counts.pending }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'approved'" (click)="setTab('approved')">
+      <span class="tab-dot dot-approved"></span>
+      Approved
+      <span class="tab-count" *ngIf="countsLoaded">{{ counts.approved }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'rejected'" (click)="setTab('rejected')">
+      <span class="tab-dot dot-rejected"></span>
+      Rejected
+      <span class="tab-count" *ngIf="countsLoaded">{{ counts.rejected }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'all'"      (click)="setTab('all')">
+      All
+      <span class="tab-count" *ngIf="countsLoaded">{{ counts.all }}</span>
+    </button>
+  </div>
+
+  <!-- ── Loading ── -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading properties...</p>
+  </div>
+
+  <!-- ── Table ── -->
+  <ng-container *ngIf="!isLoading">
+    <div class="table-wrap">
+      <table class="approvals-table" *ngIf="properties.length > 0">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Agent</th>
+            <th>Project</th>
+            <th>Submitted</th>
+            <th>Status</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prop of properties" class="prop-row">
+
+            <!-- Property cell -->
+            <td>
+              <div class="prop-cell" (click)="goToDetail(prop.id)">
+                <div class="prop-thumb">
+                  <img *ngIf="prop.images && prop.images.length > 0"
+                    [src]="prop.images[0]" [alt]="propTitle(prop)" />
+                  <div *ngIf="!prop.images || prop.images.length === 0" class="thumb-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                      <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="prop-info">
+                  <p class="prop-title-cell" dir="rtl">{{ propTitle(prop) }}</p>
+                  <p class="prop-status-cell">
+                    <span class="listing-badge" [ngClass]="'badge-' + prop.property_status">
+                      {{ statusLabels[prop.property_status] || prop.property_status }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            </td>
+
+            <!-- Type -->
+            <td>
+              <span class="type-tag">{{ typeLabels[prop.property_type] || prop.property_type }}</span>
+            </td>
+
+            <!-- Price -->
+            <td class="price-cell" dir="rtl">{{ formatPrice(prop.price) }}</td>
+
+            <!-- Agent -->
+            <td>
+              <div class="agent-cell" *ngIf="prop.agent_name || prop.agent_mobile">
+                <div class="agent-avatar-sm">
+                  <img *ngIf="prop.agent_picture" [src]="prop.agent_picture" [alt]="prop.agent_name || ''" />
+                  <span *ngIf="!prop.agent_picture">{{ prop.agent_name?.charAt(0) || '?' }}</span>
+                </div>
+                <div>
+                  <p class="agent-name-cell">{{ prop.agent_name || '—' }}</p>
+                  <p class="agent-mobile-cell" *ngIf="prop.agent_mobile">{{ prop.agent_mobile }}</p>
+                </div>
+              </div>
+              <span class="muted-dash" *ngIf="!prop.agent_name && !prop.agent_mobile">—</span>
+            </td>
+
+            <!-- Project -->
+            <td class="project-cell">{{ projectName(prop.project_id) }}</td>
+
+            <!-- Submitted date -->
+            <td class="date-cell">{{ prop.created_at | date:'mediumDate' }}</td>
+
+            <!-- Approval status -->
+            <td>
+              <span class="approval-badge"
+                [class.badge-pending]="approvalStatus(prop) === 'pending'"
+                [class.badge-approved]="approvalStatus(prop) === 'approved'"
+                [class.badge-rejected]="approvalStatus(prop) === 'rejected'">
+                <span class="badge-dot"></span>
+                {{ approvalStatus(prop) | titlecase }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="actions-cell">
+              <button class="btn-approve"
+                *ngIf="approvalStatus(prop) !== 'approved'"
+                (click)="openApprove(prop)"
+                title="Approve this property">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                Approve
+              </button>
+              <button class="btn-reject"
+                *ngIf="approvalStatus(prop) === 'pending'"
+                (click)="openReject(prop)"
+                title="Reject this property">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+                Reject
+              </button>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Empty state -->
+      <div class="empty-state" *ngIf="properties.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <p *ngIf="activeTab === 'pending'">No pending properties. All caught up! 🎉</p>
+        <p *ngIf="activeTab === 'approved'">No approved properties yet.</p>
+        <p *ngIf="activeTab === 'rejected'">No rejected properties.</p>
+        <p *ngIf="activeTab === 'all'">No properties found.</p>
+      </div>
+    </div>
+
+    <!-- ── Pagination ── -->
+    <div class="pagination-bar" *ngIf="total > 0 && totalPages > 1">
+      <span class="pagination-info">
+        Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ total }}</strong>
+      </span>
+      <div class="pagination-btns">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">‹</button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <span class="page-gap" *ngIf="p === -1">…</span>
+          <button *ngIf="p !== -1" class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">›</button>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!-- Confirm Modal                                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="modal.show" (click)="closeModal()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <!-- Icon -->
+    <div class="modal-icon" [class.icon-approve]="modal.action === 'approve'" [class.icon-reject]="modal.action === 'reject'">
+      <svg *ngIf="modal.action === 'approve'" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <svg *ngIf="modal.action === 'reject'" xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </div>
+
+    <h3 class="modal-title">
+      {{ modal.action === 'approve' ? 'Approve Property' : 'Reject Property' }}
+    </h3>
+
+    <p class="modal-body" dir="rtl">
+      <strong>{{ propTitle(modal.property!) }}</strong>
+    </p>
+    <p class="modal-sub" *ngIf="modal.action === 'approve'">
+      This listing will become visible to users on the platform.
+    </p>
+    <p class="modal-sub" *ngIf="modal.action === 'reject'">
+      The seller will be notified that their listing was not approved.
+    </p>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeModal()" [disabled]="isActioning">Cancel</button>
+      <button
+        [class.btn-confirm-approve]="modal.action === 'approve'"
+        [class.btn-confirm-reject]="modal.action === 'reject'"
+        (click)="executeAction()"
+        [disabled]="isActioning">
+        <span *ngIf="!isActioning">
+          {{ modal.action === 'approve' ? 'Yes, Approve' : 'Yes, Reject' }}
+        </span>
+        <span *ngIf="isActioning" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </div>
+</div>

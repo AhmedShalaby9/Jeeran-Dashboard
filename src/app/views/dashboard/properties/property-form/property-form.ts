@@ -1,9 +1,12 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
+import { ProjectService } from '../../../../core/services/project.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { CreatePropertyDto } from '../../../../core/models/property.model';
+import { Project } from '../../../../core/models/project.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 interface StepMeta {
@@ -13,6 +16,14 @@ interface StepMeta {
   icon:     string;
 }
 
+const DEFAULT_AGENT = {
+  agent_name:     'Mahmoud Khalil',
+  agent_mobile:   '+201005464855',
+  agent_whatsapp: '+201005464855',
+  agent_email:    'mahkhalil1984@gmail.com',
+  agent_picture:  '',
+};
+
 @Component({
   selector: 'app-property-form',
   standalone: true,
@@ -20,7 +31,7 @@ interface StepMeta {
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss',
 })
-export class PropertyFormComponent {
+export class PropertyFormComponent implements OnInit {
 
   readonly steps: StepMeta[] = [
     { index: 0, label: 'Basic Info',   sublabel: 'Title, type & price',    icon: 'info'   },
@@ -31,19 +42,58 @@ export class PropertyFormComponent {
 
   currentStep = 0;
 
+  // ── Enum options ──────────────────────────────────────────
+  readonly propertyTypes = [
+    { value: 'villa',            labelEn: 'Villa',             label: 'فيلا'          },
+    { value: 'apartment',        labelEn: 'Apartment',         label: 'شقة'           },
+    { value: 'chalet',           labelEn: 'Chalet',            label: 'شاليه'         },
+    { value: 'marina_apartment', labelEn: 'Marina Apartment',  label: 'شقة مارينا'    },
+    { value: 'studio',           labelEn: 'Studio',            label: 'استوديو'       },
+    { value: 'duplex',           labelEn: 'Duplex',            label: 'دوبلكس'        },
+    { value: 'land',             labelEn: 'Land',              label: 'أرض'           },
+    { value: 'clinic',           labelEn: 'Clinic',            label: 'عيادة'         },
+    { value: 'office',           labelEn: 'Office',            label: 'مكتب'          },
+    { value: 'shop',             labelEn: 'Shop',              label: 'محل'           },
+  ];
+
+  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
+  readonly statusLabels: Record<string, string> = {
+    for_sale:           'For Sale',
+    for_rent:           'For Rent',
+    for_rent_furnished: 'For Rent (Furnished)',
+  };
+
+  readonly states = [
+    { value: 'cairo',           label: 'Cairo'         },
+    { value: 'north_coast',     label: 'North Coast'   },
+    { value: 'sharm_el_sheikh', label: 'Sharm El Sheikh' },
+  ];
+
+  readonly countries = [
+    { value: 'egypt', label: 'Egypt' },
+  ];
+
+  // ── Projects for dropdown ─────────────────────────────────
+  projects: Project[] = [];
+
+  // ── Default agent ─────────────────────────────────────────
+  readonly defaultAgent = DEFAULT_AGENT;
+
   form: CreatePropertyDto = {
-    title:           '',
+    title_ar:        '',
+    title_en:        '',
     slug:            '',
-    content:         '',
+    content_ar:      '',
+    content_en:      '',
     content_html:    '',
-    property_type:   'فيلا',
+    property_type:   'villa',
     property_status: 'for_sale',
     price:           0,
     size:            null,
     bedrooms:        null,
     bathrooms:       null,
-    country:         'مصر',
-    state:           '',
+    country:         'egypt',
+    state:           'cairo',
     project_id:      null,
     images:          [],
     video_url:       '',
@@ -52,40 +102,112 @@ export class PropertyFormComponent {
     published_at:    null,
     views_count:     0,
     legacy_code:     '',
-    agent_name:      '',
-    agent_mobile:    '',
-    agent_whatsapp:  '',
-    agent_email:     '',
-    agent_picture:   '',
+    agent_name:      DEFAULT_AGENT.agent_name,
+    agent_mobile:    DEFAULT_AGENT.agent_mobile,
+    agent_whatsapp:  DEFAULT_AGENT.agent_whatsapp,
+    agent_email:     DEFAULT_AGENT.agent_email,
+    agent_picture:   DEFAULT_AGENT.agent_picture,
   };
 
-  imageInput      = '';
+  imageInput   = '';
   stepErrors: string[] = ['', '', '', ''];
-  isSubmitting    = false;
-  globalError     = '';
+  isSubmitting = false;
+  globalError  = '';
 
-  readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'استوديو', 'محل', 'مكتب', 'عيادة', 'أرض'];
-  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
-  readonly statusLabels: Record<string, string> = {
-    for_sale:           'For Sale',
-    for_rent:           'For Rent',
-    for_rent_furnished: 'For Rent (Furnished)',
+  // ── Translation state ─────────────────────────────────────
+  translating = {
+    titleToEn:  false,
+    titleToAr:  false,
+    descToEn:   false,
+    descToAr:   false,
   };
-  readonly countries        = ['مصر', 'السعودية', 'الإمارات', 'الكويت', 'الأردن', 'البحرين', 'قطر', 'عُمان'];
 
   constructor(
-    private propertyService: PropertyService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private propertyService:   PropertyService,
+    private projectService:    ProjectService,
+    private translationService: TranslationService,
+    private router:            Router,
+    private cdr:               ChangeDetectorRef,
   ) {}
+
+  ngOnInit(): void {
+    this.loadProjects();
+  }
+
+  loadProjects(): void {
+    this.projectService.getAll().subscribe({
+      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────
+  get typeLabel(): string {
+    return this.propertyTypes.find(t => t.value === this.form.property_type)?.labelEn
+      || this.form.property_type;
+  }
+
+  get stateLabel(): string {
+    return this.states.find(s => s.value === this.form.state)?.label || this.form.state || '';
+  }
+
+  // ── Translation ───────────────────────────────────────────
+  translateTitleToEn(): void {
+    if (!this.form.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translationService.translate(this.form.title_ar, 'ar', 'en').subscribe(result => {
+      if (result) this.form.title_en = result;
+      this.translating.titleToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateTitleToAr(): void {
+    if (!this.form.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translationService.translate(this.form.title_en, 'en', 'ar').subscribe(result => {
+      if (result) this.form.title_ar = result;
+      this.translating.titleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToEn(): void {
+    if (!this.form.content_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true;
+    this.translationService.translate(this.form.content_ar, 'ar', 'en').subscribe(result => {
+      if (result) this.form.content_en = result;
+      this.translating.descToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.form.content_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true;
+    this.translationService.translate(this.form.content_en, 'en', 'ar').subscribe(result => {
+      if (result) this.form.content_ar = result;
+      this.translating.descToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
 
   // ── Step validation ───────────────────────────────────────
   validateStep(step: number): boolean {
     this.stepErrors[step] = '';
     if (step === 0) {
-      if (!this.form.title.trim()) { this.stepErrors[0] = 'Property title is required.'; return false; }
-      if (!this.form.property_type) { this.stepErrors[0] = 'Property type is required.'; return false; }
-      if (!this.form.price || this.form.price <= 0) { this.stepErrors[0] = 'A valid price is required.'; return false; }
+      if (!this.form.title_ar?.trim() && !this.form.title_en?.trim()) {
+        this.stepErrors[0] = 'At least one property title (Arabic or English) is required.';
+        return false;
+      }
+      if (!this.form.property_type) {
+        this.stepErrors[0] = 'Property type is required.';
+        return false;
+      }
+      if (!this.form.price || this.form.price <= 0) {
+        this.stepErrors[0] = 'A valid price is required.';
+        return false;
+      }
     }
     return true;
   }
@@ -107,13 +229,11 @@ export class PropertyFormComponent {
   }
 
   goToStep(index: number): void {
-    // Allow going back freely, going forward only if current step validates
     if (index < this.currentStep) {
       this.currentStep = index;
       this.cdr.detectChanges();
       return;
     }
-    // Validate all steps up to target
     for (let i = this.currentStep; i < index; i++) {
       if (!this.validateStep(i)) { this.currentStep = i; this.cdr.detectChanges(); return; }
     }
@@ -147,12 +267,23 @@ export class PropertyFormComponent {
 
   // ── Auto-slug ─────────────────────────────────────────────
   autoSlug(): void {
-    if (this.form.slug) return; // don't overwrite manual slug
-    this.form.slug = this.form.title
+    if (this.form.slug) return;
+    const base = this.form.title_en?.trim() || this.form.title_ar?.trim() || '';
+    this.form.slug = base
       .toLowerCase()
       .replace(/\s+/g, '-')
-      .replace(/[^\w\u0600-\u06ff-]/g, '')
+      .replace(/[^\w؀-ۿ-]/g, '')
       .substring(0, 80);
+  }
+
+  // ── Agent defaults ────────────────────────────────────────
+  resetAgent(): void {
+    this.form.agent_name     = this.defaultAgent.agent_name;
+    this.form.agent_mobile   = this.defaultAgent.agent_mobile;
+    this.form.agent_whatsapp = this.defaultAgent.agent_whatsapp;
+    this.form.agent_email    = this.defaultAgent.agent_email;
+    this.form.agent_picture  = this.defaultAgent.agent_picture;
+    this.cdr.detectChanges();
   }
 
   // ── Submit ────────────────────────────────────────────────
@@ -168,20 +299,21 @@ export class PropertyFormComponent {
     this.isSubmitting = true;
     this.globalError  = '';
 
-    // Clean up empty optional strings to null
     const payload: CreatePropertyDto = {
       ...this.form,
-      content:       this.form.content?.trim()       || null,
-      content_html:  this.form.content_html?.trim()  || null,
-      video_url:     this.form.video_url?.trim()      || null,
-      legacy_code:   this.form.legacy_code?.trim()    || null,
-      agent_name:    this.form.agent_name?.trim()     || null,
-      agent_mobile:  this.form.agent_mobile?.trim()   || null,
-      agent_whatsapp:this.form.agent_whatsapp?.trim() || null,
-      agent_email:   this.form.agent_email?.trim()    || null,
-      agent_picture: this.form.agent_picture?.trim()  || null,
-      state:         this.form.state?.trim()           || null,
-      country:       this.form.country?.trim()         || null,
+      title_ar:       this.form.title_ar?.trim()       || null,
+      title_en:       this.form.title_en?.trim()       || null,
+      content_ar:     this.form.content_ar?.trim()     || null,
+      content_en:     this.form.content_en?.trim()     || null,
+      content_html:   this.form.content_html?.trim()   || null,
+      video_url:      this.form.video_url?.trim()       || null,
+      legacy_code:    this.form.legacy_code?.trim()     || null,
+      agent_name:     this.form.agent_name?.trim()      || null,
+      agent_mobile:   this.form.agent_mobile?.trim()    || null,
+      agent_whatsapp: this.form.agent_whatsapp?.trim()  || null,
+      agent_email:    this.form.agent_email?.trim()     || null,
+      agent_picture:  this.form.agent_picture?.trim()   || null,
+      views_count:    0,
     };
 
     this.propertyService.create(payload).subscribe({

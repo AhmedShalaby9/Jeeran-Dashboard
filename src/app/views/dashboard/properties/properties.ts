@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../core/services/property.service';
 import { Property } from '../../../core/models/property.model';
+import { ProjectService } from '../../../core/services/project.service';
+import { Project } from '../../../core/models/project.model';
 
 @Component({
   selector: 'app-properties',
@@ -26,12 +28,31 @@ export class PropertiesComponent implements OnInit {
   readonly pageSizes = [10, 20, 50, 100];
 
   // Filters
-  searchQ      = '';
-  typeFilter   = '';
-  statusFilter = '';
-  agentFilter  = '';
+  searchQ       = '';
+  typeFilter    = '';
+  statusFilter  = '';
+  agentFilter   = '';
+  projectFilter: number | null = null;
 
-  readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'محل', 'مكتب', 'عيادة'];
+  // Projects for dropdown
+  projects: Project[] = [];
+
+  readonly propertyTypes = [
+    { value: 'villa',            label: 'فيلا'          },
+    { value: 'apartment',        label: 'شقة'           },
+    { value: 'chalet',           label: 'شاليه'         },
+    { value: 'marina_apartment', label: 'شقة مارينا'    },
+    { value: 'studio',           label: 'استوديو'       },
+    { value: 'duplex',           label: 'دوبلكس'        },
+    { value: 'land',             label: 'أرض'           },
+    { value: 'clinic',           label: 'عيادة'         },
+    { value: 'office',           label: 'مكتب'          },
+    { value: 'shop',             label: 'محل'           },
+  ];
+  readonly typeLabels: Record<string, string> = Object.fromEntries(
+    this.propertyTypes.map(t => [t.value, t.label])
+  );
+
   readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
   readonly statusLabels: Record<string, string> = {
     for_sale:           'For Sale',
@@ -41,12 +62,21 @@ export class PropertiesComponent implements OnInit {
 
   constructor(
     private propertyService: PropertyService,
+    private projectService: ProjectService,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.loadProjects();
     this.load();
+  }
+
+  loadProjects(): void {
+    this.projectService.getAll().subscribe({
+      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
   }
 
   load(): void {
@@ -56,10 +86,11 @@ export class PropertiesComponent implements OnInit {
       page:  this.currentPage,
       limit: this.limit,
     };
-    if (this.searchQ.trim())    f.q          = this.searchQ.trim();
-    if (this.typeFilter)        f.type       = this.typeFilter;
-    if (this.statusFilter)      f.status     = this.statusFilter;
-    if (this.agentFilter.trim()) f.agent_name = this.agentFilter.trim();
+    if (this.searchQ.trim())      f.q          = this.searchQ.trim();
+    if (this.typeFilter)          f.type       = this.typeFilter;
+    if (this.statusFilter)        f.status     = this.statusFilter;
+    if (this.agentFilter.trim())  f.agent_name = this.agentFilter.trim();
+    if (this.projectFilter)       f.project_id = this.projectFilter;
 
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
@@ -123,10 +154,11 @@ export class PropertiesComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.searchQ     = '';
-    this.typeFilter  = '';
+    this.searchQ      = '';
+    this.typeFilter   = '';
     this.statusFilter = '';
     this.agentFilter  = '';
+    this.projectFilter = null;
     this.currentPage  = 1;
     this.load();
   }

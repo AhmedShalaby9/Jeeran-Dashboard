@@ -1,0 +1,532 @@
+@use '../../shared-page';
+
+$primary:      #1e3a6e;
+$primary-dark: #152c54;
+$white:        #ffffff;
+$bg:           #f4f6f8;
+$text-dark:    #1a1f2e;
+$text-muted:   #6b7280;
+$border:       #e5e7eb;
+
+// ── Tab bar ────────────────────────────────────────────────
+.tab-bar {
+  display: flex;
+  gap: 0.25rem;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 10px;
+  padding: 0.35rem;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $text-muted;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(.active) { background: $bg; color: $text-dark; }
+
+  &.active {
+    background: $primary;
+    color: $white;
+    box-shadow: 0 2px 8px rgba(30,58,110,0.25);
+
+    .tab-dot { border-color: rgba(255,255,255,0.5); }
+    .tab-count { background: rgba(255,255,255,0.2); color: $white; }
+  }
+}
+
+.tab-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  flex-shrink: 0;
+
+  &.dot-pending  { background: #f59e0b; border-color: #f59e0b; }
+  &.dot-approved { background: #16a34a; border-color: #16a34a; }
+  &.dot-rejected { background: #dc2626; border-color: #dc2626; }
+}
+
+.tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: $bg;
+  color: $text-muted;
+  border-radius: 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+
+// ── Filter bar ─────────────────────────────────────────────
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  padding: 0.85rem 1.1rem;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.filter-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  background: $white;
+  min-width: 220px;
+  transition: border-color 0.2s;
+
+  svg { color: $text-muted; flex-shrink: 0; }
+
+  input {
+    border: none;
+    outline: none;
+    font-size: 0.875rem;
+    color: $text-dark;
+    background: transparent;
+    width: 100%;
+    &::placeholder { color: $text-muted; }
+  }
+
+  &:focus-within { border-color: $primary; }
+}
+
+.filter-bar select {
+  padding: 0.5rem 0.85rem;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: $text-dark;
+  background: $white;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  &:focus { border-color: $primary; }
+}
+
+.btn-apply {
+  padding: 0.5rem 1.1rem;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  &:hover { background: $primary-dark; }
+}
+
+.btn-clear {
+  padding: 0.5rem 1rem;
+  background: none;
+  color: $text-muted;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: #dc2626; border-color: #dc2626; }
+}
+
+// ── Table ──────────────────────────────────────────────────
+.table-wrap {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.approvals-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: $bg;
+    border-bottom: 1px solid $border;
+  }
+
+  th {
+    padding: 0.75rem 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: left;
+    white-space: nowrap;
+
+    &.th-actions { text-align: right; }
+  }
+
+  td {
+    padding: 0.9rem 1rem;
+    font-size: 0.875rem;
+    color: $text-dark;
+    border-bottom: 1px solid $border;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+}
+
+.prop-row { transition: background 0.1s; &:hover { background: #fafbff; } }
+
+// ── Property cell ──────────────────────────────────────────
+.prop-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  max-width: 280px;
+}
+
+.prop-thumb {
+  width: 52px;
+  height: 42px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: $bg;
+  border: 1px solid $border;
+
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+.thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+}
+
+.prop-info { flex: 1; min-width: 0; }
+
+.prop-title-cell {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: $text-dark;
+  margin: 0 0 0.2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+
+  &:hover { color: $primary; }
+}
+
+.prop-status-cell { margin: 0; }
+
+// ── Type tag ───────────────────────────────────────────────
+.type-tag {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  background: #e8ecf5;
+  color: $primary;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+// ── Listing status badge ───────────────────────────────────
+.listing-badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  &.badge-for_sale           { background: #dbeafe; color: #1d4ed8; }
+  &.badge-for_rent           { background: #fef3c7; color: #92400e; }
+  &.badge-for_rent_furnished { background: #f3e8ff; color: #7e22ce; }
+}
+
+// ── Other cells ────────────────────────────────────────────
+.price-cell     { font-weight: 600; white-space: nowrap; color: $primary; }
+.project-cell   { color: $text-muted; font-size: 0.82rem; }
+.date-cell      { color: $text-muted; font-size: 0.82rem; white-space: nowrap; }
+.muted-dash     { color: #d1d5db; }
+
+// ── Agent cell ─────────────────────────────────────────────
+.agent-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.agent-avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: $primary;
+  color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  img { width: 100%; height: 100%; object-fit: cover; }
+}
+
+.agent-name-cell   { font-size: 0.82rem; font-weight: 600; color: $text-dark; margin: 0; }
+.agent-mobile-cell { font-size: 0.75rem; color: $text-muted; margin: 0; }
+
+// ── Approval badge ─────────────────────────────────────────
+.approval-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  .badge-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &.badge-pending  { background: #fef9c3; color: #92400e; .badge-dot { background: #f59e0b; } }
+  &.badge-approved { background: #dcfce7; color: #15803d; .badge-dot { background: #16a34a; } }
+  &.badge-rejected { background: #fee2e2; color: #b91c1c; .badge-dot { background: #dc2626; } }
+}
+
+// ── Action buttons ─────────────────────────────────────────
+.actions-cell {
+  text-align: right;
+  white-space: nowrap;
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.btn-approve,
+.btn-reject {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1.5px solid transparent;
+}
+
+.btn-approve {
+  background: #dcfce7;
+  color: #15803d;
+  border-color: #bbf7d0;
+  &:hover { background: #16a34a; color: $white; border-color: #16a34a; }
+}
+
+.btn-reject {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+  &:hover { background: #dc2626; color: $white; border-color: #dc2626; }
+}
+
+// ── Empty state ────────────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 2rem;
+  color: $text-muted;
+  text-align: center;
+  p { margin: 0; font-size: 0.95rem; }
+}
+
+// ── Pagination ─────────────────────────────────────────────
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.pagination-info { font-size: 0.82rem; color: $text-muted; }
+
+.pagination-btns {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.page-btn {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 0.5rem;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $white;
+  font-size: 0.82rem;
+  color: $text-dark;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover:not(:disabled) { border-color: $primary; color: $primary; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+  &.active   { background: $primary; color: $white; border-color: $primary; font-weight: 600; }
+}
+
+.page-gap { color: $text-muted; font-size: 0.82rem; padding: 0 0.2rem; line-height: 32px; }
+
+// ── Toast ──────────────────────────────────────────────────
+.toast {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  animation: slideIn 0.25s ease;
+
+  &.toast-success { background: #15803d; color: $white; }
+  &.toast-error   { background: #dc2626; color: $white; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(2rem); }
+  to   { opacity: 1; transform: translateX(0);    }
+}
+
+// ── Confirm Modal ──────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.15s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card {
+  background: $white;
+  border-radius: 16px;
+  padding: 2rem 2rem 1.75rem;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  animation: popIn 0.2s ease;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.94); }
+  to   { opacity: 1; transform: scale(1);    }
+}
+
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+
+  &.icon-approve { background: #dcfce7; color: #15803d; }
+  &.icon-reject  { background: #fee2e2; color: #b91c1c; }
+}
+
+.modal-title { font-size: 1.15rem; font-weight: 700; color: $text-dark; margin: 0 0 0.75rem; }
+.modal-body  { font-size: 0.95rem; color: $text-dark; margin: 0 0 0.4rem; }
+.modal-sub   { font-size: 0.82rem; color: $text-muted; margin: 0 0 1.75rem; }
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-cancel {
+  flex: 1;
+  padding: 0.65rem 1.25rem;
+  background: $bg;
+  color: $text-muted;
+  border: 1.5px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:hover:not(:disabled) { border-color: #9ca3af; color: $text-dark; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-confirm-approve,
+.btn-confirm-reject {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.25rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-confirm-approve {
+  background: #16a34a;
+  color: $white;
+  &:hover:not(:disabled) { background: #15803d; }
+}
+
+.btn-confirm-reject {
+  background: #dc2626;
+  color: $white;
+  &:hover:not(:disabled) { background: #b91c1c; }
+}

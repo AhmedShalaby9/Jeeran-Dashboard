@@ -5,8 +5,12 @@ export interface Property {
   legacy_id:        number | null;
   legacy_code:      string | null;
   title:            string;
+  title_ar:         string | null;
+  title_en:         string | null;
   slug:             string;
   content:          string | null;
+  content_ar:       string | null;
+  content_en:       string | null;
   content_html:     string | null;
   property_type:    string;
   property_status:  string;
@@ -21,6 +25,7 @@ export interface Property {
   video_url:        string | null;
   is_featured:      boolean;
   is_active:        boolean;
+  is_approved:      boolean | null;
   published_at:     string | null;
   views_count:      number;
   agent_name:       string | null;
@@ -35,9 +40,13 @@ export interface Property {
 export interface CreatePropertyDto {
   legacy_id?:       number | null;
   legacy_code?:     string | null;
-  title:            string;
+  title?:           string | null;
+  title_ar?:        string | null;
+  title_en?:        string | null;
   slug:             string;
   content?:         string | null;
+  content_ar?:      string | null;
+  content_en?:      string | null;
   content_html?:    string | null;
   property_type:    string;
   property_status:  string;

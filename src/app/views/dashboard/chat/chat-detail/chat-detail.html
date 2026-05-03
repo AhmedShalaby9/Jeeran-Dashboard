@@ -1,0 +1,93 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>Session #{{ sessionId }}</h1>
+        <p *ngIf="pagination">{{ pagination.total }} messages</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading conversation...</p>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window" *ngIf="!isLoading">
+
+    <!-- Load older button -->
+    <div class="load-older" *ngIf="hasOlderMessages">
+      <button class="btn-load-older" (click)="loadOlder()" [disabled]="isLoadingMore">
+        <span *ngIf="!isLoadingMore">↑ Load older messages</span>
+        <span *ngIf="isLoadingMore" class="spinner-sm"></span>
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-list">
+
+      <ng-container *ngFor="let msg of messages">
+
+        <!-- Skip tool messages -->
+        <ng-container *ngIf="msg.role !== 'tool' && msg.content">
+
+          <!-- Date separator could go here if needed -->
+
+          <!-- User message -->
+          <div class="message-row user-row" *ngIf="isUserMessage(msg)">
+            <div class="bubble user-bubble">
+              <p class="bubble-content" [innerHTML]="renderContent(msg.content)"></p>
+              <span class="bubble-time">{{ msg.created_at | date:'shortTime' }}</span>
+            </div>
+            <div class="msg-avatar user-avatar">U</div>
+          </div>
+
+          <!-- Assistant message -->
+          <div class="message-row bot-row" *ngIf="isAssistantMessage(msg)">
+            <div class="msg-avatar bot-avatar">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+            </div>
+            <div class="bubble bot-bubble">
+              <p class="bubble-content" [innerHTML]="renderContent(msg.content)"></p>
+              <span class="bubble-time">{{ msg.created_at | date:'shortTime' }}</span>
+            </div>
+          </div>
+
+        </ng-container>
+
+      </ng-container>
+
+      <div class="empty-chat" *ngIf="messages.length === 0">
+        <p>No messages in this session.</p>
+      </div>
+
+    </div>
+
+    <!-- Read-only notice -->
+    <div class="readonly-bar">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      Read-only — admin view
+    </div>
+
+  </div>
+
+</div>

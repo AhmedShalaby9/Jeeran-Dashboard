@@ -1,0 +1,106 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Chat Sessions</h1>
+      <p>View all user conversations with the AI assistant</p>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>From</label>
+      <input type="date" [(ngModel)]="dateFrom" name="dateFrom" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>To</label>
+      <input type="date" [(ngModel)]="dateTo" name="dateTo" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Filter by</label>
+      <select [(ngModel)]="dateField" name="dateField" class="filter-select">
+        <option value="updated_at">Last activity</option>
+        <option value="created_at">Created date</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilters()">Apply</button>
+      <button class="btn-clear" (click)="clearFilters()" *ngIf="hasActiveFilters">Clear</button>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading sessions...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <div class="sessions-table-wrap">
+      <table class="sessions-table" *ngIf="sessions.length > 0">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Session Title</th>
+            <th>Subscription</th>
+            <th>Phone</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of sessions" (click)="goTo(s.id)" class="session-row">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">{{ initials(s.user?.name) }}</div>
+                <div>
+                  <p class="user-name">{{ s.user?.name || '—' }}</p>
+                  <p class="user-email">{{ s.user?.email || '—' }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="title-cell">{{ s.title }}</td>
+            <td>
+              <span class="sub-badge sub-active"   *ngIf="hasSubscription(s)">Active</span>
+              <span class="sub-badge sub-none"     *ngIf="!hasSubscription(s)">—</span>
+            </td>
+            <td class="phone-cell">{{ s.user?.phone || '—' }}</td>
+            <td class="date-cell">{{ s.created_at | date:'mediumDate' }}</td>
+            <td class="arrow-cell">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="sessions.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <p>No chat sessions yet.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-row" *ngIf="pagination && pagination.pages > 1">
+      <span class="pagination-info">
+        {{ (page - 1) * limit + 1 }}–{{ rangeEnd }} of {{ pagination.total }}
+      </span>
+      <div class="pagination-btns">
+        <button class="page-btn" [disabled]="page === 1" (click)="goToPage(page - 1)">‹</button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <span class="page-gap" *ngIf="p === -1">…</span>
+          <button *ngIf="p !== -1" class="page-btn" [class.active]="p === page" (click)="goToPage(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="page === pagination.pages" (click)="goToPage(page + 1)">›</button>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

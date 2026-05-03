@@ -11,8 +11,8 @@
         Back
       </button>
       <div>
-        <h1>{{ property?.title || 'Property' }}</h1>
-        <p>{{ property?.property_type }} · {{ statusLabels[property?.property_status ?? ''] || property?.property_status }}</p>
+        <h1>{{ property?.title_ar || property?.title_en || property?.title || 'Property' }}</h1>
+        <p>{{ typeLabels[property?.property_type ?? ''] || property?.property_type }} · {{ statusLabels[property?.property_status ?? ''] || property?.property_status }}</p>
       </div>
     </div>
     <div class="header-actions" *ngIf="property && !isEditMode">
@@ -89,7 +89,7 @@
             <div class="price-row">
               <span class="price-tag" dir="rtl">{{ formatPrice(property.price) }}</span>
               <div class="status-pills">
-                <span class="type-pill">{{ property.property_type }}</span>
+                <span class="type-pill">{{ typeLabels[property.property_type] || property.property_type }}</span>
                 <span class="status-pill" [ngClass]="statusClass(property.property_status)">
                   {{ statusLabels[property.property_status] || property.property_status }}
                 </span>
@@ -123,7 +123,15 @@
           <div class="detail-section">
             <h2 class="section-title">Listing Details</h2>
             <div class="info-grid">
-              <div class="info-item">
+              <div class="info-item" *ngIf="property.title_ar">
+                <span class="info-label">Title (AR)</span>
+                <span class="info-value" dir="rtl">{{ property.title_ar }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.title_en">
+                <span class="info-label">Title (EN)</span>
+                <span class="info-value">{{ property.title_en }}</span>
+              </div>
+              <div class="info-item" *ngIf="!property.title_ar && !property.title_en">
                 <span class="info-label">Title</span>
                 <span class="info-value" dir="rtl">{{ property.title }}</span>
               </div>
@@ -143,11 +151,11 @@
               </div>
               <div class="info-item">
                 <span class="info-label">Country</span>
-                <span class="info-value">{{ property.country || '—' }}</span>
+                <span class="info-value">{{ property.country === 'egypt' ? 'مصر' : (property.country || '—') }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">State / City</span>
-                <span class="info-value">{{ property.state || '—' }}</span>
+                <span class="info-value">{{ stateLabels[property.state ?? ''] || property.state || '—' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">Legacy Code</span>
@@ -171,9 +179,11 @@
           <div class="detail-divider" *ngIf="property.content"></div>
 
           <!-- Description -->
-          <div class="detail-section" *ngIf="property.content">
+          <div class="detail-section" *ngIf="property.content_ar || property.content_ar || property.content">
             <h2 class="section-title">Description</h2>
-            <p class="desc-text" dir="rtl">{{ property.content }}</p>
+            <p class="desc-text" dir="rtl" *ngIf="property.content_ar">{{ property.content_ar }}</p>
+            <p class="desc-text" *ngIf="property.content_en">{{ property.content_en }}</p>
+            <p class="desc-text" dir="rtl" *ngIf="!property.content_ar && !property.content_en && property.content">{{ property.content }}</p>
           </div>
 
           <div class="detail-divider" *ngIf="property.agent_name || property.agent_mobile"></div>
@@ -231,9 +241,15 @@
         <div class="form-section">
           <h2 class="section-title">Basic Info</h2>
           <div class="form-row">
-            <div class="form-group full">
-              <label>Title <span class="required">*</span></label>
-              <input type="text" [(ngModel)]="editForm.title" name="title" dir="rtl" />
+            <div class="form-group">
+              <label>Title (Arabic) <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl"
+                placeholder="العنوان بالعربية" />
+            </div>
+            <div class="form-group">
+              <label>Title (English)</label>
+              <input type="text" [(ngModel)]="editForm.title_en" name="title_en"
+                placeholder="Title in English" />
             </div>
           </div>
           <div class="form-row">
@@ -244,7 +260,7 @@
             <div class="form-group">
               <label>Property Type <span class="required">*</span></label>
               <select [(ngModel)]="editForm.property_type" name="property_type">
-                <option *ngFor="let t of propertyTypes" [value]="t">{{ t }}</option>
+                <option *ngFor="let t of propertyTypes" [value]="t.value">{{ t.label }}</option>
               </select>
             </div>
             <div class="form-group">
@@ -275,11 +291,16 @@
           <div class="form-row">
             <div class="form-group">
               <label>Country</label>
-              <input type="text" [(ngModel)]="editForm.country" name="country" />
+              <select [(ngModel)]="editForm.country" name="country">
+                <option value="egypt">مصر</option>
+              </select>
             </div>
             <div class="form-group">
               <label>State / City</label>
-              <input type="text" [(ngModel)]="editForm.state" name="state" />
+              <select [(ngModel)]="editForm.state" name="state">
+                <option value="">— Select —</option>
+                <option *ngFor="let s of states" [value]="s.value">{{ s.label }}</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Project ID</label>
@@ -287,9 +308,15 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group full">
-              <label>Description</label>
-              <textarea [(ngModel)]="editForm.content" name="content" rows="4" dir="rtl"></textarea>
+            <div class="form-group">
+              <label>Description (Arabic)</label>
+              <textarea [(ngModel)]="editForm.content_ar" name="content_ar" rows="4" dir="rtl"
+                placeholder="وصف بالعربية..."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Description (English)</label>
+              <textarea [(ngModel)]="editForm.content_en" name="content_en" rows="4"
+                placeholder="Description in English..."></textarea>
             </div>
           </div>
           <div class="form-row">
@@ -437,7 +464,7 @@
         </svg>
       </div>
       <h3>Delete Property</h3>
-      <p>Are you sure you want to delete <strong>{{ property?.title }}</strong>? This cannot be undone.</p>
+      <p>Are you sure you want to delete <strong>{{ property?.title_ar || property?.title_en || property?.title }}</strong>? This cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
         <button class="btn-danger-solid" (click)="deleteProperty()" [disabled]="isDeleting">

@@ -75,6 +75,25 @@ $sidebar-w:   240px;
   }
 }
 
+// Sub-nav item (indented, smaller)
+.nav-sub {
+  padding-left: 2.25rem;
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.55);
+  margin-top: -0.15rem;
+
+  svg { opacity: 0.8; }
+
+  &:hover { color: rgba(255,255,255,0.9); }
+
+  &.active {
+    background: rgba(255,255,255,0.1);
+    color: #a5f3c0;
+    font-weight: 600;
+    svg { opacity: 1; }
+  }
+}
+
 .sidebar-footer {
   padding: 1rem 0.75rem;
   border-top: 1px solid rgba(255,255,255,0.1);

@@ -28,13 +28,37 @@ export class PropertyDetailComponent implements OnInit {
   // Lightbox
   lightboxIndex: number | null = null;
 
-  readonly propertyTypes    = ['فيلا', 'شقة', 'دوبلكس', 'بنتهاوس', 'تاون هاوس', 'محل', 'مكتب', 'عيادة'];
+  readonly propertyTypes = [
+    { value: 'villa',            label: 'فيلا'          },
+    { value: 'apartment',        label: 'شقة'           },
+    { value: 'chalet',           label: 'شاليه'         },
+    { value: 'marina_apartment', label: 'شقة مارينا'    },
+    { value: 'studio',           label: 'استوديو'       },
+    { value: 'duplex',           label: 'دوبلكس'        },
+    { value: 'land',             label: 'أرض'           },
+    { value: 'clinic',           label: 'عيادة'         },
+    { value: 'office',           label: 'مكتب'          },
+    { value: 'shop',             label: 'محل'           },
+  ];
+  readonly typeLabels: Record<string, string> = Object.fromEntries(
+    this.propertyTypes.map(t => [t.value, t.label])
+  );
+
   readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
   readonly statusLabels: Record<string, string> = {
     for_sale:           'For Sale',
     for_rent:           'For Rent',
     for_rent_furnished: 'For Rent (Furnished)',
   };
+
+  readonly states = [
+    { value: 'cairo',           label: 'القاهرة'         },
+    { value: 'north_coast',     label: 'الساحل الشمالي'  },
+    { value: 'sharm_el_sheikh', label: 'شرم الشيخ'       },
+  ];
+  readonly stateLabels: Record<string, string> = Object.fromEntries(
+    this.states.map(s => [s.value, s.label])
+  );
 
   constructor(
     private route: ActivatedRoute,
@@ -68,8 +92,12 @@ export class PropertyDetailComponent implements OnInit {
     if (!this.property) return;
     this.editForm = {
       title:           this.property.title,
+      title_ar:        this.property.title_ar,
+      title_en:        this.property.title_en,
       slug:            this.property.slug,
       content:         this.property.content,
+      content_ar:      this.property.content_ar,
+      content_en:      this.property.content_en,
       content_html:    this.property.content_html,
       property_type:   this.property.property_type,
       property_status: this.property.property_status,
@@ -118,7 +146,10 @@ export class PropertyDetailComponent implements OnInit {
   }
 
   saveEdit(): void {
-    if (!this.editForm.title?.trim()) { this.errorMessage = 'Title is required.'; return; }
+    if (!this.editForm.title_ar?.trim() && !this.editForm.title?.trim() && !this.editForm.title_en?.trim()) {
+      this.errorMessage = 'At least one property title is required.';
+      return;
+    }
     if (!this.editForm.property_type) { this.errorMessage = 'Property type is required.'; return; }
     this.isSubmitting = true;
     this.errorMessage = '';
