@@ -27,6 +27,7 @@ import { SellerRequestsComponent } from './views/dashboard/seller-requests/selle
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
 import { ChatComponent } from './views/dashboard/chat/chat';
 import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
+import { NotificationsComponent } from './views/dashboard/notifications/notifications';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
 
@@ -78,6 +79,9 @@ export const routes: Routes = [
       // Chat
       { path: 'chat',              component: ChatComponent },
       { path: 'chat/:id',          component: ChatDetailComponent },
+
+      // Notifications
+      { path: 'notifications',     component: NotificationsComponent },
 
       { path: '',                  redirectTo: 'home', pathMatch: 'full' },
     ],
