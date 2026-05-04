@@ -2,8 +2,10 @@
 
 export interface Package {
   id: number;
-  name: string;
-  description: string;
+  title_en: string | null;
+  title_ar: string | null;
+  description_en: string | null;
+  description_ar: string | null;
   price: string;
   duration_days: number;
   available_listings: number;
@@ -14,10 +16,12 @@ export interface Package {
 }
 
 export interface CreatePackageDto {
-  name: string;
+  title_en: string;
+  title_ar: string;
   price: number;
   duration_days: number;
-  description?: string;
+  description_en?: string | null;
+  description_ar?: string | null;
   available_listings?: number;
   features?: string[];
 }

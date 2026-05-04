@@ -1,9 +1,11 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { PackageService } from '../../../../core/services/package.service';
 import { Package, CreatePackageDto } from '../../../../core/models/package.model';
+import { LangService, Lang } from '../../../../core/services/lang.service';
 
 @Component({
   selector: 'app-package-detail',
@@ -12,7 +14,7 @@ import { Package, CreatePackageDto } from '../../../../core/models/package.model
   templateUrl: './package-detail.html',
   styleUrl: './package-detail.scss',
 })
-export class PackageDetailComponent implements OnInit {
+export class PackageDetailComponent implements OnInit, OnDestroy {
   pkg: Package | null = null;
   isLoading       = false;
   isEditMode      = false;
@@ -23,9 +25,14 @@ export class PackageDetailComponent implements OnInit {
   successMessage  = '';
   featureInput    = '';
 
+  lang: Lang = 'en';
+  private langSub!: Subscription;
+
   editForm: CreatePackageDto = {
-    name: '', price: 0, duration_days: 30,
-    description: '', available_listings: 0, features: [],
+    title_en: '', title_ar: '',
+    price: 0, duration_days: 30,
+    description_en: '', description_ar: '',
+    available_listings: 0, features: [],
   };
 
   constructor(
@@ -33,11 +40,21 @@ export class PackageDetailComponent implements OnInit {
     private router: Router,
     private packageService: PackageService,
     private cdr: ChangeDetectorRef,
+    private langService: LangService,
   ) {}
 
   ngOnInit(): void {
+    this.lang = this.langService.lang;
+    this.langSub = this.langService.lang$.subscribe(l => {
+      this.lang = l;
+      this.cdr.detectChanges();
+    });
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadPackage(id);
+  }
+
+  ngOnDestroy(): void {
+    this.langSub?.unsubscribe();
   }
 
   loadPackage(id: number): void {
@@ -56,13 +73,23 @@ export class PackageDetailComponent implements OnInit {
     });
   }
 
+  pkgTitle(pkg: Package): string {
+    return (this.lang === 'ar' ? pkg.title_ar : pkg.title_en) || pkg.title_en || pkg.title_ar || '—';
+  }
+
+  pkgDesc(pkg: Package): string {
+    return (this.lang === 'ar' ? pkg.description_ar : pkg.description_en) || '—';
+  }
+
   enableEdit(): void {
     if (!this.pkg) return;
     this.editForm = {
-      name:               this.pkg.name,
+      title_en:           this.pkg.title_en           ?? '',
+      title_ar:           this.pkg.title_ar           ?? '',
       price:              parseFloat(this.pkg.price),
       duration_days:      this.pkg.duration_days,
-      description:        this.pkg.description,
+      description_en:     this.pkg.description_en     ?? '',
+      description_ar:     this.pkg.description_ar     ?? '',
       available_listings: this.pkg.available_listings,
       features:           [...(this.pkg.features || [])],
     };
@@ -93,14 +120,26 @@ export class PackageDetailComponent implements OnInit {
   }
 
   saveEdit(): void {
-    if (!this.editForm.name || !this.editForm.price || !this.editForm.duration_days) {
-      this.errorMessage = 'Name, price, and duration are required.';
+    if (!this.editForm.title_en?.trim() && !this.editForm.title_ar?.trim()) {
+      this.errorMessage = 'At least one title (English or Arabic) is required.';
+      return;
+    }
+    if (!this.editForm.price || !this.editForm.duration_days) {
+      this.errorMessage = 'Price and duration are required.';
       return;
     }
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.packageService.update(this.pkg!.id, this.editForm).subscribe({
+    const payload: CreatePackageDto = {
+      ...this.editForm,
+      title_en:       this.editForm.title_en?.trim()       || '',
+      title_ar:       this.editForm.title_ar?.trim()       || '',
+      description_en: this.editForm.description_en?.trim() || null,
+      description_ar: this.editForm.description_ar?.trim() || null,
+    };
+
+    this.packageService.update(this.pkg!.id, payload).subscribe({
       next: (res) => {
         this.pkg            = res.data;
         this.isSubmitting   = false;
@@ -117,13 +156,8 @@ export class PackageDetailComponent implements OnInit {
     });
   }
 
-  confirmDelete(): void {
-    this.showDeleteModal = true;
-  }
-
-  cancelDelete(): void {
-    this.showDeleteModal = false;
-  }
+  confirmDelete(): void  { this.showDeleteModal = true; }
+  cancelDelete(): void   { this.showDeleteModal = false; }
 
   deletePackage(): void {
     this.isDeleting = true;

@@ -11,8 +11,8 @@
         Back
       </button>
       <div>
-        <h1>{{ pkg?.name || 'Package Detail' }}</h1>
-        <p>{{ pkg?.description || '' }}</p>
+        <h1>{{ pkg ? pkgTitle(pkg) : 'Package Detail' }}</h1>
+        <p>{{ pkg ? pkgDesc(pkg) : '' }}</p>
       </div>
     </div>
     <div class="header-actions" *ngIf="pkg && !isEditMode">
@@ -61,12 +61,20 @@
           <h2 class="section-title">Package Info</h2>
           <div class="info-grid">
             <div class="info-item">
-              <span class="info-label">Name</span>
-              <span class="info-value">{{ pkg.name }}</span>
+              <span class="info-label">Title (English)</span>
+              <span class="info-value">{{ pkg.title_en || '—' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Description</span>
-              <span class="info-value">{{ pkg.description || '—' }}</span>
+              <span class="info-label">Title (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ pkg.title_ar || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Description (English)</span>
+              <span class="info-value">{{ pkg.description_en || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Description (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ pkg.description_ar || '—' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Price</span>
@@ -126,12 +134,23 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label>Name <span class="required">*</span></label>
-              <input type="text" [(ngModel)]="editForm.name" name="name" />
+              <label>Title (English) <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.title_en" name="title_en" />
             </div>
             <div class="form-group">
-              <label>Description</label>
-              <input type="text" [(ngModel)]="editForm.description" name="description" />
+              <label>Title (Arabic) <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Description (English)</label>
+              <input type="text" [(ngModel)]="editForm.description_en" name="description_en" />
+            </div>
+            <div class="form-group">
+              <label>Description (Arabic)</label>
+              <input type="text" [(ngModel)]="editForm.description_ar" name="description_ar" dir="rtl" />
             </div>
           </div>
 
@@ -216,7 +235,7 @@
         </svg>
       </div>
       <h3>Delete Package</h3>
-      <p>Are you sure you want to delete <strong>{{ pkg?.name }}</strong>? This action cannot be undone.</p>
+      <p>Are you sure you want to delete <strong>{{ pkg ? pkgTitle(pkg) : '' }}</strong>? This action cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
         <button class="btn-danger-solid" (click)="deletePackage()" [disabled]="isDeleting">

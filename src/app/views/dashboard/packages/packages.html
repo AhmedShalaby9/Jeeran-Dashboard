@@ -27,7 +27,7 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Name</th>
+          <th>Title</th>
           <th>Description</th>
           <th>Price</th>
           <th>Duration</th>
@@ -40,8 +40,8 @@
       <tbody>
         <tr *ngFor="let pkg of packages">
           <td class="td-id">{{ pkg.id }}</td>
-          <td class="td-name">{{ pkg.name }}</td>
-          <td class="td-muted">{{ pkg.description || '—' }}</td>
+          <td class="td-name">{{ pkgTitle(pkg) }}</td>
+          <td class="td-muted">{{ pkgDesc(pkg) }}</td>
           <td class="td-price">{{ pkg.price }} EGP</td>
           <td class="td-center">{{ pkg.duration_days }}d</td>
           <td class="td-center">{{ pkg.available_listings }}</td>

@@ -129,6 +129,37 @@ $sidebar-w:   240px;
   .user-role { color: $accent; font-size: 0.75rem; margin: 0; text-transform: capitalize; }
 }
 
+.btn-lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.07);
+  color: rgba(255,255,255,0.85);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.15s, color 0.15s;
+  letter-spacing: 0.02em;
+
+  svg { flex-shrink: 0; }
+
+  .lang-alt {
+    margin-left: auto;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: $accent;
+  }
+
+  &:hover {
+    background: rgba(255,255,255,0.14);
+    color: $white;
+  }
+}
+
 .btn-logout {
   display: flex;
   align-items: center;

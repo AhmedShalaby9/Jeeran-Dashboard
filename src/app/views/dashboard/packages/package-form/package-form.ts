@@ -14,12 +14,14 @@ import { CreatePackageDto } from '../../../../core/models/package.model';
 })
 export class PackageFormComponent {
   form: CreatePackageDto = {
-    name: '',
-    price: 0,
-    duration_days: 30,
-    description: '',
+    title_en:           '',
+    title_ar:           '',
+    price:              0,
+    duration_days:      30,
+    description_en:     '',
+    description_ar:     '',
     available_listings: 0,
-    features: [],
+    features:           [],
   };
 
   featureInput = '';
@@ -52,15 +54,27 @@ export class PackageFormComponent {
   }
 
   onSubmit(): void {
-    if (!this.form.name || !this.form.price || !this.form.duration_days) {
-      this.errorMessage = 'Name, price, and duration are required.';
+    if (!this.form.title_en?.trim() && !this.form.title_ar?.trim()) {
+      this.errorMessage = 'At least one title (English or Arabic) is required.';
+      return;
+    }
+    if (!this.form.price || !this.form.duration_days) {
+      this.errorMessage = 'Price and duration are required.';
       return;
     }
 
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.packageService.create(this.form).subscribe({
+    const payload: CreatePackageDto = {
+      ...this.form,
+      title_en:       this.form.title_en?.trim()       || '',
+      title_ar:       this.form.title_ar?.trim()       || '',
+      description_en: this.form.description_en?.trim() || null,
+      description_ar: this.form.description_ar?.trim() || null,
+    };
+
+    this.packageService.create(payload).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.router.navigate(['/dashboard/packages']);
