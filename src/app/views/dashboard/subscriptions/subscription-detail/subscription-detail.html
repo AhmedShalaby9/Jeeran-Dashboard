@@ -1,0 +1,144 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>Subscription #{{ subscription?.id }}</h1>
+        <p>Full subscription details</p>
+      </div>
+    </div>
+    <button class="btn-danger"
+      *ngIf="subscription?.status === 'active'"
+      (click)="confirmCancel()">
+      Cancel Subscription
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="toast-error"   *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading subscription...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && subscription">
+
+    <!-- Subscription Info -->
+    <div class="detail-card">
+      <div class="detail-section">
+        <p class="section-title">Subscription</p>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Status</span>
+            <span class="status-badge" [ngClass]="statusBadgeClass(subscription.status)">{{ subscription.status }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Remaining Listings</span>
+            <span class="info-value">{{ subscription.remaining_listings }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Started</span>
+            <span class="info-value">{{ formatDate(subscription.start_date) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Ends</span>
+            <span class="info-value">{{ formatDate(subscription.end_date) }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Created</span>
+            <span class="info-value">{{ formatDate(subscription.created_at) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="detail-divider" />
+
+      <!-- User Info -->
+      <div class="detail-section">
+        <p class="section-title">User</p>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">ID</span>
+            <span class="info-value">{{ subscription.user?.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Name</span>
+            <span class="info-value">{{ subscription.user?.name || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ subscription.user?.email || '—' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <hr class="detail-divider" />
+
+      <!-- Package Info -->
+      <div class="detail-section">
+        <p class="section-title">Package</p>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">ID</span>
+            <span class="info-value">{{ subscription.package?.id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Name (EN)</span>
+            <span class="info-value">{{ subscription.package?.title_en || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Name (AR)</span>
+            <span class="info-value">{{ subscription.package?.title_ar || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Price</span>
+            <span class="info-value price">{{ subscription.package?.price }} EGP</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Duration</span>
+            <span class="info-value">{{ subscription.package?.duration_days }} days</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Available Listings</span>
+            <span class="info-value">{{ subscription.package?.available_listings }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- Cancel Confirm Modal -->
+  <div class="modal-overlay" *ngIf="showCancelModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/>
+          <line x1="9" y1="9" x2="15" y2="15"/>
+        </svg>
+      </div>
+      <h3>Cancel Subscription?</h3>
+      <p>This will immediately cancel the user's active subscription and clear their subscription ID. This cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="dismissCancel()" [disabled]="isCancelling">Keep</button>
+        <button class="btn-danger-solid" (click)="doCancel()" [disabled]="isCancelling">
+          <span *ngIf="!isCancelling">Yes, Cancel</span>
+          <span *ngIf="isCancelling">Cancelling...</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

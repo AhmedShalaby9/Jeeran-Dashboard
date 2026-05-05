@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { CreatePropertyDto } from '../../../../core/models/property.model';
+import { CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
 import { Project } from '../../../../core/models/project.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
@@ -43,25 +43,23 @@ export class PropertyFormComponent implements OnInit {
   currentStep = 0;
 
   // ── Enum options ──────────────────────────────────────────
-  readonly propertyTypes = [
-    { value: 'villa',            labelEn: 'Villa',             label: 'فيلا'          },
-    { value: 'apartment',        labelEn: 'Apartment',         label: 'شقة'           },
-    { value: 'chalet',           labelEn: 'Chalet',            label: 'شاليه'         },
-    { value: 'marina_apartment', labelEn: 'Marina Apartment',  label: 'شقة مارينا'    },
-    { value: 'studio',           labelEn: 'Studio',            label: 'استوديو'       },
-    { value: 'duplex',           labelEn: 'Duplex',            label: 'دوبلكس'        },
-    { value: 'land',             labelEn: 'Land',              label: 'أرض'           },
-    { value: 'clinic',           labelEn: 'Clinic',            label: 'عيادة'         },
-    { value: 'office',           labelEn: 'Office',            label: 'مكتب'          },
-    { value: 'shop',             labelEn: 'Shop',              label: 'محل'           },
-  ];
+  readonly propertyTypes: { value: PropertyType; en: string; ar: string }[] =
+    (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map(key => ({
+      value: key, ...PROPERTY_TYPE_LABELS[key],
+    }));
 
-  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
-  readonly statusLabels: Record<string, string> = {
-    for_sale:           'For Sale',
-    for_rent:           'For Rent',
-    for_rent_furnished: 'For Rent (Furnished)',
-  };
+  readonly propertyStatuses: { value: PropertyStatus; en: string; ar: string }[] =
+    (Object.keys(PROPERTY_STATUS_LABELS) as PropertyStatus[]).map(key => ({
+      value: key, ...PROPERTY_STATUS_LABELS[key],
+    }));
+
+  typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
+  }
+
+  statusLabel(status: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_STATUS_LABELS[status as PropertyStatus]?.[lang] ?? status;
+  }
 
   readonly states = [
     { value: 'cairo',           label: 'Cairo'         },
@@ -142,10 +140,6 @@ export class PropertyFormComponent implements OnInit {
   }
 
   // ── Helpers ───────────────────────────────────────────────
-  get typeLabel(): string {
-    return this.propertyTypes.find(t => t.value === this.form.property_type)?.labelEn
-      || this.form.property_type;
-  }
 
   get stateLabel(): string {
     return this.states.find(s => s.value === this.form.state)?.label || this.form.state || '';

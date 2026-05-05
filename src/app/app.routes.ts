@@ -28,6 +28,9 @@ import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/
 import { ChatComponent } from './views/dashboard/chat/chat';
 import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
 import { NotificationsComponent } from './views/dashboard/notifications/notifications';
+import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscriptions';
+import { SubscriptionDetailComponent } from './views/dashboard/subscriptions/subscription-detail/subscription-detail';
+import { SettingsComponent } from './views/dashboard/settings/settings';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
 
@@ -82,6 +85,13 @@ export const routes: Routes = [
 
       // Notifications
       { path: 'notifications',     component: NotificationsComponent },
+
+      // Subscriptions
+      { path: 'subscriptions',     component: SubscriptionsComponent },
+      { path: 'subscriptions/:id', component: SubscriptionDetailComponent },
+
+      // Settings
+      { path: 'settings', component: SettingsComponent },
 
       { path: '',                  redirectTo: 'home', pathMatch: 'full' },
     ],

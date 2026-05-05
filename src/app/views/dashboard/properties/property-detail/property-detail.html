@@ -12,7 +12,7 @@
       </button>
       <div>
         <h1>{{ property?.title_ar || property?.title_en || property?.title || 'Property' }}</h1>
-        <p>{{ typeLabels[property?.property_type ?? ''] || property?.property_type }} · {{ statusLabels[property?.property_status ?? ''] || property?.property_status }}</p>
+        <p>{{ typeLabel(property?.property_type ?? '') }} · {{ statusLabel(property?.property_status ?? '') }}</p>
       </div>
     </div>
     <div class="header-actions" *ngIf="property && !isEditMode">
@@ -89,9 +89,9 @@
             <div class="price-row">
               <span class="price-tag" dir="rtl">{{ formatPrice(property.price) }}</span>
               <div class="status-pills">
-                <span class="type-pill">{{ typeLabels[property.property_type] || property.property_type }}</span>
+                <span class="type-pill">{{ typeLabel(property.property_type) }}</span>
                 <span class="status-pill" [ngClass]="statusClass(property.property_status)">
-                  {{ statusLabels[property.property_status] || property.property_status }}
+                  {{ statusLabel(property.property_status) }}
                 </span>
                 <span class="featured-pill" *ngIf="property.is_featured">
                   ★ Featured
@@ -260,13 +260,13 @@
             <div class="form-group">
               <label>Property Type <span class="required">*</span></label>
               <select [(ngModel)]="editForm.property_type" name="property_type">
-                <option *ngFor="let t of propertyTypes" [value]="t.value">{{ t.label }}</option>
+                <option *ngFor="let t of propertyTypes" [value]="t.value">{{ t.en }}</option>
               </select>
             </div>
             <div class="form-group">
               <label>Status</label>
               <select [(ngModel)]="editForm.property_status" name="property_status">
-                <option *ngFor="let s of propertyStatuses" [value]="s">{{ statusLabels[s] }}</option>
+                <option *ngFor="let s of propertyStatuses" [value]="s.value">{{ s.en }}</option>
               </select>
             </div>
           </div>

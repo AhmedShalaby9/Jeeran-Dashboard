@@ -217,14 +217,14 @@ export class NotificationsComponent implements OnInit {
     }
   }
 
-  audienceBadgeClass(audience: NotificationAudience): string {
+  audienceBadgeClass(audience: NotificationAudience | undefined): string {
     const map: Record<NotificationAudience, string> = {
       all:                'badge-all',
       registered_between: 'badge-date',
       user_type:          'badge-type',
       single_user:        'badge-single',
     };
-    return map[audience] || '';
+    return audience ? map[audience] : '';
   }
 
   typeClass(type: NotificationType): string {

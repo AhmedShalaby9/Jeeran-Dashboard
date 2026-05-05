@@ -87,7 +87,7 @@
                   <p class="prop-title-cell" dir="rtl">{{ propTitle(prop) }}</p>
                   <p class="prop-status-cell">
                     <span class="listing-badge" [ngClass]="'badge-' + prop.property_status">
-                      {{ statusLabels[prop.property_status] || prop.property_status }}
+                      {{ statusLabel(prop.property_status) }}
                     </span>
                   </p>
                 </div>
@@ -96,7 +96,7 @@
 
             <!-- Type -->
             <td>
-              <span class="type-tag">{{ typeLabels[prop.property_type] || prop.property_type }}</span>
+              <span class="type-tag">{{ typeLabel(prop.property_type) }}</span>
             </td>
 
             <!-- Price -->

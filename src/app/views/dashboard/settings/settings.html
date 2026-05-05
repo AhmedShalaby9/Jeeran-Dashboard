@@ -1,0 +1,110 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Manage app versions, store links, and static pages</p>
+    </div>
+    <button class="btn-primary" (click)="save()" [disabled]="isSubmitting || isLoading">
+      <span *ngIf="!isSubmitting">Save Changes</span>
+      <span *ngIf="isSubmitting" class="saving-row">
+        <span class="spinner-sm"></span> Saving...
+      </span>
+    </button>
+  </div>
+
+  <div class="toast-success" *ngIf="successMessage">{{ successMessage }}</div>
+  <div class="error-msg"     *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading settings...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- Tabs -->
+    <div class="tabs-bar">
+      <button class="tab-btn" [class.active]="activeTab === 'app'"   (click)="setTab('app')">App & Versions</button>
+      <button class="tab-btn" [class.active]="activeTab === 'terms'" (click)="setTab('terms')">Terms & Conditions</button>
+      <button class="tab-btn" [class.active]="activeTab === 'about'" (click)="setTab('about')">About Us</button>
+    </div>
+
+    <!-- App & Versions tab -->
+    <div class="settings-card" *ngIf="activeTab === 'app'">
+
+      <div class="settings-section">
+        <p class="section-title">Minimum App Versions</p>
+        <p class="section-desc">Users on lower versions will be prompted to update.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>iOS Min Version</label>
+            <input type="text" [(ngModel)]="form.min_version_ios" placeholder="e.g. 1.0.0" />
+          </div>
+          <div class="form-group">
+            <label>Android Min Version</label>
+            <input type="text" [(ngModel)]="form.min_version_android" placeholder="e.g. 1.0.0" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="settings-section">
+        <p class="section-title">Store Links</p>
+        <p class="section-desc">Deep links shown in update prompts and app onboarding.</p>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>App Store URL (iOS)</label>
+            <input type="url" [(ngModel)]="form.app_store_url" placeholder="https://apps.apple.com/..." />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group full">
+            <label>Google Play URL (Android)</label>
+            <input type="url" [(ngModel)]="form.google_play_url" placeholder="https://play.google.com/..." />
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Terms tab -->
+    <div class="settings-card" *ngIf="activeTab === 'terms'">
+      <div class="settings-section">
+        <p class="section-title">Terms & Conditions</p>
+        <p class="section-desc">Accepts full HTML. Use heading and paragraph tags for formatting.</p>
+        <div class="html-editors">
+          <div class="form-group">
+            <label>English</label>
+            <textarea [(ngModel)]="form.terms_en" rows="20" placeholder="<h1>Terms</h1><p>...</p>" dir="ltr"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Arabic</label>
+            <textarea [(ngModel)]="form.terms_ar"  rows="20" placeholder="<h1>الشروط</h1><p>...</p>" dir="rtl"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Us tab -->
+    <div class="settings-card" *ngIf="activeTab === 'about'">
+      <div class="settings-section">
+        <p class="section-title">About Us</p>
+        <p class="section-desc">Accepts full HTML. Use heading and paragraph tags for formatting.</p>
+        <div class="html-editors">
+          <div class="form-group">
+            <label>English</label>
+            <textarea [(ngModel)]="form.about_us_en" rows="20" placeholder="<h1>About Us</h1><p>...</p>" dir="ltr"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Arabic</label>
+            <textarea [(ngModel)]="form.about_us_ar" rows="20" placeholder="<h1>من نحن</h1><p>...</p>" dir="rtl"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

@@ -209,7 +209,7 @@
                 class="type-chip"
                 [class.selected]="form.property_type === t.value"
                 (click)="form.property_type = t.value">
-                {{ t.labelEn }}
+                {{ t.en }}
               </button>
             </div>
           </div>
@@ -220,12 +220,12 @@
               <button type="button"
                 *ngFor="let s of propertyStatuses"
                 class="status-chip"
-                [class.selected]="form.property_status === s"
-                [class.chip-sale]="s === 'for_sale'"
-                [class.chip-rent]="s === 'for_rent'"
-                [class.chip-rent-furnished]="s === 'for_rent_furnished'"
-                (click)="form.property_status = s">
-                {{ statusLabels[s] }}
+                [class.selected]="form.property_status === s.value"
+                [class.chip-sale]="s.value === 'for_sale'"
+                [class.chip-rent]="s.value === 'for_rent'"
+                [class.chip-rent-furnished]="s.value === 'for_rent_furnished'"
+                (click)="form.property_status = s.value">
+                {{ s.en }}
               </button>
             </div>
           </div>
@@ -279,8 +279,8 @@
             <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
           </svg>
           <span dir="rtl">{{ form.price | number }} ج.م</span>
-          <span class="price-type-tag">{{ typeLabel }}</span>
-          <span class="price-status-tag" [ngClass]="'tag-' + form.property_status">{{ statusLabels[form.property_status] }}</span>
+          <span class="price-type-tag">{{ typeLabel(form.property_type) }}</span>
+          <span class="price-status-tag" [ngClass]="'tag-' + form.property_status">{{ statusLabel(form.property_status) }}</span>
         </div>
 
       </div>
@@ -631,7 +631,7 @@
             </div>
             <div class="summary-item">
               <span class="summary-label">Type</span>
-              <span class="summary-val">{{ typeLabel }}</span>
+              <span class="summary-val">{{ typeLabel(form.property_type) }}</span>
             </div>
             <div class="summary-item">
               <span class="summary-label">Status</span>

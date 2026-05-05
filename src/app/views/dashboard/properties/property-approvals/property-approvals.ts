@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../../core/services/property.service';
 import { ProjectService } from '../../../../core/services/project.service';
-import { Property } from '../../../../core/models/property.model';
+import { Property, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
 import { Project } from '../../../../core/models/project.model';
 
 type ApprovalTab = 'all' | 'pending' | 'approved' | 'rejected';
@@ -48,14 +48,13 @@ export class PropertyApprovalsComponent implements OnInit {
   toast: { type: 'success' | 'error'; message: string } | null = null;
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
 
-  readonly typeLabels: Record<string, string> = {
-    villa: 'فيلا', apartment: 'شقة', chalet: 'شاليه',
-    marina_apartment: 'شقة مارينا', studio: 'استوديو', duplex: 'دوبلكس',
-    land: 'أرض', clinic: 'عيادة', office: 'مكتب', shop: 'محل',
-  };
-  readonly statusLabels: Record<string, string> = {
-    for_sale: 'For Sale', for_rent: 'For Rent', for_rent_furnished: 'For Rent (Furnished)',
-  };
+  typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
+  }
+
+  statusLabel(status: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_STATUS_LABELS[status as PropertyStatus]?.[lang] ?? status;
+  }
   readonly stateLabels: Record<string, string> = {
     cairo: 'القاهرة', north_coast: 'الساحل الشمالي', sharm_el_sheikh: 'شرم الشيخ',
   };

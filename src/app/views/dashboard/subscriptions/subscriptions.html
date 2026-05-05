@@ -1,0 +1,98 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Subscriptions</h1>
+      <p>View and manage all user subscriptions</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="filterStatus">
+        <option value="">All</option>
+        <option value="active">Active</option>
+        <option value="expired">Expired</option>
+        <option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>User Name</label>
+      <input type="text" [(ngModel)]="filterUserName" placeholder="Search by name" />
+    </div>
+    <div class="filter-group">
+      <label>Package</label>
+      <select [(ngModel)]="filterPackageId">
+        <option value="">All Packages</option>
+        <option *ngFor="let p of packages" [value]="p.id">
+          {{ p.title_en || p.title_ar || 'Package #' + p.id }}
+        </option>
+      </select>
+    </div>
+    <button class="btn-apply" (click)="applyFilters()">Apply</button>
+    <button class="btn-reset" (click)="resetFilters()">Reset</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading subscriptions...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card" *ngIf="!isLoading">
+    <div class="table-meta">{{ total }} subscription{{ total !== 1 ? 's' : '' }} found</div>
+
+    <table class="sub-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Email</th>
+          <th>Package</th>
+          <th>Status</th>
+          <th>Remaining</th>
+          <th>Started</th>
+          <th>Ends</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of subscriptions">
+          <td class="td-id">{{ s.id }}</td>
+          <td class="td-name">{{ s.user?.name || '—' }}</td>
+          <td class="td-muted">{{ s.user?.email || '—' }}</td>
+          <td class="td-pkg">{{ s.package?.title_en || s.package?.title_ar || '—' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="statusBadgeClass(s.status)">{{ s.status }}</span>
+          </td>
+          <td class="td-center">{{ s.remaining_listings }}</td>
+          <td class="td-date">{{ formatDate(s.start_date) }}</td>
+          <td class="td-date">{{ formatDate(s.end_date) }}</td>
+          <td>
+            <button class="btn-view" (click)="goToDetail(s.id)">
+              View
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="subscriptions.length === 0">
+          <td colspan="9" class="empty-row">No subscriptions found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-row" *ngIf="totalPages > 1">
+      <button class="page-btn" (click)="goToPage(page - 1)" [disabled]="page === 1">‹</button>
+      <span class="page-info">Page {{ page }} of {{ totalPages }}</span>
+      <button class="page-btn" (click)="goToPage(page + 1)" [disabled]="page === totalPages">›</button>
+    </div>
+  </div>
+
+</div>

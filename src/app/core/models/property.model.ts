@@ -1,5 +1,41 @@
 // MODEL — defines the shape of property data
 
+export type PropertyType =
+  | 'villa'
+  | 'apartment'
+  | 'chalet'
+  | 'marina_apartment'
+  | 'studio'
+  | 'duplex'
+  | 'land'
+  | 'clinic'
+  | 'office'
+  | 'shop';
+
+export type PropertyStatus =
+  | 'for_sale'
+  | 'for_rent'
+  | 'for_rent_furnished';
+
+export const PROPERTY_TYPE_LABELS: Record<PropertyType, { en: string; ar: string }> = {
+  villa:            { en: 'Villa',            ar: 'فيلا'       },
+  apartment:        { en: 'Apartment',        ar: 'شقة'        },
+  chalet:           { en: 'Chalet',           ar: 'شاليه'      },
+  marina_apartment: { en: 'Marina Apartment', ar: 'شقة مارينا' },
+  studio:           { en: 'Studio',           ar: 'استوديو'    },
+  duplex:           { en: 'Duplex',           ar: 'دوبلكس'     },
+  land:             { en: 'Land',             ar: 'أرض'        },
+  clinic:           { en: 'Clinic',           ar: 'عيادة'      },
+  office:           { en: 'Office',           ar: 'مكتب'       },
+  shop:             { en: 'Shop',             ar: 'محل'        },
+};
+
+export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, { en: string; ar: string }> = {
+  for_sale:           { en: 'For Sale',             ar: 'للبيع'         },
+  for_rent:           { en: 'For Rent',             ar: 'للإيجار'       },
+  for_rent_furnished: { en: 'For Rent (Furnished)', ar: 'للإيجار مفروش' },
+};
+
 export interface Property {
   id:               number;
   legacy_id:        number | null;

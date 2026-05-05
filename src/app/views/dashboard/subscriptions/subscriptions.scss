@@ -1,0 +1,211 @@
+@use '../shared-page';
+
+$primary:    #1e3a6e;
+$white:      #ffffff;
+$bg:         #f4f6f8;
+$text-dark:  #1a1f2e;
+$text-muted: #6b7280;
+$border:     #e5e7eb;
+
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  select, input {
+    padding: 0.55rem 0.75rem;
+    border: 1px solid $border;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: $text-dark;
+    background: $white;
+    outline: none;
+    min-width: 140px;
+    font-family: inherit;
+
+    &:focus { border-color: $primary; }
+  }
+}
+
+.btn-apply {
+  padding: 0.575rem 1.1rem;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: #152c54; }
+}
+
+.btn-reset {
+  padding: 0.575rem 1.1rem;
+  background: $white;
+  color: $text-muted;
+  border: 1px solid $border;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: $bg; }
+}
+
+.table-card {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  overflow: hidden;
+}
+
+.table-meta {
+  padding: 0.85rem 1.25rem;
+  font-size: 0.82rem;
+  color: $text-muted;
+  border-bottom: 1px solid $border;
+}
+
+.sub-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+
+  thead tr { background: $bg; border-bottom: 1px solid $border; }
+
+  th {
+    padding: 0.85rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    color: $text-muted;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 0.9rem 1rem;
+    color: $text-dark;
+    border-bottom: 1px solid $border;
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: #fafafa; }
+}
+
+.td-id     { color: $text-muted; width: 40px; }
+.td-name   { font-weight: 600; }
+.td-muted  { color: $text-muted; }
+.td-pkg    { max-width: 180px; }
+.td-center { text-align: center; }
+.td-date   { color: $text-muted; font-size: 0.82rem; white-space: nowrap; }
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+
+  &.badge-active    { background: #dcfce7; color: #16a34a; }
+  &.badge-expired   { background: #f3f4f6; color: #6b7280; }
+  &.badge-cancelled { background: #fee2e2; color: #dc2626; }
+}
+
+.btn-view {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.4rem 0.85rem;
+  border: 1.5px solid $border;
+  border-radius: 6px;
+  background: $white;
+  color: $primary;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover { background: $primary; color: $white; border-color: $primary; }
+}
+
+.empty-row {
+  text-align: center;
+  color: $text-muted;
+  padding: 3rem !important;
+  font-size: 0.9rem;
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 4rem 0;
+  color: $text-muted;
+
+  .spinner-lg {
+    width: 40px;
+    height: 40px;
+    border: 3px solid $border;
+    border-top-color: $primary;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+.pagination-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-top: 1px solid $border;
+}
+
+.page-btn {
+  min-width: 34px;
+  height: 34px;
+  padding: 0 0.5rem;
+  border: 1px solid $border;
+  border-radius: 6px;
+  background: $white;
+  color: $text-dark;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) { background: $primary; color: $white; border-color: $primary; }
+  &:disabled { opacity: 0.4; cursor: not-allowed; }
+}
+
+.page-info {
+  font-size: 0.85rem;
+  color: $text-muted;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

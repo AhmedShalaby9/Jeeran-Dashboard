@@ -4,7 +4,10 @@
       "Bash(npx ng:*)",
       "Bash(node -e \"const a=require\\('./angular.json'\\); const proj=Object.keys\\(a.projects\\)[0]; const build=a.projects[proj].architect.build; console.log\\(JSON.stringify\\({configurations: Object.keys\\(build.configurations\\), fileReplacements: build.configurations}, null, 2\\)\\)\")",
       "Bash(node:*)",
-      "Bash(git:*)"
+      "Bash(git:*)",
+      "Bash(grep -E \"\\\\.model\\\\.ts$\")",
+      "Bash(grep -E \"\\\\.service\\\\.ts$\")",
+      "Bash(grep -E \"\\\\.\\(ts|html\\)$\")"
     ]
   }
 }

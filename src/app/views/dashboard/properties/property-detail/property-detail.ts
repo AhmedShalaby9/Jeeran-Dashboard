@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
-import { Property, CreatePropertyDto } from '../../../../core/models/property.model';
+import { Property, CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
 
 @Component({
   selector: 'app-property-detail',
@@ -28,28 +28,23 @@ export class PropertyDetailComponent implements OnInit {
   // Lightbox
   lightboxIndex: number | null = null;
 
-  readonly propertyTypes = [
-    { value: 'villa',            label: 'فيلا'          },
-    { value: 'apartment',        label: 'شقة'           },
-    { value: 'chalet',           label: 'شاليه'         },
-    { value: 'marina_apartment', label: 'شقة مارينا'    },
-    { value: 'studio',           label: 'استوديو'       },
-    { value: 'duplex',           label: 'دوبلكس'        },
-    { value: 'land',             label: 'أرض'           },
-    { value: 'clinic',           label: 'عيادة'         },
-    { value: 'office',           label: 'مكتب'          },
-    { value: 'shop',             label: 'محل'           },
-  ];
-  readonly typeLabels: Record<string, string> = Object.fromEntries(
-    this.propertyTypes.map(t => [t.value, t.label])
-  );
+  readonly propertyTypes: { value: PropertyType; en: string; ar: string }[] =
+    (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map(key => ({
+      value: key, ...PROPERTY_TYPE_LABELS[key],
+    }));
 
-  readonly propertyStatuses = ['for_sale', 'for_rent', 'for_rent_furnished'];
-  readonly statusLabels: Record<string, string> = {
-    for_sale:           'For Sale',
-    for_rent:           'For Rent',
-    for_rent_furnished: 'For Rent (Furnished)',
-  };
+  readonly propertyStatuses: { value: PropertyStatus; en: string; ar: string }[] =
+    (Object.keys(PROPERTY_STATUS_LABELS) as PropertyStatus[]).map(key => ({
+      value: key, ...PROPERTY_STATUS_LABELS[key],
+    }));
+
+  typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
+  }
+
+  statusLabel(status: string, lang: 'en' | 'ar' = 'en'): string {
+    return PROPERTY_STATUS_LABELS[status as PropertyStatus]?.[lang] ?? status;
+  }
 
   readonly states = [
     { value: 'cairo',           label: 'القاهرة'         },

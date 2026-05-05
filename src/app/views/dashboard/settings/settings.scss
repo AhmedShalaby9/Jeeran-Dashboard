@@ -1,0 +1,126 @@
+@use '../shared-page';
+
+$primary:    #1e3a6e;
+$white:      #ffffff;
+$bg:         #f4f6f8;
+$text-dark:  #1a1f2e;
+$text-muted: #6b7280;
+$border:     #e5e7eb;
+
+.tabs-bar {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid $border;
+  padding-bottom: 0;
+}
+
+.tab-btn {
+  padding: 0.6rem 1.25rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: $text-muted;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+
+  &:hover { color: $text-dark; }
+
+  &.active {
+    color: $primary;
+    font-weight: 700;
+    border-bottom-color: $primary;
+  }
+}
+
+.settings-card {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $border;
+  overflow: hidden;
+}
+
+.settings-section {
+  padding: 1.75rem 2rem;
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid $border;
+  margin: 0;
+}
+
+.section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $text-dark;
+  margin: 0 0 0.25rem;
+}
+
+.section-desc {
+  font-size: 0.83rem;
+  color: $text-muted;
+  margin: 0 0 1.25rem;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+
+  &:last-child { margin-bottom: 0; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  &.full { grid-column: 1 / -1; }
+
+  label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  input, textarea {
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid $border;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: $text-dark;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+    background: $white;
+
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+    &::placeholder { color: #9ca3af; }
+  }
+
+  textarea {
+    resize: vertical;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+}
+
+.html-editors {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.saving-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
