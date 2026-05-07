@@ -31,6 +31,18 @@ export class SubscriptionService {
     });
   }
 
+  approve(id: number): Observable<{ success: boolean; data: Subscription }> {
+    return this.http.patch<{ success: boolean; data: Subscription }>(
+      `${this.url}/admin/${id}/approve`, {}, { headers: this.headers() },
+    );
+  }
+
+  reject(id: number): Observable<{ success: boolean; message: string }> {
+    return this.http.patch<{ success: boolean; message: string }>(
+      `${this.url}/admin/${id}/reject`, {}, { headers: this.headers() },
+    );
+  }
+
   cancelAdmin(id: number): Observable<{ success: boolean; message: string }> {
     return this.http.patch<{ success: boolean; message: string }>(
       `${this.url}/admin/${id}/cancel`, {}, { headers: this.headers() },

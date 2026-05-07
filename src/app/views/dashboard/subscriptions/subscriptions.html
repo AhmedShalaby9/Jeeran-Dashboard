@@ -7,15 +7,22 @@
     </div>
   </div>
 
+  <!-- Error toast -->
+  <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
   <!-- Filters -->
   <div class="filters-bar">
     <div class="filter-group">
       <label>Status</label>
       <select [(ngModel)]="filterStatus">
         <option value="">All</option>
+        <option value="pending_payment">Pending Payment</option>
+        <option value="pending_approval">Pending Approval</option>
         <option value="active">Active</option>
-        <option value="expired">Expired</option>
+        <option value="rejected">Rejected</option>
         <option value="cancelled">Cancelled</option>
+        <option value="upgraded">Upgraded</option>
+        <option value="expired">Expired</option>
       </select>
     </div>
     <div class="filter-group">
@@ -50,28 +57,48 @@
         <tr>
           <th>#</th>
           <th>User</th>
-          <th>Email</th>
+          <th>Phone</th>
           <th>Package</th>
           <th>Status</th>
-          <th>Remaining</th>
-          <th>Started</th>
-          <th>Ends</th>
-          <th></th>
+          <th>Paid</th>
+          <th>Created</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let s of subscriptions">
           <td class="td-id">{{ s.id }}</td>
           <td class="td-name">{{ s.user?.name || '—' }}</td>
-          <td class="td-muted">{{ s.user?.email || '—' }}</td>
+          <td class="td-muted">{{ s.user?.phone || '—' }}</td>
           <td class="td-pkg">{{ s.package?.title_en || s.package?.title_ar || '—' }}</td>
           <td>
-            <span class="status-badge" [ngClass]="statusBadgeClass(s.status)">{{ s.status }}</span>
+            <span class="status-badge" [ngClass]="statusBadgeClass(s.status)">{{ s.status | titlecase }}</span>
           </td>
-          <td class="td-center">{{ s.remaining_listings }}</td>
-          <td class="td-date">{{ formatDate(s.start_date) }}</td>
-          <td class="td-date">{{ formatDate(s.end_date) }}</td>
-          <td>
+          <td class="td-center">
+            <span class="paid-chip" [class.paid]="s.is_paid">{{ s.is_paid ? 'Yes' : 'No' }}</span>
+          </td>
+          <td class="td-date">{{ formatDate(s.created_at) }}</td>
+          <td class="td-actions">
+            <a *ngIf="s.payment_proof_url"
+               [href]="s.payment_proof_url"
+               target="_blank"
+               class="btn-proof"
+               rel="noopener noreferrer">
+              View Proof
+            </a>
+            <ng-container *ngIf="s.status === 'pending_approval'">
+              <button class="btn-approve"
+                      [disabled]="actingId === s.id"
+                      (click)="approveRow(s.id)">
+                <span class="spinner-sm" *ngIf="actingId === s.id"></span>
+                <span *ngIf="actingId !== s.id">Approve</span>
+              </button>
+              <button class="btn-reject"
+                      [disabled]="actingId === s.id"
+                      (click)="rejectRow(s.id)">
+                <span *ngIf="actingId !== s.id">Reject</span>
+              </button>
+            </ng-container>
             <button class="btn-view" (click)="goToDetail(s.id)">
               View
               <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -82,7 +109,7 @@
           </td>
         </tr>
         <tr *ngIf="subscriptions.length === 0">
-          <td colspan="9" class="empty-row">No subscriptions found.</td>
+          <td colspan="8" class="empty-row">No subscriptions found.</td>
         </tr>
       </tbody>
     </table>

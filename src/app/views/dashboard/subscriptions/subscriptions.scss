@@ -133,6 +133,10 @@ $border:     #e5e7eb;
   &.badge-active    { background: #dcfce7; color: #16a34a; }
   &.badge-expired   { background: #f3f4f6; color: #6b7280; }
   &.badge-cancelled { background: #fee2e2; color: #dc2626; }
+  &.badge-warning  { background: #fef3c7; color: #b45309; }
+  &.badge-info     { background: #fff7ed; color: #c2410c; }
+  &.badge-rejected { background: #fef2f2; color: #dc2626; }
+  &.badge-upgraded { background: #eff6ff; color: #1d4ed8; }
 }
 
 .btn-view {
@@ -206,6 +210,90 @@ $border:     #e5e7eb;
 .page-info {
   font-size: 0.85rem;
   color: $text-muted;
+}
+
+.td-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.btn-proof {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border: 1.5px solid #c2410c;
+  border-radius: 6px;
+  background: #fff7ed;
+  color: #c2410c;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover { background: #c2410c; color: #fff; }
+}
+
+.btn-approve {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.35rem 0.7rem;
+  border: none;
+  border-radius: 6px;
+  background: #16a34a;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) { background: #15803d; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-reject {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.7rem;
+  border: 1.5px solid #fecaca;
+  border-radius: 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) { background: #dc2626; color: #fff; border-color: #dc2626; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.paid-chip {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  background: #f3f4f6;
+  color: #6b7280;
+
+  &.paid { background: #dcfce7; color: #16a34a; }
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }

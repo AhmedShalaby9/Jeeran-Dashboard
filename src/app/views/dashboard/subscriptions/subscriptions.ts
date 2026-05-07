@@ -18,8 +18,9 @@ export class SubscriptionsComponent implements OnInit {
   subscriptions: Subscription[] = [];
   packages: Package[] = [];
   isLoading = false;
+  errorMessage = '';
 
-  filterStatus: SubscriptionStatus | '' = '';
+  filterStatus: SubscriptionStatus | '' = 'pending_approval';
   filterUserName = '';
   filterPackageId: number | '' = '';
 
@@ -27,6 +28,8 @@ export class SubscriptionsComponent implements OnInit {
   limit = 20;
   totalPages = 1;
   total = 0;
+
+  actingId: number | null = null;
 
   constructor(
     private subscriptionService: SubscriptionService,
@@ -50,8 +53,8 @@ export class SubscriptionsComponent implements OnInit {
     this.subscriptionService.getAdminAll(filters).subscribe({
       next: (res) => {
         this.subscriptions = res.data;
-        this.total         = res.pagination?.total ?? res.data.length;
-        this.totalPages    = res.pagination?.total_pages ?? 1;
+        this.total         = res.meta?.total ?? res.pagination?.total ?? res.data.length;
+        this.totalPages    = res.pagination?.total_pages ?? (this.total > 0 ? Math.ceil(this.total / this.limit) : 1);
         this.isLoading     = false;
         this.cdr.detectChanges();
       },
@@ -68,7 +71,7 @@ export class SubscriptionsComponent implements OnInit {
   }
 
   resetFilters(): void {
-    this.filterStatus    = '';
+    this.filterStatus    = 'pending_approval';
     this.filterUserName  = '';
     this.filterPackageId = '';
     this.page = 1;
@@ -85,16 +88,55 @@ export class SubscriptionsComponent implements OnInit {
     this.router.navigate(['/dashboard/subscriptions', id]);
   }
 
-  statusBadgeClass(status: SubscriptionStatus): string {
-    const map: Record<SubscriptionStatus, string> = {
-      active:    'badge-active',
-      expired:   'badge-expired',
-      cancelled: 'badge-cancelled',
+  approveRow(id: number): void {
+    this.actingId = id;
+    this.errorMessage = '';
+    this.subscriptionService.approve(id).subscribe({
+      next: () => {
+        this.actingId = null;
+        this.load();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.actingId = null;
+        this.errorMessage = err.error?.message || 'Failed to approve subscription.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  rejectRow(id: number): void {
+    this.actingId = id;
+    this.errorMessage = '';
+    this.subscriptionService.reject(id).subscribe({
+      next: () => {
+        this.actingId = null;
+        this.load();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.actingId = null;
+        this.errorMessage = err.error?.message || 'Failed to reject subscription.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  statusBadgeClass(status: SubscriptionStatus | string): string {
+    const map: Record<string, string> = {
+      pending_payment:  'badge-warning',
+      pending_approval: 'badge-info',
+      active:           'badge-active',
+      rejected:         'badge-rejected',
+      cancelled:        'badge-cancelled',
+      upgraded:         'badge-upgraded',
+      expired:          'badge-expired',
     };
     return map[status] ?? '';
   }
 
-  formatDate(iso: string): string {
+  formatDate(iso: string | null | undefined): string {
+    if (!iso) return '—';
     return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
   }
 }

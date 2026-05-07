@@ -22,7 +22,7 @@
     </button>
   </div>
 
-  <!-- Toast -->
+  <!-- Toasts -->
   <div class="toast-success" *ngIf="successMessage">{{ successMessage }}</div>
   <div class="toast-error"   *ngIf="errorMessage">{{ errorMessage }}</div>
 
@@ -34,18 +34,66 @@
 
   <ng-container *ngIf="!isLoading && subscription">
 
-    <!-- Subscription Info -->
+    <!-- Approve / Reject action bar -->
+    <div class="action-bar" *ngIf="subscription.status === 'pending_approval'">
+      <p class="action-hint">This subscription is awaiting your review. Verify the payment proof below before approving.</p>
+      <div class="action-btns">
+        <button class="btn-approve-lg" (click)="approve()" [disabled]="isApproving || isRejecting">
+          <span class="spinner-sm" *ngIf="isApproving"></span>
+          <svg *ngIf="!isApproving" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+          <span>{{ isApproving ? 'Approving…' : 'Approve' }}</span>
+        </button>
+        <button class="btn-reject-lg" (click)="reject()" [disabled]="isApproving || isRejecting">
+          <svg *ngIf="!isRejecting" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+          <span class="spinner-sm spinner-sm--dark" *ngIf="isRejecting"></span>
+          <span>{{ isRejecting ? 'Rejecting…' : 'Reject' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Detail Card -->
     <div class="detail-card">
+
+      <!-- Payment Proof -->
+      <div class="detail-section" *ngIf="subscription.payment_proof_url">
+        <p class="section-title">Payment Proof</p>
+        <a [href]="subscription.payment_proof_url" target="_blank" rel="noopener noreferrer" class="proof-link">
+          <img [src]="subscription.payment_proof_url" alt="Payment proof" class="proof-img" />
+          <span class="proof-caption">Click to open full size</span>
+        </a>
+      </div>
+
+      <hr class="detail-divider" *ngIf="subscription.payment_proof_url" />
+
+      <!-- Subscription Info -->
       <div class="detail-section">
         <p class="section-title">Subscription</p>
         <div class="info-grid">
           <div class="info-item">
             <span class="info-label">Status</span>
-            <span class="status-badge" [ngClass]="statusBadgeClass(subscription.status)">{{ subscription.status }}</span>
+            <span class="status-badge" [ngClass]="statusBadgeClass(subscription.status)">{{ subscription.status | titlecase }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Payment Received</span>
+            <span class="info-value">{{ subscription.is_paid ? 'Yes' : 'No' }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Remaining Listings</span>
             <span class="info-value">{{ subscription.remaining_listings }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Available Listings</span>
+            <span class="info-value">{{ subscription.available_listings }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Consumed Listings</span>
+            <span class="info-value">{{ subscription.consumed_listings }}</span>
           </div>
           <div class="info-item">
             <span class="info-label">Started</span>
@@ -58,6 +106,10 @@
           <div class="info-item">
             <span class="info-label">Created</span>
             <span class="info-value">{{ formatDate(subscription.created_at) }}</span>
+          </div>
+          <div class="info-item" *ngIf="subscription.reviewed_at">
+            <span class="info-label">Reviewed At</span>
+            <span class="info-value">{{ formatDateTime(subscription.reviewed_at) }}</span>
           </div>
         </div>
       </div>
@@ -79,6 +131,10 @@
           <div class="info-item">
             <span class="info-label">Email</span>
             <span class="info-value">{{ subscription.user?.email || '—' }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ subscription.user?.phone || '—' }}</span>
           </div>
         </div>
       </div>
@@ -130,7 +186,7 @@
         </svg>
       </div>
       <h3>Cancel Subscription?</h3>
-      <p>This will immediately cancel the user's active subscription and clear their subscription ID. This cannot be undone.</p>
+      <p>This will immediately cancel the user's active subscription. This cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="dismissCancel()" [disabled]="isCancelling">Keep</button>
         <button class="btn-danger-solid" (click)="doCancel()" [disabled]="isCancelling">

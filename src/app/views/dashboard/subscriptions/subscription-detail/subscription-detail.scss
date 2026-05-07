@@ -142,6 +142,10 @@ $border:     #e5e7eb;
   &.badge-active    { background: #dcfce7; color: #16a34a; }
   &.badge-expired   { background: #f3f4f6; color: #6b7280; }
   &.badge-cancelled { background: #fee2e2; color: #dc2626; }
+  &.badge-warning  { background: #fef3c7; color: #b45309; }
+  &.badge-info     { background: #fff7ed; color: #c2410c; }
+  &.badge-rejected { background: #fef2f2; color: #dc2626; }
+  &.badge-upgraded { background: #eff6ff; color: #1d4ed8; }
 }
 
 .modal-overlay {
@@ -217,6 +221,106 @@ $border:     #e5e7eb;
 
   &:hover    { background: #b91c1c; }
   &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.action-hint {
+  font-size: 0.875rem;
+  color: #92400e;
+  margin: 0;
+  flex: 1;
+}
+
+.action-btns {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.btn-approve-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.4rem;
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover:not(:disabled) { background: #15803d; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.btn-reject-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.4rem;
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+
+  &:hover:not(:disabled) { background: #dc2626; color: #fff; border-color: #dc2626; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}
+
+.proof-link {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.proof-img {
+  max-width: 320px;
+  max-height: 240px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid $border;
+  transition: opacity 0.15s;
+
+  &:hover { opacity: 0.85; }
+}
+
+.proof-caption {
+  font-size: 0.78rem;
+  color: $text-muted;
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+
+  &--dark {
+    border-color: rgba(220,38,38,0.3);
+    border-top-color: #dc2626;
+  }
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }

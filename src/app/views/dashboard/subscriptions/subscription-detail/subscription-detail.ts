@@ -14,6 +14,8 @@ import { Subscription, SubscriptionStatus } from '../../../../core/models/subscr
 export class SubscriptionDetailComponent implements OnInit {
   subscription: Subscription | null = null;
   isLoading       = false;
+  isApproving     = false;
+  isRejecting     = false;
   isCancelling    = false;
   showCancelModal = false;
   errorMessage    = '';
@@ -47,6 +49,46 @@ export class SubscriptionDetailComponent implements OnInit {
     });
   }
 
+  approve(): void {
+    if (!this.subscription) return;
+    this.isApproving = true;
+    this.errorMessage = '';
+    this.subscriptionService.approve(this.subscription.id).subscribe({
+      next: (res) => {
+        this.isApproving   = false;
+        this.subscription  = res.data;
+        this.successMessage = 'Subscription approved successfully.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: (err) => {
+        this.isApproving  = false;
+        this.errorMessage = err.error?.message || 'Failed to approve subscription.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  reject(): void {
+    if (!this.subscription) return;
+    this.isRejecting = true;
+    this.errorMessage = '';
+    this.subscriptionService.reject(this.subscription.id).subscribe({
+      next: () => {
+        this.isRejecting    = false;
+        this.successMessage = 'Subscription rejected.';
+        this.load(this.subscription!.id);
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: (err) => {
+        this.isRejecting  = false;
+        this.errorMessage = err.error?.message || 'Failed to reject subscription.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   confirmCancel(): void { this.showCancelModal = true; }
   dismissCancel(): void { this.showCancelModal = false; }
 
@@ -69,17 +111,27 @@ export class SubscriptionDetailComponent implements OnInit {
     });
   }
 
-  statusBadgeClass(status: SubscriptionStatus): string {
-    const map: Record<SubscriptionStatus, string> = {
-      active:    'badge-active',
-      expired:   'badge-expired',
-      cancelled: 'badge-cancelled',
+  statusBadgeClass(status: SubscriptionStatus | string): string {
+    const map: Record<string, string> = {
+      pending_payment:  'badge-warning',
+      pending_approval: 'badge-info',
+      active:           'badge-active',
+      rejected:         'badge-rejected',
+      cancelled:        'badge-cancelled',
+      upgraded:         'badge-upgraded',
+      expired:          'badge-expired',
     };
     return map[status] ?? '';
   }
 
-  formatDate(iso: string): string {
+  formatDate(iso: string | null | undefined): string {
+    if (!iso) return '—';
     return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  formatDateTime(iso: string | null | undefined): string {
+    if (!iso) return '—';
+    return new Date(iso).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
   }
 
   goBack(): void {
