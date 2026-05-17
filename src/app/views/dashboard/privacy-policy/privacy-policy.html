@@ -1,0 +1,149 @@
+<div class="page">
+
+  <!-- ── Header ── -->
+  <div class="page-header">
+    <div>
+      <h1>Privacy Policy</h1>
+      <p>Manage the privacy policy displayed in the app and website</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-ghost" (click)="resetToDefault()" [disabled]="isLoading || isSubmitting"
+        title="Restore generated default content">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 .49-4.5"/>
+        </svg>
+        Reset to Default
+      </button>
+      <button class="btn-primary" (click)="save()" [disabled]="isLoading || isSubmitting">
+        <span *ngIf="!isSubmitting">
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          Save Changes
+        </span>
+        <span *ngIf="isSubmitting" class="saving-row">
+          <span class="spinner-sm"></span> Saving…
+        </span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Toasts ── -->
+  <div class="toast-success" *ngIf="successMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="20 6 9 17 4 12"/>
+    </svg>
+    {{ successMessage }}
+  </div>
+  <div class="error-msg" *ngIf="errorMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <!-- ── Loading ── -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading privacy policy…</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <!-- ── Toolbar: lang + mode ── -->
+    <div class="editor-toolbar">
+      <div class="lang-tabs">
+        <button class="lang-tab" [class.active]="activeLang === 'en'" (click)="setLang('en')">
+          🇬🇧 English
+        </button>
+        <button class="lang-tab" [class.active]="activeLang === 'ar'" (click)="setLang('ar')">
+          🇸🇦 Arabic
+        </button>
+      </div>
+      <div class="mode-tabs">
+        <button class="mode-tab" [class.active]="viewMode === 'edit'"    (click)="setMode('edit')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Edit
+        </button>
+        <button class="mode-tab" [class.active]="viewMode === 'preview'" (click)="setMode('preview')">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+          Preview
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Edit mode ── -->
+    <div class="editor-card" *ngIf="viewMode === 'edit'">
+      <div class="editor-hint">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>
+          <line x1="12" y1="8" x2="12.01" y2="8"/>
+        </svg>
+        Accepts full HTML &mdash; use <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;ul&gt;</code>, <code>&lt;strong&gt;</code>, etc.
+      </div>
+
+      <!-- English editor -->
+      <div class="editor-pane" *ngIf="activeLang === 'en'">
+        <div class="editor-label">
+          <span class="lang-flag">🇬🇧</span> English Content
+        </div>
+        <textarea
+          [(ngModel)]="form.content_en"
+          name="content_en"
+          rows="40"
+          dir="ltr"
+          class="html-editor"
+          placeholder="<h1>Privacy Policy</h1><p>...</p>"
+          spellcheck="false">
+        </textarea>
+      </div>
+
+      <!-- Arabic editor -->
+      <div class="editor-pane" *ngIf="activeLang === 'ar'">
+        <div class="editor-label">
+          <span class="lang-flag">🇸🇦</span> Arabic Content
+        </div>
+        <textarea
+          [(ngModel)]="form.content_ar"
+          name="content_ar"
+          rows="40"
+          dir="rtl"
+          class="html-editor"
+          placeholder="<h1>سياسة الخصوصية</h1><p>...</p>"
+          spellcheck="false">
+        </textarea>
+      </div>
+    </div>
+
+    <!-- ── Preview mode ── -->
+    <div class="preview-card" *ngIf="viewMode === 'preview'">
+      <div class="preview-pane" *ngIf="activeLang === 'en'">
+        <div class="preview-badge">🇬🇧 English Preview</div>
+        <div class="preview-body prose" dir="ltr" [innerHTML]="previewEn"></div>
+      </div>
+      <div class="preview-pane" *ngIf="activeLang === 'ar'">
+        <div class="preview-badge">🇸🇦 Arabic Preview</div>
+        <div class="preview-body prose" dir="rtl" [innerHTML]="previewAr"></div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>

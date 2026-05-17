@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SettingService } from '../../../core/services/setting.service';
 import { AppSettings } from '../../../core/models/setting.model';
 
-type Tab = 'app' | 'terms' | 'about';
+type Tab = 'app' | 'terms' | 'about' | 'privacy';
 
 @Component({
   selector: 'app-settings',
@@ -29,6 +29,8 @@ export class SettingsComponent implements OnInit {
     terms_ar:            '',
     about_us_en:         '',
     about_us_ar:         '',
+    privacy_policy_en:   '',
+    privacy_policy_ar:   '',
   };
 
   constructor(private settingService: SettingService, private cdr: ChangeDetectorRef) {}
