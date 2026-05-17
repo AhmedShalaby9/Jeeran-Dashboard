@@ -1,0 +1,71 @@
+name: Deploy Angular Dashboard
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.ref_name == 'main' && 'Production' || 'Staging' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Set build configuration
+        id: vars
+        run: |
+          if [ "${{ github.ref_name }}" = "main" ]; then
+            echo "target_dir=/var/www/dashboard-prod" >> $GITHUB_OUTPUT
+            echo "env_name=production" >> $GITHUB_OUTPUT
+          else
+            echo "target_dir=/var/www/dashboard-stg" >> $GITHUB_OUTPUT
+            echo "env_name=staging" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Angular
+        run: npm run build -- --configuration=${{ steps.vars.outputs.env_name }}
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p ${{ secrets.SERVER_PORT }} -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Find build output directory
+        id: build_dir
+        run: |
+          if [ -d "dist/$(ls dist | head -1)/browser" ]; then
+            echo "path=dist/$(ls dist | head -1)/browser" >> $GITHUB_OUTPUT
+          else
+            echo "path=dist/$(ls dist | head -1)" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Deploy via rsync
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/deploy_key -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no" \
+            ${{ steps.build_dir.outputs.path }}/ \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:${{ steps.vars.outputs.target_dir }}/
+
+      - name: Cleanup
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
+
+      - name: Summary
+        run: |
+          echo "🎉 Deployed to ${{ steps.vars.outputs.env_name }}"
+          echo "📂 Server path: ${{ steps.vars.outputs.target_dir }}"
