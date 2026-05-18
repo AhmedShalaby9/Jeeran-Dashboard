@@ -205,6 +205,25 @@ export class NotificationsComponent implements OnInit {
     });
   }
 
+  // ── Body line limit (max 2 lines) ─────────────────────────
+  onBodyKeydown(field: 'body_en' | 'body_ar', event: KeyboardEvent): void {
+    if (event.key === 'Enter' && this.form[field].split('\n').length >= 2) {
+      event.preventDefault();
+    }
+  }
+
+  onBodyInput(field: 'body_en' | 'body_ar'): void {
+    const lines = this.form[field].split('\n');
+    if (lines.length > 2) {
+      this.form[field] = lines.slice(0, 2).join('\n');
+      this.cdr.detectChanges();
+    }
+  }
+
+  bodyLineCount(field: 'body_en' | 'body_ar'): number {
+    return this.form[field] ? this.form[field].split('\n').length : 0;
+  }
+
   // ── Helpers ───────────────────────────────────────────────
   audienceLabel(n: Notification): string {
     const a = n.target?.audience;
