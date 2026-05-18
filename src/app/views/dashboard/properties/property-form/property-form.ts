@@ -114,10 +114,17 @@ export class PropertyFormComponent implements OnInit {
 
   // ── Translation state ─────────────────────────────────────
   translating = {
-    titleToEn:  false,
-    titleToAr:  false,
-    descToEn:   false,
-    descToAr:   false,
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
+  };
+
+  translateErrors = {
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
   };
 
   constructor(
@@ -149,8 +156,10 @@ export class PropertyFormComponent implements OnInit {
   translateTitleToEn(): void {
     if (!this.form.title_ar?.trim() || this.translating.titleToEn) return;
     this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
     this.translationService.translate(this.form.title_ar, 'ar', 'en').subscribe(result => {
-      if (result) this.form.title_en = result;
+      if (result !== null) this.form.title_en = result;
+      else this.translateErrors.titleToEn = true;
       this.translating.titleToEn = false;
       this.cdr.detectChanges();
     });
@@ -159,8 +168,10 @@ export class PropertyFormComponent implements OnInit {
   translateTitleToAr(): void {
     if (!this.form.title_en?.trim() || this.translating.titleToAr) return;
     this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
     this.translationService.translate(this.form.title_en, 'en', 'ar').subscribe(result => {
-      if (result) this.form.title_ar = result;
+      if (result !== null) this.form.title_ar = result;
+      else this.translateErrors.titleToAr = true;
       this.translating.titleToAr = false;
       this.cdr.detectChanges();
     });
@@ -169,8 +180,10 @@ export class PropertyFormComponent implements OnInit {
   translateDescToEn(): void {
     if (!this.form.content_ar?.trim() || this.translating.descToEn) return;
     this.translating.descToEn = true;
+    this.translateErrors.descToEn = false;
     this.translationService.translate(this.form.content_ar, 'ar', 'en').subscribe(result => {
-      if (result) this.form.content_en = result;
+      if (result !== null) this.form.content_en = result;
+      else this.translateErrors.descToEn = true;
       this.translating.descToEn = false;
       this.cdr.detectChanges();
     });
@@ -179,8 +192,10 @@ export class PropertyFormComponent implements OnInit {
   translateDescToAr(): void {
     if (!this.form.content_en?.trim() || this.translating.descToAr) return;
     this.translating.descToAr = true;
+    this.translateErrors.descToAr = false;
     this.translationService.translate(this.form.content_en, 'en', 'ar').subscribe(result => {
-      if (result) this.form.content_ar = result;
+      if (result !== null) this.form.content_ar = result;
+      else this.translateErrors.descToAr = true;
       this.translating.descToAr = false;
       this.cdr.detectChanges();
     });

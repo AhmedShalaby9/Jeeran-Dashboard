@@ -49,6 +49,44 @@
           </label>
         </div>
       </div>
+
+      <!-- Name translate row -->
+      <div class="translate-row">
+        <button type="button" class="btn-translate"
+          (click)="translateNameToAr()"
+          [disabled]="translating.nameToAr || !form.name_en?.trim()">
+          <span *ngIf="!translating.nameToAr">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Translate EN → AR
+          </span>
+          <span *ngIf="translating.nameToAr" class="spinner-xs"></span>
+        </button>
+        <span class="translate-divider">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+          </svg>
+          Name Auto-translate
+        </span>
+        <button type="button" class="btn-translate"
+          (click)="translateNameToEn()"
+          [disabled]="translating.nameToEn || !form.name_ar?.trim()">
+          <span *ngIf="!translating.nameToEn">
+            Translate AR → EN
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </span>
+          <span *ngIf="translating.nameToEn" class="spinner-xs"></span>
+        </button>
+      </div>
+      <div class="translate-error" *ngIf="translateErrors.nameToEn || translateErrors.nameToAr">
+        Translation failed — please try again.
+      </div>
     </div>
 
     <div class="form-divider"></div>
@@ -175,6 +213,44 @@
           </div>
         </div>
 
+        <!-- Feature title translate row -->
+        <div class="translate-row">
+          <button type="button" class="btn-translate"
+            (click)="translateFeatTitleToAr()"
+            [disabled]="translating.featTitleToAr || !newFeature.title_en?.trim()">
+            <span *ngIf="!translating.featTitleToAr">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+              Translate EN → AR
+            </span>
+            <span *ngIf="translating.featTitleToAr" class="spinner-xs"></span>
+          </button>
+          <span class="translate-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+            </svg>
+            Title Auto-translate
+          </span>
+          <button type="button" class="btn-translate"
+            (click)="translateFeatTitleToEn()"
+            [disabled]="translating.featTitleToEn || !newFeature.title_ar?.trim()">
+            <span *ngIf="!translating.featTitleToEn">
+              Translate AR → EN
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+            <span *ngIf="translating.featTitleToEn" class="spinner-xs"></span>
+          </button>
+        </div>
+        <div class="translate-error" *ngIf="translateErrors.featTitleToEn || translateErrors.featTitleToAr">
+          Translation failed — please try again.
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label>Subtitle (Arabic)</label>
@@ -199,6 +275,44 @@
             <textarea [(ngModel)]="newFeature.desc_en" name="feat_desc_en"
               rows="3" placeholder="Detailed description in English"></textarea>
           </div>
+        </div>
+
+        <!-- Feature desc translate row -->
+        <div class="translate-row">
+          <button type="button" class="btn-translate"
+            (click)="translateFeatDescToAr()"
+            [disabled]="translating.featDescToAr || !newFeature.desc_en?.trim()">
+            <span *ngIf="!translating.featDescToAr">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+              Translate EN → AR
+            </span>
+            <span *ngIf="translating.featDescToAr" class="spinner-xs"></span>
+          </button>
+          <span class="translate-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+            </svg>
+            Description Auto-translate
+          </span>
+          <button type="button" class="btn-translate"
+            (click)="translateFeatDescToEn()"
+            [disabled]="translating.featDescToEn || !newFeature.desc_ar?.trim()">
+            <span *ngIf="!translating.featDescToEn">
+              Translate AR → EN
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+            <span *ngIf="translating.featDescToEn" class="spinner-xs"></span>
+          </button>
+        </div>
+        <div class="translate-error" *ngIf="translateErrors.featDescToEn || translateErrors.featDescToAr">
+          Translation failed — please try again.
         </div>
 
         <div class="form-group">

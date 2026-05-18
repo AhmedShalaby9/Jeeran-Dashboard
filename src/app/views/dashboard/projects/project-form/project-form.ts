@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { ProjectService } from '../../../../core/services/project.service';
 import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-project-form',
@@ -34,11 +35,102 @@ export class ProjectFormComponent {
   isSubmitting = false;
   errorMessage = '';
 
+  translating = {
+    nameToEn:       false,
+    nameToAr:       false,
+    featTitleToEn:  false,
+    featTitleToAr:  false,
+    featDescToEn:   false,
+    featDescToAr:   false,
+  };
+
+  translateErrors = {
+    nameToEn:       false,
+    nameToAr:       false,
+    featTitleToEn:  false,
+    featTitleToAr:  false,
+    featDescToEn:   false,
+    featDescToAr:   false,
+  };
+
   constructor(
-    private projectService: ProjectService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private projectService:     ProjectService,
+    private translationService: TranslationService,
+    private router:             Router,
+    private cdr:                ChangeDetectorRef,
   ) {}
+
+  translateNameToEn(): void {
+    if (!this.form.name_ar?.trim() || this.translating.nameToEn) return;
+    this.translating.nameToEn = true;
+    this.translateErrors.nameToEn = false;
+    this.translationService.translate(this.form.name_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.name_en = result;
+      else this.translateErrors.nameToEn = true;
+      this.translating.nameToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateNameToAr(): void {
+    if (!this.form.name_en?.trim() || this.translating.nameToAr) return;
+    this.translating.nameToAr = true;
+    this.translateErrors.nameToAr = false;
+    this.translationService.translate(this.form.name_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.name_ar = result;
+      else this.translateErrors.nameToAr = true;
+      this.translating.nameToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatTitleToEn(): void {
+    if (!this.newFeature.title_ar?.trim() || this.translating.featTitleToEn) return;
+    this.translating.featTitleToEn = true;
+    this.translateErrors.featTitleToEn = false;
+    this.translationService.translate(this.newFeature.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.newFeature.title_en = result;
+      else this.translateErrors.featTitleToEn = true;
+      this.translating.featTitleToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatTitleToAr(): void {
+    if (!this.newFeature.title_en?.trim() || this.translating.featTitleToAr) return;
+    this.translating.featTitleToAr = true;
+    this.translateErrors.featTitleToAr = false;
+    this.translationService.translate(this.newFeature.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.newFeature.title_ar = result;
+      else this.translateErrors.featTitleToAr = true;
+      this.translating.featTitleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatDescToEn(): void {
+    if (!this.newFeature.desc_ar?.trim() || this.translating.featDescToEn) return;
+    this.translating.featDescToEn = true;
+    this.translateErrors.featDescToEn = false;
+    this.translationService.translate(this.newFeature.desc_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.newFeature.desc_en = result;
+      else this.translateErrors.featDescToEn = true;
+      this.translating.featDescToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatDescToAr(): void {
+    if (!this.newFeature.desc_en?.trim() || this.translating.featDescToAr) return;
+    this.translating.featDescToAr = true;
+    this.translateErrors.featDescToAr = false;
+    this.translationService.translate(this.newFeature.desc_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.newFeature.desc_ar = result;
+      else this.translateErrors.featDescToAr = true;
+      this.translating.featDescToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
 
   private emptyFeature(): ProjectFeature {
     return { title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '', desc_ar: '', desc_en: '', images: [] };

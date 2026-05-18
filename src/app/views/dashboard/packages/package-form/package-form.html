@@ -44,6 +44,44 @@
         </div>
       </div>
 
+      <!-- Title translate row -->
+      <div class="translate-row">
+        <button type="button" class="btn-translate"
+          (click)="translateTitleToAr()"
+          [disabled]="translating.titleToAr || !form.title_en?.trim()">
+          <span *ngIf="!translating.titleToAr">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Translate EN → AR
+          </span>
+          <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
+        </button>
+        <span class="translate-divider">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+          </svg>
+          Title Auto-translate
+        </span>
+        <button type="button" class="btn-translate"
+          (click)="translateTitleToEn()"
+          [disabled]="translating.titleToEn || !form.title_ar?.trim()">
+          <span *ngIf="!translating.titleToEn">
+            Translate AR → EN
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </span>
+          <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
+        </button>
+      </div>
+      <div class="translate-error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+        Translation failed — please try again.
+      </div>
+
       <!-- Description row -->
       <div class="form-row">
         <div class="form-group">
@@ -54,6 +92,44 @@
           <label>Description (Arabic)</label>
           <input type="text" [(ngModel)]="form.description_ar" name="description_ar" placeholder="للوكلاء الجدد" dir="rtl" />
         </div>
+      </div>
+
+      <!-- Description translate row -->
+      <div class="translate-row">
+        <button type="button" class="btn-translate"
+          (click)="translateDescToAr()"
+          [disabled]="translating.descToAr || !form.description_en?.trim()">
+          <span *ngIf="!translating.descToAr">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+            Translate EN → AR
+          </span>
+          <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+        </button>
+        <span class="translate-divider">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+          </svg>
+          Description Auto-translate
+        </span>
+        <button type="button" class="btn-translate"
+          (click)="translateDescToEn()"
+          [disabled]="translating.descToEn || !form.description_ar?.trim()">
+          <span *ngIf="!translating.descToEn">
+            Translate AR → EN
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </span>
+          <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+        </button>
+      </div>
+      <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+        Translation failed — please try again.
       </div>
 
       <div class="form-row">
