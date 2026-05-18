@@ -6,6 +6,7 @@ import { PropertyService, PropertyFilters } from '../../../core/services/propert
 import { Property, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../core/models/property.model';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../core/models/project.model';
+import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
   selector: 'app-properties',
@@ -58,15 +59,41 @@ export class PropertiesComponent implements OnInit {
   }
 
   constructor(
-    private propertyService: PropertyService,
-    private projectService: ProjectService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private propertyService:  PropertyService,
+    private projectService:   ProjectService,
+    private filterState:      FilterStateService,
+    private router:           Router,
+    private cdr:              ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.restoreFilters();
     this.loadProjects();
     this.load();
+  }
+
+  private saveFilters(): void {
+    this.filterState.save('properties', {
+      searchQ:       this.searchQ,
+      typeFilter:    this.typeFilter,
+      statusFilter:  this.statusFilter,
+      agentFilter:   this.agentFilter,
+      projectFilter: this.projectFilter,
+      currentPage:   this.currentPage,
+      limit:         this.limit,
+    });
+  }
+
+  private restoreFilters(): void {
+    const s = this.filterState.restore<any>('properties');
+    if (!s) return;
+    this.searchQ       = s.searchQ       ?? '';
+    this.typeFilter    = s.typeFilter    ?? '';
+    this.statusFilter  = s.statusFilter  ?? '';
+    this.agentFilter   = s.agentFilter   ?? '';
+    this.projectFilter = s.projectFilter ?? null;
+    this.currentPage   = s.currentPage   ?? 1;
+    this.limit         = s.limit         ?? 20;
   }
 
   loadProjects(): void {
@@ -77,6 +104,7 @@ export class PropertiesComponent implements OnInit {
   }
 
   load(): void {
+    this.saveFilters();
     this.isLoading = true;
 
     const f: PropertyFilters = {
@@ -151,12 +179,13 @@ export class PropertiesComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.searchQ      = '';
-    this.typeFilter   = '';
-    this.statusFilter = '';
-    this.agentFilter  = '';
+    this.searchQ       = '';
+    this.typeFilter    = '';
+    this.statusFilter  = '';
+    this.agentFilter   = '';
     this.projectFilter = null;
-    this.currentPage  = 1;
+    this.currentPage   = 1;
+    this.filterState.clear('properties');
     this.load();
   }
 

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SellerRequestService, SellerRequestFilters } from '../../../core/services/seller-request.service';
 import { SellerRequest, SellerRequestStatus } from '../../../core/models/seller-request.model';
+import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
   selector: 'app-seller-requests',
@@ -30,15 +31,34 @@ export class SellerRequestsComponent implements OnInit {
 
   constructor(
     private sellerRequestService: SellerRequestService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private filterState:          FilterStateService,
+    private router:               Router,
+    private cdr:                  ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.restoreFilters();
     this.load();
   }
 
+  private saveFilters(): void {
+    this.filterState.save('seller-requests', {
+      statusFilter: this.statusFilter,
+      currentPage:  this.currentPage,
+      limit:        this.limit,
+    });
+  }
+
+  private restoreFilters(): void {
+    const s = this.filterState.restore<any>('seller-requests');
+    if (!s) return;
+    this.statusFilter = s.statusFilter ?? 'pending';
+    this.currentPage  = s.currentPage  ?? 1;
+    this.limit        = s.limit        ?? 20;
+  }
+
   load(): void {
+    this.saveFilters();
     this.isLoading = true;
 
     const f: SellerRequestFilters = {
