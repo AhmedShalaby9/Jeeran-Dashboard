@@ -100,26 +100,59 @@ $border:       #e5e7eb;
 .section-desc { font-size: 0.85rem; color: $text-muted; margin: -0.75rem 0 1.25rem; }
 .form-divider { border: none; border-top: 1px solid $border; }
 
-.translate-actions {
-  display: flex; align-items: center; gap: 0.4rem; margin-top: 0.4rem;
+// ── Bilingual block ───────────────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
 }
 
-.btn-translate-sm {
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.25rem;
-  padding: 0.28rem 0.7rem;
-  background: #f0f4ff; border: 1.5px solid #c8d3f0; color: $primary;
-  border-radius: 5px; font-size: 0.74rem; font-weight: 600;
-  cursor: pointer; white-space: nowrap; transition: all 0.15s;
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.bilingual-inputs .form-group { margin-bottom: 0; }
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+.translate-divider {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.75rem; color: $text-muted; font-weight: 500;
+  padding: 0 0.5rem; white-space: nowrap;
+}
+
+.btn-translate {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.38rem 0.9rem;
+  background: $white; border: 1.5px solid #c8d3f0; color: $primary;
+  border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; min-width: 130px;
+  justify-content: center; transition: all 0.15s;
   &:hover:not(:disabled) { background: $primary; color: $white; border-color: $primary; }
   &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
-.translate-error-inline {
-  font-size: 0.74rem; color: #dc2626; font-weight: 500;
+.translate-error {
+  text-align: center; font-size: 0.78rem;
+  color: #dc2626; margin-top: 0.4rem;
 }
 
 .spinner-xs {
-  display: inline-block; width: 12px; height: 12px;
+  display: inline-block; width: 13px; height: 13px;
   border: 2px solid currentColor; border-top-color: transparent;
   border-radius: 50%; animation: spin-xs 0.7s linear infinite;
 }
