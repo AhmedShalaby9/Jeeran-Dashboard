@@ -7,6 +7,8 @@ export interface AppSettings {
   terms_ar: string;
   about_us_en: string;
   about_us_ar: string;
+  ad_generation_price: number;
+  ad_generation_trials: number;
 }
 
 export interface SettingsResponse {

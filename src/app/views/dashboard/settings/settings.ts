@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { SettingService } from '../../../core/services/setting.service';
 import { AppSettings } from '../../../core/models/setting.model';
 
-type Tab = 'app' | 'terms' | 'about';
+type Tab = 'app' | 'terms' | 'about' | 'ai-ads';
 
 @Component({
   selector: 'app-settings',
@@ -21,14 +21,16 @@ export class SettingsComponent implements OnInit {
   errorMessage   = '';
 
   form: AppSettings = {
-    min_version_ios:     '',
-    min_version_android: '',
-    app_store_url:       '',
-    google_play_url:     '',
-    terms_en:            '',
-    terms_ar:            '',
-    about_us_en:         '',
-    about_us_ar:         '',
+    min_version_ios:      '',
+    min_version_android:  '',
+    app_store_url:        '',
+    google_play_url:      '',
+    terms_en:             '',
+    terms_ar:             '',
+    about_us_en:          '',
+    about_us_ar:          '',
+    ad_generation_price:  50,
+    ad_generation_trials: 5,
   };
 
   constructor(private settingService: SettingService, private cdr: ChangeDetectorRef) {}
