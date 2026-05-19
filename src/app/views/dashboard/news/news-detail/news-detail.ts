@@ -24,12 +24,14 @@ export class NewsDetailComponent implements OnInit {
   successMessage  = '';
   mediaInput      = '';
 
-  translating = { titleToAr: false, titleToEn: false, contentToAr: false, contentToEn: false };
-  translateErrors = { title: false, content: false };
+  translating = { titleToEn: false, titleToAr: false, contentToEn: false, contentToAr: false };
+  translateErrors = { titleToEn: false, titleToAr: false, contentToEn: false, contentToAr: false };
 
   editForm: CreateNewsDto = {
-    title:        '',
-    content:      '',
+    title_ar:     '',
+    title_en:     '',
+    content_ar:   '',
+    content_en:   '',
     media:        [],
     is_active:    true,
     published_at: '',
@@ -44,34 +46,51 @@ export class NewsDetailComponent implements OnInit {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  translateTitle(to: 'ar' | 'en'): void {
-    const text = this.editForm.title?.trim();
-    if (!text) return;
-    const from = to === 'ar' ? 'en' : 'ar';
-    const key  = to === 'ar' ? 'titleToAr' : 'titleToEn';
-    if (this.translating[key]) return;
-    this.translating[key] = true;
-    this.translateErrors.title = false;
-    this.translationService.translate(text, from, to).subscribe(result => {
-      if (result !== null) this.editForm.title = result;
-      else this.translateErrors.title = true;
-      this.translating[key] = false;
+  // ── Translation ───────────────────────────────────────────
+  translateTitleToEn(): void {
+    if (!this.editForm.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
+    this.translationService.translate(this.editForm.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.title_en = result;
+      else this.translateErrors.titleToEn = true;
+      this.translating.titleToEn = false;
       this.cdr.detectChanges();
     });
   }
 
-  translateContent(to: 'ar' | 'en'): void {
-    const text = this.editForm.content?.trim();
-    if (!text) return;
-    const from = to === 'ar' ? 'en' : 'ar';
-    const key  = to === 'ar' ? 'contentToAr' : 'contentToEn';
-    if (this.translating[key]) return;
-    this.translating[key] = true;
-    this.translateErrors.content = false;
-    this.translationService.translate(text, from, to).subscribe(result => {
-      if (result !== null) this.editForm.content = result;
-      else this.translateErrors.content = true;
-      this.translating[key] = false;
+  translateTitleToAr(): void {
+    if (!this.editForm.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
+    this.translationService.translate(this.editForm.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.title_ar = result;
+      else this.translateErrors.titleToAr = true;
+      this.translating.titleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateContentToEn(): void {
+    if (!this.editForm.content_ar?.trim() || this.translating.contentToEn) return;
+    this.translating.contentToEn = true;
+    this.translateErrors.contentToEn = false;
+    this.translationService.translate(this.editForm.content_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.content_en = result;
+      else this.translateErrors.contentToEn = true;
+      this.translating.contentToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateContentToAr(): void {
+    if (!this.editForm.content_en?.trim() || this.translating.contentToAr) return;
+    this.translating.contentToAr = true;
+    this.translateErrors.contentToAr = false;
+    this.translationService.translate(this.editForm.content_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.content_ar = result;
+      else this.translateErrors.contentToAr = true;
+      this.translating.contentToAr = false;
       this.cdr.detectChanges();
     });
   }
@@ -104,8 +123,10 @@ export class NewsDetailComponent implements OnInit {
   enableEdit(): void {
     if (!this.article) return;
     this.editForm = {
-      title:        this.article.title,
-      content:      this.article.content,
+      title_ar:     this.article.title_ar || '',
+      title_en:     this.article.title_en || '',
+      content_ar:   this.article.content_ar || '',
+      content_en:   this.article.content_en || '',
       media:        [...(this.article.media || [])],
       is_active:    this.article.is_active,
       published_at: this.article.published_at
@@ -142,14 +163,30 @@ export class NewsDetailComponent implements OnInit {
 
   // ── Save / Delete ──────────────────────────────────────────
   saveEdit(): void {
-    if (!this.editForm.title || !this.editForm.content) {
-      this.errorMessage = 'Title and content are required.';
+    if (!this.editForm.title_ar?.trim() && !this.editForm.title_en?.trim()) {
+      this.errorMessage = 'At least one title (Arabic or English) is required.';
       return;
     }
+    if (!this.editForm.content_ar?.trim() && !this.editForm.content_en?.trim()) {
+      this.errorMessage = 'At least one content (Arabic or English) is required.';
+      return;
+    }
+
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.newsService.update(this.article!.id, this.editForm).subscribe({
+    const payload: CreateNewsDto = {
+      title_ar:   this.editForm.title_ar?.trim()   || null,
+      title_en:   this.editForm.title_en?.trim()   || null,
+      content_ar: this.editForm.content_ar?.trim() || null,
+      content_en: this.editForm.content_en?.trim() || null,
+      media:        this.editForm.media,
+      is_active:    this.editForm.is_active,
+      published_at: this.editForm.published_at,
+      published_by: this.editForm.published_by,
+    };
+
+    this.newsService.update(this.article!.id, payload).subscribe({
       next: (res) => {
         this.article        = res.data;
         this.isSubmitting   = false;

@@ -32,7 +32,7 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
     title_en: '', title_ar: '',
     price: 0, duration_days: 30,
     description_en: '', description_ar: '',
-    available_listings: 0, features: [],
+    available_listings: 0, featured_listings: 0, features: [],
   };
 
   constructor(
@@ -91,6 +91,7 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
       description_en:     this.pkg.description_en     ?? '',
       description_ar:     this.pkg.description_ar     ?? '',
       available_listings: this.pkg.available_listings,
+      featured_listings:  this.pkg.featured_listings,
       features:           [...(this.pkg.features || [])],
     };
     this.errorMessage = '';
@@ -124,8 +125,8 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
       this.errorMessage = 'At least one title (English or Arabic) is required.';
       return;
     }
-    if (!this.editForm.price || !this.editForm.duration_days) {
-      this.errorMessage = 'Price and duration are required.';
+    if (!this.editForm.duration_days) {
+      this.errorMessage = 'Duration is required.';
       return;
     }
     this.isSubmitting = true;

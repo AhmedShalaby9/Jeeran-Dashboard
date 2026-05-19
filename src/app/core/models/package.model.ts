@@ -9,6 +9,7 @@ export interface Package {
   price: string;
   duration_days: number;
   available_listings: number;
+  featured_listings: number;
   features: string[];
   is_active: boolean;
   created_at: string;
@@ -23,6 +24,7 @@ export interface CreatePackageDto {
   description_en?: string | null;
   description_ar?: string | null;
   available_listings?: number;
+  featured_listings?: number;
   features?: string[];
 }
 
