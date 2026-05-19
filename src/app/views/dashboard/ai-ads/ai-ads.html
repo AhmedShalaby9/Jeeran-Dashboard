@@ -1,0 +1,201 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>AI Ad Generations</h1>
+      <p>All user-generated AI ads — {{ total }} total</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+      <option value="">All Statuses</option>
+      <option value="awaiting_payment">Awaiting Payment</option>
+      <option value="pending">Pending</option>
+      <option value="done">Done</option>
+      <option value="failed">Failed</option>
+    </select>
+
+    <select [(ngModel)]="filterPaymentStatus" (change)="applyFilters()">
+      <option value="">All Payments</option>
+      <option value="unpaid">Unpaid</option>
+      <option value="paid">Paid</option>
+      <option value="failed">Payment Failed</option>
+    </select>
+
+    <input
+      type="text"
+      [(ngModel)]="filterUserId"
+      placeholder="User ID..."
+      (keyup.enter)="applyFilters()"
+    />
+
+    <button class="btn-secondary" (click)="applyFilters()">Search</button>
+    <button class="btn-ghost" (click)="resetFilters()">Reset</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table" *ngIf="ads.length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Image</th>
+          <th>User</th>
+          <th>Caption</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ad of ads" (click)="openDetail(ad)" class="clickable-row">
+          <td class="col-id">#{{ ad.id }}</td>
+          <td class="col-img">
+            <div class="thumb-wrap">
+              <img
+                *ngIf="ad.generated_image_url; else sourceThumb"
+                [src]="ad.generated_image_url"
+                class="thumb"
+                alt="Generated"
+              />
+              <ng-template #sourceThumb>
+                <img
+                  *ngIf="ad.source_images?.length; else noThumb"
+                  [src]="ad.source_images[0]"
+                  class="thumb"
+                  alt="Source"
+                />
+              </ng-template>
+              <ng-template #noThumb>
+                <div class="thumb-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5"/>
+                    <path d="M2 20c0-4 4-7 10-7s10 3 10 7"/>
+                  </svg>
+                </div>
+              </ng-template>
+            </div>
+          </td>
+          <td class="col-user">
+            <span class="user-name">{{ ad.user?.name || '—' }}</span>
+            <span class="user-phone">{{ ad.user?.phone }}</span>
+          </td>
+          <td class="col-caption">{{ ad.caption }}</td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + ad.status">
+              {{ statusLabel(ad.status) }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="'badge-pay-' + ad.payment_status">
+              {{ ad.payment_status }}
+            </span>
+          </td>
+          <td class="col-date">{{ ad.created_at | date:'dd MMM yyyy' }}</td>
+          <td>
+            <button class="btn-view" (click)="$event.stopPropagation(); openDetail(ad)">View</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>No AI ads found.</p>
+      </div>
+    </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="pages > 1">
+      <button (click)="goToPage(page - 1)" [disabled]="page === 1">‹</button>
+      <button
+        *ngFor="let p of pageNumbers"
+        (click)="goToPage(p)"
+        [class.active]="p === page"
+      >{{ p }}</button>
+      <button (click)="goToPage(page + 1)" [disabled]="page === pages">›</button>
+    </div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div class="modal-overlay" *ngIf="selected" (click)="closeDetail()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>AI Ad #{{ selected.id }}</h2>
+        <button class="modal-close" (click)="closeDetail()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Generated image -->
+        <div class="modal-image" *ngIf="selected.generated_image_url">
+          <p class="modal-label">Generated Image</p>
+          <img [src]="selected.generated_image_url" alt="Generated Ad" />
+        </div>
+
+        <!-- Source images -->
+        <div *ngIf="selected.source_images?.length">
+          <p class="modal-label">Source Images ({{ selected.source_images.length }})</p>
+          <div class="source-images">
+            <img *ngFor="let img of selected.source_images" [src]="img" alt="Source" />
+          </div>
+        </div>
+
+        <div class="modal-grid">
+          <div class="modal-field">
+            <span class="modal-label">User</span>
+            <span>{{ selected.user?.name || '—' }} · {{ selected.user?.phone }}</span>
+          </div>
+          <div class="modal-field">
+            <span class="modal-label">User ID</span>
+            <span>#{{ selected.user_id }}</span>
+          </div>
+          <div class="modal-field">
+            <span class="modal-label">Status</span>
+            <span class="badge" [ngClass]="'badge-' + selected.status">{{ statusLabel(selected.status) }}</span>
+          </div>
+          <div class="modal-field">
+            <span class="modal-label">Payment</span>
+            <span class="badge" [ngClass]="'badge-pay-' + selected.payment_status">{{ selected.payment_status }}</span>
+          </div>
+          <div class="modal-field" *ngIf="selected.payment_order_id">
+            <span class="modal-label">Order ID</span>
+            <span>{{ selected.payment_order_id }}</span>
+          </div>
+          <div class="modal-field" *ngIf="selected.model">
+            <span class="modal-label">Model</span>
+            <span>{{ selected.model }}</span>
+          </div>
+          <div class="modal-field" *ngIf="selected.duration_ms">
+            <span class="modal-label">Duration</span>
+            <span>{{ selected.duration_ms | number }}ms</span>
+          </div>
+          <div class="modal-field">
+            <span class="modal-label">Created</span>
+            <span>{{ selected.created_at | date:'dd MMM yyyy, HH:mm' }}</span>
+          </div>
+        </div>
+
+        <div class="modal-field" style="margin-top: 1rem;">
+          <p class="modal-label">Caption</p>
+          <p class="modal-caption">{{ selected.caption }}</p>
+        </div>
+
+        <div class="modal-field" *ngIf="selected.error_message" style="margin-top: 1rem;">
+          <p class="modal-label">Error</p>
+          <p class="error-text">{{ selected.error_message }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
