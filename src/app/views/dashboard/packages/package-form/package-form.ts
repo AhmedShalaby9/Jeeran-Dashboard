@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PackageService } from '../../../../core/services/package.service';
 import { CreatePackageDto } from '../../../../core/models/package.model';
+import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-package-form',
@@ -28,11 +29,74 @@ export class PackageFormComponent {
   isSubmitting = false;
   errorMessage = '';
 
+  translating = {
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
+  };
+
+  translateErrors = {
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
+  };
+
   constructor(
-    private packageService: PackageService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private packageService:     PackageService,
+    private translationService: TranslationService,
+    private router:             Router,
+    private cdr:                ChangeDetectorRef,
   ) {}
+
+  translateTitleToEn(): void {
+    if (!this.form.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
+    this.translationService.translate(this.form.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.title_en = result;
+      else this.translateErrors.titleToEn = true;
+      this.translating.titleToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateTitleToAr(): void {
+    if (!this.form.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
+    this.translationService.translate(this.form.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.title_ar = result;
+      else this.translateErrors.titleToAr = true;
+      this.translating.titleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToEn(): void {
+    if (!this.form.description_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true;
+    this.translateErrors.descToEn = false;
+    this.translationService.translate(this.form.description_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.description_en = result;
+      else this.translateErrors.descToEn = true;
+      this.translating.descToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.form.description_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true;
+    this.translateErrors.descToAr = false;
+    this.translationService.translate(this.form.description_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.description_ar = result;
+      else this.translateErrors.descToAr = true;
+      this.translating.descToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
 
   addFeature(): void {
     const val = this.featureInput.trim();

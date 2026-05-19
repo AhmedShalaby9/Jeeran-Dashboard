@@ -8,7 +8,9 @@
       "Bash(grep -E \"\\\\.model\\\\.ts$\")",
       "Bash(grep -E \"\\\\.service\\\\.ts$\")",
       "Bash(grep -E \"\\\\.\\(ts|html\\)$\")",
-      "Bash(ng build *)"
+      "Bash(ng build *)",
+      "Bash(grep -E \"\\\\.\\(ts|html|json\\)$\")",
+      "Bash(npm start:*)"
     ]
   }
 }

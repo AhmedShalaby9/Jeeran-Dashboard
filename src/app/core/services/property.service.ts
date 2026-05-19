@@ -70,7 +70,8 @@ export class PropertyService {
     return this.http.patch<PropertyResponse>(`${this.url}/${id}/approve`, {}, { headers: this.headers() });
   }
 
-  reject(id: number): Observable<PropertyResponse> {
-    return this.http.patch<PropertyResponse>(`${this.url}/${id}/reject`, {}, { headers: this.headers() });
+  reject(id: number, rejectionReason?: string): Observable<PropertyResponse> {
+    const body = rejectionReason?.trim() ? { rejection_reason: rejectionReason.trim() } : {};
+    return this.http.patch<PropertyResponse>(`${this.url}/${id}/reject`, body, { headers: this.headers() });
   }
 }

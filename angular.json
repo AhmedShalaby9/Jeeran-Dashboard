@@ -82,7 +82,8 @@
               "buildTarget": "Jeeran-Dashboard:build:production"
             },
             "development": {
-              "buildTarget": "Jeeran-Dashboard:build:development"
+              "buildTarget": "Jeeran-Dashboard:build:development",
+              "proxyConfig": "proxy.conf.json"
             },
             "staging": {
               "buildTarget": "Jeeran-Dashboard:build:staging"

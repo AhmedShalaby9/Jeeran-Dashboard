@@ -6,6 +6,7 @@ import { SubscriptionService } from '../../../core/services/subscription.service
 import { Subscription, SubscriptionFilters, SubscriptionStatus } from '../../../core/models/subscription.model';
 import { PackageService } from '../../../core/services/package.service';
 import { Package } from '../../../core/models/package.model';
+import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
   selector: 'app-subscriptions',
@@ -33,17 +34,40 @@ export class SubscriptionsComponent implements OnInit {
 
   constructor(
     private subscriptionService: SubscriptionService,
-    private packageService: PackageService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private packageService:      PackageService,
+    private filterState:         FilterStateService,
+    private router:              Router,
+    private cdr:                 ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.restoreFilters();
     this.packageService.getAll().subscribe({ next: (res) => { this.packages = res.data; } });
     this.load();
   }
 
+  private saveFilters(): void {
+    this.filterState.save('subscriptions', {
+      filterStatus:    this.filterStatus,
+      filterUserName:  this.filterUserName,
+      filterPackageId: this.filterPackageId,
+      page:            this.page,
+      limit:           this.limit,
+    });
+  }
+
+  private restoreFilters(): void {
+    const s = this.filterState.restore<any>('subscriptions');
+    if (!s) return;
+    this.filterStatus    = s.filterStatus    ?? 'pending_approval';
+    this.filterUserName  = s.filterUserName  ?? '';
+    this.filterPackageId = s.filterPackageId ?? '';
+    this.page            = s.page            ?? 1;
+    this.limit           = s.limit           ?? 20;
+  }
+
   load(): void {
+    this.saveFilters();
     this.isLoading = true;
     const filters: SubscriptionFilters = { page: this.page, limit: this.limit };
     if (this.filterStatus)    filters.status     = this.filterStatus;
@@ -74,7 +98,8 @@ export class SubscriptionsComponent implements OnInit {
     this.filterStatus    = 'pending_approval';
     this.filterUserName  = '';
     this.filterPackageId = '';
-    this.page = 1;
+    this.page            = 1;
+    this.filterState.clear('subscriptions');
     this.load();
   }
 

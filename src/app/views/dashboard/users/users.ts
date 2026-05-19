@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { User, UserType } from '../../../core/models/user.model';
+import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
   selector: 'app-users',
@@ -21,16 +22,35 @@ export class UsersComponent implements OnInit {
   filterSearch = '';
 
   constructor(
-    private userService: UserService,
-    private router: Router,
-    private cdr: ChangeDetectorRef,
+    private userService:  UserService,
+    private filterState:  FilterStateService,
+    private router:       Router,
+    private cdr:          ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
+    this.restoreFilters();
     this.loadUsers();
   }
 
+  private saveFilters(): void {
+    this.filterState.save('users', {
+      filterType:   this.filterType,
+      filterActive: this.filterActive,
+      filterSearch: this.filterSearch,
+    });
+  }
+
+  private restoreFilters(): void {
+    const s = this.filterState.restore<any>('users');
+    if (!s) return;
+    this.filterType   = s.filterType   ?? '';
+    this.filterActive = s.filterActive ?? '';
+    this.filterSearch = s.filterSearch ?? '';
+  }
+
   loadUsers(): void {
+    this.saveFilters();
     this.isLoading = true;
     const filters: any = {};
     if (this.filterType)   filters.user_type = this.filterType as UserType;

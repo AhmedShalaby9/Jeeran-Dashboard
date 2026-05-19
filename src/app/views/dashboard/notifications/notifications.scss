@@ -336,8 +336,17 @@ $panel-w:      560px;
     &::placeholder { color: #9ca3af; }
   }
 
-  textarea { resize: vertical; min-height: 72px; }
+  textarea { resize: none; min-height: 60px; }
   select   { cursor: pointer; }
+}
+
+.body-line-hint {
+  font-size: 0.72rem;
+  color: $text-muted;
+  text-align: right;
+  margin-top: -0.1rem;
+
+  &.at-limit { color: $error; font-weight: 600; }
 }
 
 .required { color: $error; margin-left: 2px; }

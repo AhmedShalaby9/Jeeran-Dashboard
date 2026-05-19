@@ -183,6 +183,9 @@
                 <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
               </button>
             </div>
+            <div class="translate-error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+              Translation failed — please try again.
+            </div>
           </div>
 
           <div class="field-group">
@@ -378,6 +381,9 @@
                 </span>
                 <span *ngIf="translating.descToEn" class="spinner-xs"></span>
               </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+              Translation failed — please try again.
             </div>
           </div>
 

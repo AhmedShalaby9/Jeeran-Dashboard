@@ -29,6 +29,7 @@
       <button class="tab-btn" [class.active]="activeTab === 'terms'"   (click)="setTab('terms')">Terms &amp; Conditions</button>
       <button class="tab-btn" [class.active]="activeTab === 'about'"   (click)="setTab('about')">About Us</button>
       <button class="tab-btn" [class.active]="activeTab === 'privacy'" (click)="setTab('privacy')">Privacy Policy</button>
+      <button class="tab-btn" [class.active]="activeTab === 'ai-ads'"  (click)="setTab('ai-ads')">AI Ads</button>
     </div>
 
     <!-- App & Versions tab -->
@@ -73,7 +74,7 @@
     <!-- Terms tab -->
     <div class="settings-card" *ngIf="activeTab === 'terms'">
       <div class="settings-section">
-        <p class="section-title">Terms & Conditions</p>
+        <p class="section-title">Terms &amp; Conditions</p>
         <p class="section-desc">Accepts full HTML. Use heading and paragraph tags for formatting.</p>
         <div class="html-editors">
           <div class="form-group">
@@ -121,6 +122,27 @@
             <textarea [(ngModel)]="form.privacy_policy_ar" rows="20" placeholder="<h1>سياسة الخصوصية</h1><p>...</p>" dir="rtl"></textarea>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- AI Ads tab -->
+    <div class="settings-card" *ngIf="activeTab === 'ai-ads'">
+      <div class="settings-section">
+        <p class="section-title">AI Ad Generation</p>
+        <p class="section-desc">Control the price per generation and how many free re-generation trials each user gets per ad.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Price per Generation (EGP)</label>
+            <input type="number" [(ngModel)]="form.ad_generation_price" min="0" step="0.01" placeholder="50.00" />
+          </div>
+          <div class="form-group">
+            <label>Max Trials per Ad</label>
+            <input type="number" [(ngModel)]="form.ad_generation_trials" min="0" step="1" placeholder="5" />
+          </div>
+        </div>
+        <p class="section-desc" style="margin-top: 8px;">
+          Trials are free re-generations using the same images but a new caption. Users can request up to the limit above per original paid ad.
+        </p>
       </div>
     </div>
 

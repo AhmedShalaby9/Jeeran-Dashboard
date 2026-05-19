@@ -10,9 +10,10 @@ import { Project } from '../../../../core/models/project.model';
 type ApprovalTab = 'all' | 'pending' | 'approved' | 'rejected';
 
 interface ConfirmModal {
-  show:     boolean;
-  action:   'approve' | 'reject';
-  property: Property | null;
+  show:            boolean;
+  action:          'approve' | 'reject';
+  property:        Property | null;
+  rejectionReason: string;
 }
 
 @Component({
@@ -43,7 +44,7 @@ export class PropertyApprovalsComponent implements OnInit {
   countsLoaded = false;
 
   // Action state
-  modal: ConfirmModal = { show: false, action: 'approve', property: null };
+  modal: ConfirmModal = { show: false, action: 'approve', property: null, rejectionReason: '' };
   isActioning   = false;
   toast: { type: 'success' | 'error'; message: string } | null = null;
   private toastTimer: ReturnType<typeof setTimeout> | null = null;
@@ -160,16 +161,16 @@ export class PropertyApprovalsComponent implements OnInit {
 
   // ── Action modal ──────────────────────────────────────────
   openApprove(prop: Property): void {
-    this.modal = { show: true, action: 'approve', property: prop };
+    this.modal = { show: true, action: 'approve', property: prop, rejectionReason: '' };
   }
 
   openReject(prop: Property): void {
-    this.modal = { show: true, action: 'reject', property: prop };
+    this.modal = { show: true, action: 'reject', property: prop, rejectionReason: '' };
   }
 
   closeModal(): void {
     if (this.isActioning) return;
-    this.modal = { show: false, action: 'approve', property: null };
+    this.modal = { show: false, action: 'approve', property: null, rejectionReason: '' };
   }
 
   executeAction(): void {
@@ -178,7 +179,7 @@ export class PropertyApprovalsComponent implements OnInit {
     const id  = this.modal.property.id;
     const obs = this.modal.action === 'approve'
       ? this.propertyService.approve(id)
-      : this.propertyService.reject(id);
+      : this.propertyService.reject(id, this.modal.rejectionReason);
 
     obs.subscribe({
       next: () => {

@@ -226,6 +226,18 @@
       The seller will be notified that their listing was not approved.
     </p>
 
+    <!-- Rejection reason -->
+    <div class="rejection-reason-wrap" *ngIf="modal.action === 'reject'">
+      <label class="rejection-label">Rejection Reason <span class="rejection-optional">(optional)</span></label>
+      <textarea
+        [(ngModel)]="modal.rejectionReason"
+        name="rejectionReason"
+        rows="3"
+        class="rejection-textarea"
+        placeholder="e.g. Incomplete information, images are missing, price seems incorrect...">
+      </textarea>
+    </div>
+
     <div class="modal-actions">
       <button class="btn-cancel" (click)="closeModal()" [disabled]="isActioning">Cancel</button>
       <button

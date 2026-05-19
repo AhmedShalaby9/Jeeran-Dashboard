@@ -154,13 +154,23 @@
       <div class="field-row">
         <div class="field-group">
           <label>English</label>
-          <textarea [(ngModel)]="form.body_en" name="body_en" rows="3"
-            placeholder="e.g. Check out the latest properties!"></textarea>
+          <textarea [(ngModel)]="form.body_en" name="body_en" rows="2"
+            placeholder="e.g. Check out the latest properties!"
+            (keydown)="onBodyKeydown('body_en', $event)"
+            (input)="onBodyInput('body_en')"></textarea>
+          <div class="body-line-hint" [class.at-limit]="bodyLineCount('body_en') >= 2">
+            {{ bodyLineCount('body_en') }} / 2 lines
+          </div>
         </div>
         <div class="field-group">
           <label>Arabic</label>
-          <textarea [(ngModel)]="form.body_ar" name="body_ar" rows="3"
-            placeholder="تفقد أحدث العقارات!" dir="rtl"></textarea>
+          <textarea [(ngModel)]="form.body_ar" name="body_ar" rows="2"
+            placeholder="تفقد أحدث العقارات!" dir="rtl"
+            (keydown)="onBodyKeydown('body_ar', $event)"
+            (input)="onBodyInput('body_ar')"></textarea>
+          <div class="body-line-hint" [class.at-limit]="bodyLineCount('body_ar') >= 2">
+            {{ bodyLineCount('body_ar') }} / 2 lines
+          </div>
         </div>
       </div>
     </div>
