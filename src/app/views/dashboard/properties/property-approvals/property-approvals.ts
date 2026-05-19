@@ -161,7 +161,7 @@ export class PropertyApprovalsComponent implements OnInit {
 
   // ── Action modal ──────────────────────────────────────────
   openApprove(prop: Property): void {
-    this.modal = { show: true, action: 'approve', property: prop };
+    this.modal = { show: true, action: 'approve', property: prop, rejectionReason: '' };
   }
 
   openReject(prop: Property): void {
