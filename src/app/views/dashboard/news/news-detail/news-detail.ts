@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NewsService } from '../../../../core/services/news.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { News, CreateNewsDto } from '../../../../core/models/news.model';
 
 @Component({
@@ -23,6 +24,9 @@ export class NewsDetailComponent implements OnInit {
   successMessage  = '';
   mediaInput      = '';
 
+  translating = { titleToAr: false, titleToEn: false, contentToAr: false, contentToEn: false };
+  translateErrors = { title: false, content: false };
+
   editForm: CreateNewsDto = {
     title:        '',
     content:      '',
@@ -36,8 +40,41 @@ export class NewsDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private newsService: NewsService,
+    private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  translateTitle(to: 'ar' | 'en'): void {
+    const text = this.editForm.title?.trim();
+    if (!text) return;
+    const from = to === 'ar' ? 'en' : 'ar';
+    const key  = to === 'ar' ? 'titleToAr' : 'titleToEn';
+    if (this.translating[key]) return;
+    this.translating[key] = true;
+    this.translateErrors.title = false;
+    this.translationService.translate(text, from, to).subscribe(result => {
+      if (result !== null) this.editForm.title = result;
+      else this.translateErrors.title = true;
+      this.translating[key] = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateContent(to: 'ar' | 'en'): void {
+    const text = this.editForm.content?.trim();
+    if (!text) return;
+    const from = to === 'ar' ? 'en' : 'ar';
+    const key  = to === 'ar' ? 'contentToAr' : 'contentToEn';
+    if (this.translating[key]) return;
+    this.translating[key] = true;
+    this.translateErrors.content = false;
+    this.translationService.translate(text, from, to).subscribe(result => {
+      if (result !== null) this.editForm.content = result;
+      else this.translateErrors.content = true;
+      this.translating[key] = false;
+      this.cdr.detectChanges();
+    });
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));

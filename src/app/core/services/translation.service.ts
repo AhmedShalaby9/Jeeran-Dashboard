@@ -3,15 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, forkJoin } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
-interface MyMemoryResponse {
-  responseStatus: number;
-  responseData: { translatedText: string };
-}
-
 @Injectable({ providedIn: 'root' })
 export class TranslationService {
-  private readonly url        = 'https://api.mymemory.translated.net/get';
-  private readonly CHUNK_SIZE = 450;
+  private readonly url        = 'https://translate.googleapis.com/translate_a/single';
+  private readonly CHUNK_SIZE = 1000;
 
   constructor(private http: HttpClient) {}
 
@@ -32,10 +27,16 @@ export class TranslationService {
   }
 
   private translateChunk(text: string, from: string, to: string): Observable<string | null> {
-    return this.http.get<MyMemoryResponse>(this.url, {
-      params: { q: text, langpair: `${from}|${to}` },
+    return this.http.get<any>(this.url, {
+      params: { client: 'gtx', sl: from, tl: to, dt: 't', q: text },
     }).pipe(
-      map(res => res?.responseData?.translatedText ?? null),
+      map(res => {
+        if (!Array.isArray(res) || !Array.isArray(res[0])) return null;
+        return (res[0] as any[][])
+          .map(part => part[0])
+          .filter(Boolean)
+          .join('');
+      }),
       catchError(() => of(null)),
     );
   }
