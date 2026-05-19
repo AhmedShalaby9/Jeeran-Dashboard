@@ -124,8 +124,8 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
       this.errorMessage = 'At least one title (English or Arabic) is required.';
       return;
     }
-    if (!this.editForm.price || !this.editForm.duration_days) {
-      this.errorMessage = 'Price and duration are required.';
+    if (!this.editForm.duration_days) {
+      this.errorMessage = 'Duration is required.';
       return;
     }
     this.isSubmitting = true;
