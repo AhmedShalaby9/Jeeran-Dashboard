@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { Property, CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
 
 @Component({
@@ -24,6 +25,20 @@ export class PropertyDetailComponent implements OnInit {
 
   editForm: Partial<CreatePropertyDto> = {};
   imageInput = '';
+
+  translating = {
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
+  };
+
+  translateErrors = {
+    titleToEn: false,
+    titleToAr: false,
+    descToEn:  false,
+    descToAr:  false,
+  };
 
   // Lightbox
   lightboxIndex: number | null = null;
@@ -59,6 +74,7 @@ export class PropertyDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private propertyService: PropertyService,
+    private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -138,6 +154,54 @@ export class PropertyDetailComponent implements OnInit {
 
   onImageKeydown(e: KeyboardEvent): void {
     if (e.key === 'Enter') { e.preventDefault(); this.addImage(); }
+  }
+
+  translateTitleToEn(): void {
+    if (!this.editForm.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
+    this.translationService.translate(this.editForm.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.title_en = result;
+      else this.translateErrors.titleToEn = true;
+      this.translating.titleToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateTitleToAr(): void {
+    if (!this.editForm.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
+    this.translationService.translate(this.editForm.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.title_ar = result;
+      else this.translateErrors.titleToAr = true;
+      this.translating.titleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToEn(): void {
+    if (!this.editForm.content_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true;
+    this.translateErrors.descToEn = false;
+    this.translationService.translate(this.editForm.content_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.content_en = result;
+      else this.translateErrors.descToEn = true;
+      this.translating.descToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.editForm.content_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true;
+    this.translateErrors.descToAr = false;
+    this.translationService.translate(this.editForm.content_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.content_ar = result;
+      else this.translateErrors.descToAr = true;
+      this.translating.descToAr = false;
+      this.cdr.detectChanges();
+    });
   }
 
   saveEdit(): void {

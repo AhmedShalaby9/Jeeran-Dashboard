@@ -240,16 +240,45 @@
         <!-- Basic Info -->
         <div class="form-section">
           <h2 class="section-title">Basic Info</h2>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Title (Arabic) <span class="required">*</span></label>
-              <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl"
-                placeholder="العنوان بالعربية" />
+          <div class="bilingual-card">
+            <div class="bilingual-card__header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              Title
             </div>
-            <div class="form-group">
-              <label>Title (English)</label>
-              <input type="text" [(ngModel)]="editForm.title_en" name="title_en"
-                placeholder="Title in English" />
+            <div class="bilingual-card__body">
+              <div class="form-group">
+                <label>Arabic <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl"
+                  placeholder="العنوان بالعربية" />
+              </div>
+              <div class="bilingual-card__actions">
+                <button type="button" class="btn-translate"
+                  (click)="translateTitleToAr()"
+                  [disabled]="translating.titleToAr || !editForm.title_en?.trim()">
+                  <span *ngIf="!translating.titleToAr">← EN → AR</span>
+                  <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
+                </button>
+                <span class="bilingual-card__divider">Auto-translate</span>
+                <button type="button" class="btn-translate"
+                  (click)="translateTitleToEn()"
+                  [disabled]="translating.titleToEn || !editForm.title_ar?.trim()">
+                  <span *ngIf="!translating.titleToEn">AR → EN →</span>
+                  <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
+                </button>
+              </div>
+              <div class="form-group">
+                <label>English</label>
+                <input type="text" [(ngModel)]="editForm.title_en" name="title_en"
+                  placeholder="Title in English" />
+              </div>
+            </div>
+            <div class="bilingual-card__error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+              Translation failed — please try again.
             </div>
           </div>
           <div class="form-row">
@@ -307,16 +336,45 @@
               <input type="number" [(ngModel)]="editForm.project_id" name="project_id" />
             </div>
           </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Description (Arabic)</label>
-              <textarea [(ngModel)]="editForm.content_ar" name="content_ar" rows="4" dir="rtl"
-                placeholder="وصف بالعربية..."></textarea>
+          <div class="bilingual-card">
+            <div class="bilingual-card__header">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="2" y1="12" x2="22" y2="12"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+              Description
             </div>
-            <div class="form-group">
-              <label>Description (English)</label>
-              <textarea [(ngModel)]="editForm.content_en" name="content_en" rows="4"
-                placeholder="Description in English..."></textarea>
+            <div class="bilingual-card__body">
+              <div class="form-group">
+                <label>Arabic</label>
+                <textarea [(ngModel)]="editForm.content_ar" name="content_ar" rows="4" dir="rtl"
+                  placeholder="وصف بالعربية..."></textarea>
+              </div>
+              <div class="bilingual-card__actions">
+                <button type="button" class="btn-translate"
+                  (click)="translateDescToAr()"
+                  [disabled]="translating.descToAr || !editForm.content_en?.trim()">
+                  <span *ngIf="!translating.descToAr">← EN → AR</span>
+                  <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+                </button>
+                <span class="bilingual-card__divider">Auto-translate</span>
+                <button type="button" class="btn-translate"
+                  (click)="translateDescToEn()"
+                  [disabled]="translating.descToEn || !editForm.content_ar?.trim()">
+                  <span *ngIf="!translating.descToEn">AR → EN →</span>
+                  <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+                </button>
+              </div>
+              <div class="form-group">
+                <label>English</label>
+                <textarea [(ngModel)]="editForm.content_en" name="content_en" rows="4"
+                  placeholder="Description in English..."></textarea>
+              </div>
+            </div>
+            <div class="bilingual-card__error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+              Translation failed — please try again.
             </div>
           </div>
           <div class="form-row">
