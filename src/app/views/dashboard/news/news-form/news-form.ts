@@ -16,20 +16,22 @@ import { MediaUploaderComponent } from '../../../../shared/components/media-uplo
 })
 export class NewsFormComponent {
   form: CreateNewsDto = {
-    title:        '',
-    content:      '',
+    title_ar:     '',
+    title_en:     '',
+    content_ar:   '',
+    content_en:   '',
     media:        [],
     is_active:    true,
     published_at: new Date().toISOString().slice(0, 16),
     published_by: '',
   };
 
-  mediaInput  = '';
+  mediaInput   = '';
   isSubmitting = false;
   errorMessage = '';
 
-  translating = { titleToAr: false, titleToEn: false, contentToAr: false, contentToEn: false };
-  translateErrors = { title: false, content: false };
+  translating = { titleToEn: false, titleToAr: false, contentToEn: false, contentToAr: false };
+  translateErrors = { titleToEn: false, titleToAr: false, contentToEn: false, contentToAr: false };
 
   constructor(
     private newsService: NewsService,
@@ -38,38 +40,56 @@ export class NewsFormComponent {
     private cdr: ChangeDetectorRef,
   ) {}
 
-  translateTitle(to: 'ar' | 'en'): void {
-    const text = this.form.title?.trim();
-    if (!text) return;
-    const from = to === 'ar' ? 'en' : 'ar';
-    const key  = to === 'ar' ? 'titleToAr' : 'titleToEn';
-    if (this.translating[key]) return;
-    this.translating[key] = true;
-    this.translateErrors.title = false;
-    this.translationService.translate(text, from, to).subscribe(result => {
-      if (result !== null) this.form.title = result;
-      else this.translateErrors.title = true;
-      this.translating[key] = false;
+  // ── Translation ───────────────────────────────────────────
+  translateTitleToEn(): void {
+    if (!this.form.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
+    this.translationService.translate(this.form.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.title_en = result;
+      else this.translateErrors.titleToEn = true;
+      this.translating.titleToEn = false;
       this.cdr.detectChanges();
     });
   }
 
-  translateContent(to: 'ar' | 'en'): void {
-    const text = this.form.content?.trim();
-    if (!text) return;
-    const from = to === 'ar' ? 'en' : 'ar';
-    const key  = to === 'ar' ? 'contentToAr' : 'contentToEn';
-    if (this.translating[key]) return;
-    this.translating[key] = true;
-    this.translateErrors.content = false;
-    this.translationService.translate(text, from, to).subscribe(result => {
-      if (result !== null) this.form.content = result;
-      else this.translateErrors.content = true;
-      this.translating[key] = false;
+  translateTitleToAr(): void {
+    if (!this.form.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
+    this.translationService.translate(this.form.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.title_ar = result;
+      else this.translateErrors.titleToAr = true;
+      this.translating.titleToAr = false;
       this.cdr.detectChanges();
     });
   }
 
+  translateContentToEn(): void {
+    if (!this.form.content_ar?.trim() || this.translating.contentToEn) return;
+    this.translating.contentToEn = true;
+    this.translateErrors.contentToEn = false;
+    this.translationService.translate(this.form.content_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.content_en = result;
+      else this.translateErrors.contentToEn = true;
+      this.translating.contentToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateContentToAr(): void {
+    if (!this.form.content_en?.trim() || this.translating.contentToAr) return;
+    this.translating.contentToAr = true;
+    this.translateErrors.contentToAr = false;
+    this.translationService.translate(this.form.content_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.content_ar = result;
+      else this.translateErrors.contentToAr = true;
+      this.translating.contentToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ── Media helpers ─────────────────────────────────────────
   isVideo(url: string): boolean {
     return /\.(mp4|webm|ogg|mov)$/i.test(url);
   }
@@ -93,16 +113,32 @@ export class NewsFormComponent {
     urls.forEach(url => this.form.media.push(url));
   }
 
+  // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
-    if (!this.form.title || !this.form.content) {
-      this.errorMessage = 'Title and content are required.';
+    if (!this.form.title_ar?.trim() && !this.form.title_en?.trim()) {
+      this.errorMessage = 'At least one title (Arabic or English) is required.';
+      return;
+    }
+    if (!this.form.content_ar?.trim() && !this.form.content_en?.trim()) {
+      this.errorMessage = 'At least one content (Arabic or English) is required.';
       return;
     }
 
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.newsService.create(this.form).subscribe({
+    const payload: CreateNewsDto = {
+      title_ar:   this.form.title_ar?.trim()   || null,
+      title_en:   this.form.title_en?.trim()   || null,
+      content_ar: this.form.content_ar?.trim() || null,
+      content_en: this.form.content_en?.trim() || null,
+      media:        this.form.media,
+      is_active:    this.form.is_active,
+      published_at: this.form.published_at,
+      published_by: this.form.published_by,
+    };
+
+    this.newsService.create(payload).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.router.navigate(['/dashboard/news']);

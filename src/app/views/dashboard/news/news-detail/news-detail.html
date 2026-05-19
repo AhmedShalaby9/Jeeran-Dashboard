@@ -11,7 +11,7 @@
         Back
       </button>
       <div>
-        <h1>{{ article?.title || 'Article Detail' }}</h1>
+        <h1>{{ article?.title_ar || article?.title_en || article?.title || 'Article Detail' }}</h1>
         <p>{{ article?.published_by ? 'By ' + article?.published_by : '' }}</p>
       </div>
     </div>
@@ -25,7 +25,7 @@
         Edit
       </button>
       <button class="btn-danger" (click)="confirmDelete()">
-      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" 
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
           <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
@@ -33,7 +33,7 @@
         Delete
       </button>
   </div>
-  </div> 
+  </div>
 
   <!-- Loading -->
   <div class="loading-state" *ngIf="isLoading">
@@ -60,8 +60,12 @@
           <h2 class="section-title">Article Info</h2>
           <div class="info-grid">
             <div class="info-item full-width">
-              <span class="info-label">Title</span>
-              <span class="info-value">{{ article.title }}</span>
+              <span class="info-label">Title (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ article.title_ar || '—' }}</span>
+            </div>
+            <div class="info-item full-width">
+              <span class="info-label">Title (English)</span>
+              <span class="info-value">{{ article.title_en || article.title || '—' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Published By</span>
@@ -84,7 +88,13 @@
 
         <div class="detail-section">
           <h2 class="section-title">Content</h2>
-          <p class="article-content">{{ article.content }}</p>
+          <div *ngIf="article.content_ar || article.content_en">
+            <p class="info-label" *ngIf="article.content_ar">Arabic</p>
+            <p class="article-content" dir="rtl" *ngIf="article.content_ar">{{ article.content_ar }}</p>
+            <p class="info-label" *ngIf="article.content_en" style="margin-top: 1rem;">English</p>
+            <p class="article-content" *ngIf="article.content_en">{{ article.content_en }}</p>
+          </div>
+          <p class="article-content" *ngIf="!article.content_ar && !article.content_en">{{ article.content }}</p>
         </div>
 
         <div class="detail-divider"></div>
@@ -125,43 +135,111 @@
         <div class="form-section">
           <h2 class="section-title">Edit Article Info</h2>
 
-          <div class="form-group">
-            <label>Title <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="editForm.title" name="title" placeholder="Article title" />
-            <div class="translate-actions">
-              <button type="button" class="btn-translate-sm" (click)="translateTitle('ar')"
-                [disabled]="translating.titleToAr || !editForm.title?.trim()">
-                <span *ngIf="!translating.titleToAr">→ عربي</span>
-                <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
-              </button>
-              <button type="button" class="btn-translate-sm" (click)="translateTitle('en')"
-                [disabled]="translating.titleToEn || !editForm.title?.trim()">
-                <span *ngIf="!translating.titleToEn">→ English</span>
-                <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
-              </button>
-              <span class="translate-error-inline" *ngIf="translateErrors.title">Translation failed</span>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Content <span class="required">*</span></label>
-            <textarea [(ngModel)]="editForm.content" name="content" rows="6" placeholder="Article content..."></textarea>
-            <div class="translate-actions">
-              <button type="button" class="btn-translate-sm" (click)="translateContent('ar')"
-                [disabled]="translating.contentToAr || !editForm.content?.trim()">
-                <span *ngIf="!translating.contentToAr">→ عربي</span>
-                <span *ngIf="translating.contentToAr" class="spinner-xs"></span>
-              </button>
-              <button type="button" class="btn-translate-sm" (click)="translateContent('en')"
-                [disabled]="translating.contentToEn || !editForm.content?.trim()">
-                <span *ngIf="!translating.contentToEn">→ English</span>
-                <span *ngIf="translating.contentToEn" class="spinner-xs"></span>
-              </button>
-              <span class="translate-error-inline" *ngIf="translateErrors.content">Translation failed</span>
-            </div>
-          </div>
-
+          <!-- Title fields -->
           <div class="form-row">
+            <div class="form-group">
+              <label>Title (Arabic) <span class="required">*</span></label>
+              <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar"
+                placeholder="عنوان المقال بالعربية..." dir="rtl" />
+            </div>
+            <div class="form-group">
+              <label>Title (English)</label>
+              <input type="text" [(ngModel)]="editForm.title_en" name="title_en"
+                placeholder="Article title in English..." />
+            </div>
+          </div>
+
+          <!-- Title translate row -->
+          <div class="translate-row">
+            <button type="button" class="btn-translate"
+              (click)="translateTitleToAr()"
+              [disabled]="translating.titleToAr || !editForm.title_en?.trim()">
+              <span *ngIf="!translating.titleToAr">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Translate EN → AR
+              </span>
+              <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
+            </button>
+            <span class="translate-divider">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+              </svg>
+              Auto-translate
+            </span>
+            <button type="button" class="btn-translate"
+              (click)="translateTitleToEn()"
+              [disabled]="translating.titleToEn || !editForm.title_ar?.trim()">
+              <span *ngIf="!translating.titleToEn">
+                Translate AR → EN
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </span>
+              <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
+            </button>
+          </div>
+          <div class="translate-error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+            Translation failed — please try again.
+          </div>
+
+          <!-- Content fields -->
+          <div class="form-row" style="margin-top: 1.25rem;">
+            <div class="form-group">
+              <label>Content (Arabic) <span class="required">*</span></label>
+              <textarea [(ngModel)]="editForm.content_ar" name="content_ar" rows="6"
+                placeholder="محتوى المقال بالعربية..." dir="rtl"></textarea>
+            </div>
+            <div class="form-group">
+              <label>Content (English)</label>
+              <textarea [(ngModel)]="editForm.content_en" name="content_en" rows="6"
+                placeholder="Article content in English..."></textarea>
+            </div>
+          </div>
+
+          <!-- Content translate row -->
+          <div class="translate-row">
+            <button type="button" class="btn-translate"
+              (click)="translateContentToAr()"
+              [disabled]="translating.contentToAr || !editForm.content_en?.trim()">
+              <span *ngIf="!translating.contentToAr">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                Translate EN → AR
+              </span>
+              <span *ngIf="translating.contentToAr" class="spinner-xs"></span>
+            </button>
+            <span class="translate-divider">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+              </svg>
+              Auto-translate
+            </span>
+            <button type="button" class="btn-translate"
+              (click)="translateContentToEn()"
+              [disabled]="translating.contentToEn || !editForm.content_ar?.trim()">
+              <span *ngIf="!translating.contentToEn">
+                Translate AR → EN
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </span>
+              <span *ngIf="translating.contentToEn" class="spinner-xs"></span>
+            </button>
+          </div>
+          <div class="translate-error" *ngIf="translateErrors.contentToEn || translateErrors.contentToAr">
+            Translation failed — please try again.
+          </div>
+
+          <div class="form-row" style="margin-top: 1.25rem;">
             <div class="form-group">
               <label>Published By</label>
               <input type="text" [(ngModel)]="editForm.published_by" name="published_by" placeholder="Author name" />
@@ -243,7 +321,7 @@
         </svg>
       </div>
       <h3>Delete Article</h3>
-      <p>Are you sure you want to delete <strong>{{ article?.title }}</strong>? This action cannot be undone.</p>
+      <p>Are you sure you want to delete <strong>{{ article?.title_ar || article?.title_en || article?.title }}</strong>? This action cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
         <button class="btn-danger-solid" (click)="deleteArticle()" [disabled]="isDeleting">
