@@ -89,6 +89,10 @@
               <span class="info-value">{{ pkg.available_listings }}</span>
             </div>
             <div class="info-item">
+              <span class="info-label">Featured Listings</span>
+              <span class="info-value">{{ pkg.featured_listings }}</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Status</span>
               <span class="badge" [class.badge-active]="pkg.is_active" [class.badge-inactive]="!pkg.is_active">
                 {{ pkg.is_active ? 'Active' : 'Inactive' }}
@@ -169,6 +173,10 @@
             <div class="form-group">
               <label>Available Listings</label>
               <input type="number" [(ngModel)]="editForm.available_listings" name="available_listings" min="0" />
+            </div>
+            <div class="form-group">
+              <label>Featured Listings</label>
+              <input type="number" [(ngModel)]="editForm.featured_listings" name="featured_listings" min="0" />
             </div>
           </div>
         </div>
