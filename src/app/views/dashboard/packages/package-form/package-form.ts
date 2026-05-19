@@ -22,6 +22,7 @@ export class PackageFormComponent {
     description_en:     '',
     description_ar:     '',
     available_listings: 0,
+    featured_listings:  0,
     features:           [],
   };
 
@@ -122,8 +123,8 @@ export class PackageFormComponent {
       this.errorMessage = 'At least one title (English or Arabic) is required.';
       return;
     }
-    if (!this.form.price || !this.form.duration_days) {
-      this.errorMessage = 'Price and duration are required.';
+    if (!this.form.duration_days) {
+      this.errorMessage = 'Duration is required.';
       return;
     }
 
