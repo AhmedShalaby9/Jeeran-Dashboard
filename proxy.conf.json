@@ -1,0 +1,8 @@
+{
+  "/api": {
+    "target": "http://api-stg.jeeran-realestate.com",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
+}
