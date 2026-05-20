@@ -5,6 +5,7 @@
       <h1>AI Ad Generations</h1>
       <p>All user-generated AI ads — {{ total }} total</p>
     </div>
+    <button class="btn-secondary" (click)="openGenerateModal()">+ Generate AI Ad</button>
   </div>
 
   <!-- Filters -->
@@ -124,6 +125,53 @@
         [class.active]="p === page"
       >{{ p }}</button>
       <button (click)="goToPage(page + 1)" [disabled]="page === pages">›</button>
+    </div>
+  </div>
+
+  <!-- Generate Modal -->
+  <div class="modal-overlay" *ngIf="showGenerateModal" (click)="closeGenerateModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Generate AI Ad (Admin)</h2>
+        <button class="modal-close" (click)="closeGenerateModal()" [disabled]="genLoading">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="gen-success" *ngIf="genSuccess">{{ genSuccess }}</div>
+        <div class="gen-error" *ngIf="genError">{{ genError }}</div>
+
+        <div class="gen-field">
+          <label>User ID</label>
+          <input type="number" [(ngModel)]="genUserId" placeholder="e.g. 42" [disabled]="genLoading" />
+        </div>
+
+        <div class="gen-field">
+          <label>Source Image URLs</label>
+          <textarea
+            [(ngModel)]="genImagesRaw"
+            placeholder="Paste image URLs separated by commas"
+            rows="3"
+            [disabled]="genLoading"
+          ></textarea>
+          <span class="gen-hint">Separate multiple URLs with commas. Max 5 images.</span>
+        </div>
+
+        <div class="gen-field">
+          <label>Caption / Instructions</label>
+          <textarea
+            [(ngModel)]="genCaption"
+            placeholder="Describe the ad to generate…"
+            rows="4"
+            [disabled]="genLoading"
+          ></textarea>
+        </div>
+
+        <div class="gen-actions">
+          <button class="btn-ghost" (click)="closeGenerateModal()" [disabled]="genLoading">Cancel</button>
+          <button class="btn-secondary" (click)="submitGenerate()" [disabled]="genLoading">
+            {{ genLoading ? 'Generating…' : 'Generate' }}
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 

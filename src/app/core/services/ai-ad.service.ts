@@ -2,8 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AiAdsResponse } from '../models/ai-ad.model';
+import { AiAd, AiAdsResponse } from '../models/ai-ad.model';
 import { AuthService } from './auth.service';
+
+export interface AdminGeneratePayload {
+  user_id: number;
+  source_images: string[];
+  caption: string;
+}
 
 export interface AiAdFilters {
   status?: string;
@@ -21,6 +27,12 @@ export class AiAdService {
 
   private headers(): HttpHeaders {
     return new HttpHeaders({ Authorization: `Bearer ${this.authService.getToken()}` });
+  }
+
+  adminGenerate(payload: AdminGeneratePayload): Observable<{ success: boolean; data: AiAd }> {
+    return this.http.post<{ success: boolean; data: AiAd }>(`${this.url}/admin/generate`, payload, {
+      headers: this.headers(),
+    });
   }
 
   adminList(filters: AiAdFilters = {}): Observable<AiAdsResponse> {
