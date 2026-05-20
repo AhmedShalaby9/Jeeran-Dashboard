@@ -27,9 +27,6 @@ export class AiAdsComponent implements OnInit {
   total = 0;
   pages = 1;
 
-  // Detail modal
-  selected: AiAd | null = null;
-
   constructor(private aiAdService: AiAdService, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit(): void {
@@ -79,11 +76,7 @@ export class AiAdsComponent implements OnInit {
   }
 
   openDetail(ad: AiAd): void {
-    this.selected = ad;
-  }
-
-  closeDetail(): void {
-    this.selected = null;
+    this.router.navigate(['/dashboard/ai-ads', ad.id]);
   }
 
   goToNew(): void {
