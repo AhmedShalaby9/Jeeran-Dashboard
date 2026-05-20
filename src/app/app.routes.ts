@@ -32,6 +32,7 @@ import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscrip
 import { SubscriptionDetailComponent } from './views/dashboard/subscriptions/subscription-detail/subscription-detail';
 import { SettingsComponent } from './views/dashboard/settings/settings';
 import { AiAdsComponent } from './views/dashboard/ai-ads/ai-ads';
+import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-form';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
 
@@ -92,7 +93,8 @@ export const routes: Routes = [
       { path: 'subscriptions/:id', component: SubscriptionDetailComponent },
 
       // AI Ads
-      { path: 'ai-ads', component: AiAdsComponent },
+      { path: 'ai-ads',     component: AiAdsComponent },
+      { path: 'ai-ads/new', component: AiAdFormComponent },
 
       // Settings
       { path: 'settings', component: SettingsComponent },

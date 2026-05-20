@@ -6,7 +6,6 @@ import { AiAd, AiAdsResponse } from '../models/ai-ad.model';
 import { AuthService } from './auth.service';
 
 export interface AdminGeneratePayload {
-  user_id: number;
   source_images: string[];
   caption: string;
 }
