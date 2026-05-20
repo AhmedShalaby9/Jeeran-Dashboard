@@ -1,0 +1,118 @@
+@use '../../shared-page';
+
+.header-left    { display: flex; align-items: center; gap: 1rem; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.5rem 0.85rem; border: 1.5px solid #e5e7eb; border-radius: 8px;
+  background: #ffffff; color: #6b7280; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: #1a1f2e; border-color: #9ca3af; }
+}
+
+.form-card      { background: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; }
+.form-section   { padding: 1.75rem 2rem; }
+.section-title  { font-size: 1rem; font-weight: 700; color: #1a1f2e; margin: 0 0 0.25rem; }
+.section-desc   { font-size: 0.85rem; color: #6b7280; margin: 0 0 1.25rem; }
+.form-divider   { border: none; border-top: 1px solid #e5e7eb; }
+
+.form-group {
+  display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1.25rem;
+  &:last-child { margin-bottom: 0; }
+
+  label { font-size: 0.82rem; font-weight: 600; color: #1a1f2e; }
+
+  textarea {
+    padding: 0.7rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 8px;
+    font-size: 0.9rem; color: #1a1f2e; outline: none; width: 100%; box-sizing: border-box;
+    resize: vertical; min-height: 140px; font-family: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    &::placeholder { color: #b0b7c3; }
+    &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+  }
+}
+
+.required { color: #ef4444; }
+
+// ── Media ──────────────────────────────────────────────────────────────────────
+.url-fallback   { margin-top: 1rem; }
+.or-label       { font-size: 0.8rem; color: #6b7280; display: block; margin-bottom: 0.5rem; }
+.media-input-row { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
+
+.media-input {
+  flex: 1; padding: 0.7rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 8px;
+  font-size: 0.9rem; color: #1a1f2e; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &::placeholder { color: #b0b7c3; }
+  &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.btn-add {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.7rem 1.1rem; background: #1e3a6e; color: #ffffff;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: background 0.2s;
+  &:hover { background: #152c54; }
+}
+
+.media-list { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem; }
+
+.media-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.5rem 0.85rem; background: #f4f6f8; border: 1px solid #e5e7eb;
+  border-radius: 8px; font-size: 0.85rem;
+}
+
+.media-thumb {
+  width: 44px; height: 44px; border-radius: 6px; overflow: hidden; flex-shrink: 0;
+  background: #dde3f0;
+  .thumb { width: 100%; height: 100%; object-fit: cover; display: block; }
+}
+
+.media-url { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #1a1f2e; }
+
+.btn-remove {
+  background: none; border: none; cursor: pointer; color: #9ca3af;
+  display: flex; align-items: center; padding: 2px; border-radius: 4px; flex-shrink: 0;
+  transition: color 0.15s, background 0.15s;
+  &:hover { color: #dc2626; background: #fee2e2; }
+}
+
+.empty-hint { font-size: 0.85rem; color: #6b7280; font-style: italic; margin-top: 0.5rem; }
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.form-actions {
+  padding: 1.25rem 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;
+  background: #f4f6f8; border-top: 1px solid #e5e7eb;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.4rem; background: #1e3a6e; color: #ffffff;
+  border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+  &:hover:not(:disabled) { background: #152c54; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+.btn-secondary {
+  padding: 0.65rem 1.2rem; background: transparent; color: #6b7280;
+  border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; font-weight: 500;
+  cursor: pointer; transition: all 0.15s;
+  &:hover { color: #1a1f2e; border-color: #9ca3af; }
+}
+
+// ── Error ─────────────────────────────────────────────────────────────────────
+.error-msg {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 1rem; background: #fee2e2; border: 1px solid #fca5a5;
+  border-radius: 8px; color: #dc2626; font-size: 0.875rem; margin-bottom: 1.25rem;
+}
+
+.spinner-sm {
+  width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: #ffffff; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AiAdService } from '../../../core/services/ai-ad.service';
 import { AiAd } from '../../../core/models/ai-ad.model';
 
@@ -29,7 +30,7 @@ export class AiAdsComponent implements OnInit {
   // Detail modal
   selected: AiAd | null = null;
 
-  constructor(private aiAdService: AiAdService, private cdr: ChangeDetectorRef) {}
+  constructor(private aiAdService: AiAdService, private cdr: ChangeDetectorRef, private router: Router) {}
 
   ngOnInit(): void {
     this.load();
@@ -83,6 +84,10 @@ export class AiAdsComponent implements OnInit {
 
   closeDetail(): void {
     this.selected = null;
+  }
+
+  goToNew(): void {
+    this.router.navigate(['/dashboard/ai-ads/new']);
   }
 
   statusLabel(status: string): string {
