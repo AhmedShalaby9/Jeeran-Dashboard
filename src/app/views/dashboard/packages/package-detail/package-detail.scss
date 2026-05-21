@@ -122,6 +122,35 @@ $border:      #e5e7eb;
   svg { color: $accent; flex-shrink: 0; }
 }
 
+.feature-text { flex: 1; display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+.feature-sep  { color: #9ca3af; font-size: 0.8rem; }
+
+// ── Feature Bilingual block (edit mode) ───────────────────
+.feature-bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.feature-bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 0; }
+}
+
+.feature-add-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #dce3f5;
+}
+
 .no-features {
   font-size: 0.875rem;
   color: $text-muted;
@@ -173,6 +202,93 @@ $border:      #e5e7eb;
 }
 
 .required { color: #ef4444; }
+
+// ── Bilingual card ────────────────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 0; }
+}
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+// ── Translate row (used inside feature bilingual block) ───
+.translate-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0 0.75rem;
+}
+
+.translate-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 500;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-translate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  background: #f0f4ff;
+  border: 1.5px solid #c8d3f0;
+  color: $primary;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  min-width: 140px;
+  justify-content: center;
+
+  &:hover:not(:disabled) { background: $primary; color: $white; border-color: $primary; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.translate-error {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #dc2626;
+  margin-bottom: 0.75rem;
+}
+
+.spinner-xs {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin-xs 0.7s linear infinite;
+}
+
+@keyframes spin-xs { to { transform: rotate(360deg); } }
 
 .input-prefix-wrap {
   display: flex;
@@ -229,7 +345,8 @@ $border:      #e5e7eb;
   cursor: pointer;
   transition: background 0.2s;
 
-  &:hover { background: $primary-dark; }
+  &:hover:not(:disabled) { background: $primary-dark; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
 
 .features-list { display: flex; flex-direction: column; gap: 0.5rem; }

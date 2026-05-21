@@ -18,39 +18,33 @@ export class ProjectFormComponent {
   form: CreateProjectDto = {
     name_ar:    '',
     name_en:    '',
+    desc_ar:    '',
+    desc_en:    '',
     main_image: null,
     gallery:    [],
     features:   [],
     is_active:  true,
   };
 
-  // Gallery input
-  galleryInput = '';
-
-  // Feature builder — temporary state while filling a new feature
+  galleryInput      = '';
   newFeature: ProjectFeature = this.emptyFeature();
   featureImageInput = '';
   showFeatureForm   = false;
-
-  isSubmitting = false;
-  errorMessage = '';
+  isSubmitting      = false;
+  errorMessage      = '';
 
   translating = {
-    nameToEn:       false,
-    nameToAr:       false,
-    featTitleToEn:  false,
-    featTitleToAr:  false,
-    featDescToEn:   false,
-    featDescToAr:   false,
+    nameToEn:          false, nameToAr:          false,
+    descToEn:          false, descToAr:          false,
+    featTitleToEn:     false, featTitleToAr:     false,
+    featSubtitleToEn:  false, featSubtitleToAr:  false,
   };
 
   translateErrors = {
-    nameToEn:       false,
-    nameToAr:       false,
-    featTitleToEn:  false,
-    featTitleToAr:  false,
-    featDescToEn:   false,
-    featDescToAr:   false,
+    nameToEn:          false, nameToAr:          false,
+    descToEn:          false, descToAr:          false,
+    featTitleToEn:     false, featTitleToAr:     false,
+    featSubtitleToEn:  false, featSubtitleToAr:  false,
   };
 
   constructor(
@@ -60,80 +54,80 @@ export class ProjectFormComponent {
     private cdr:                ChangeDetectorRef,
   ) {}
 
+  // ── Project name ──────────────────────────────────────────
   translateNameToEn(): void {
     if (!this.form.name_ar?.trim() || this.translating.nameToEn) return;
-    this.translating.nameToEn = true;
-    this.translateErrors.nameToEn = false;
-    this.translationService.translate(this.form.name_ar, 'ar', 'en').subscribe(result => {
-      if (result !== null) this.form.name_en = result;
-      else this.translateErrors.nameToEn = true;
-      this.translating.nameToEn = false;
-      this.cdr.detectChanges();
+    this.translating.nameToEn = true; this.translateErrors.nameToEn = false;
+    this.translationService.translate(this.form.name_ar, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.form.name_en = r; else this.translateErrors.nameToEn = true;
+      this.translating.nameToEn = false; this.cdr.detectChanges();
     });
   }
 
   translateNameToAr(): void {
     if (!this.form.name_en?.trim() || this.translating.nameToAr) return;
-    this.translating.nameToAr = true;
-    this.translateErrors.nameToAr = false;
-    this.translationService.translate(this.form.name_en, 'en', 'ar').subscribe(result => {
-      if (result !== null) this.form.name_ar = result;
-      else this.translateErrors.nameToAr = true;
-      this.translating.nameToAr = false;
-      this.cdr.detectChanges();
+    this.translating.nameToAr = true; this.translateErrors.nameToAr = false;
+    this.translationService.translate(this.form.name_en, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.form.name_ar = r; else this.translateErrors.nameToAr = true;
+      this.translating.nameToAr = false; this.cdr.detectChanges();
     });
   }
 
+  // ── Project description ───────────────────────────────────
+  translateDescToEn(): void {
+    if (!this.form.desc_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true; this.translateErrors.descToEn = false;
+    this.translationService.translate(this.form.desc_ar!, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.form.desc_en = r; else this.translateErrors.descToEn = true;
+      this.translating.descToEn = false; this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.form.desc_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true; this.translateErrors.descToAr = false;
+    this.translationService.translate(this.form.desc_en!, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.form.desc_ar = r; else this.translateErrors.descToAr = true;
+      this.translating.descToAr = false; this.cdr.detectChanges();
+    });
+  }
+
+  // ── Feature title ─────────────────────────────────────────
   translateFeatTitleToEn(): void {
     if (!this.newFeature.title_ar?.trim() || this.translating.featTitleToEn) return;
-    this.translating.featTitleToEn = true;
-    this.translateErrors.featTitleToEn = false;
-    this.translationService.translate(this.newFeature.title_ar, 'ar', 'en').subscribe(result => {
-      if (result !== null) this.newFeature.title_en = result;
-      else this.translateErrors.featTitleToEn = true;
-      this.translating.featTitleToEn = false;
-      this.cdr.detectChanges();
+    this.translating.featTitleToEn = true; this.translateErrors.featTitleToEn = false;
+    this.translationService.translate(this.newFeature.title_ar, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.newFeature.title_en = r; else this.translateErrors.featTitleToEn = true;
+      this.translating.featTitleToEn = false; this.cdr.detectChanges();
     });
   }
 
   translateFeatTitleToAr(): void {
     if (!this.newFeature.title_en?.trim() || this.translating.featTitleToAr) return;
-    this.translating.featTitleToAr = true;
-    this.translateErrors.featTitleToAr = false;
-    this.translationService.translate(this.newFeature.title_en, 'en', 'ar').subscribe(result => {
-      if (result !== null) this.newFeature.title_ar = result;
-      else this.translateErrors.featTitleToAr = true;
-      this.translating.featTitleToAr = false;
-      this.cdr.detectChanges();
+    this.translating.featTitleToAr = true; this.translateErrors.featTitleToAr = false;
+    this.translationService.translate(this.newFeature.title_en, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.newFeature.title_ar = r; else this.translateErrors.featTitleToAr = true;
+      this.translating.featTitleToAr = false; this.cdr.detectChanges();
     });
   }
 
-  translateFeatDescToEn(): void {
-    if (!this.newFeature.desc_ar?.trim() || this.translating.featDescToEn) return;
-    this.translating.featDescToEn = true;
-    this.translateErrors.featDescToEn = false;
-    this.translationService.translate(this.newFeature.desc_ar, 'ar', 'en').subscribe(result => {
-      if (result !== null) this.newFeature.desc_en = result;
-      else this.translateErrors.featDescToEn = true;
-      this.translating.featDescToEn = false;
-      this.cdr.detectChanges();
+  // ── Feature subtitle ──────────────────────────────────────
+  translateFeatSubtitleToEn(): void {
+    if (!this.newFeature.subtitle_ar?.trim() || this.translating.featSubtitleToEn) return;
+    this.translating.featSubtitleToEn = true; this.translateErrors.featSubtitleToEn = false;
+    this.translationService.translate(this.newFeature.subtitle_ar, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.newFeature.subtitle_en = r; else this.translateErrors.featSubtitleToEn = true;
+      this.translating.featSubtitleToEn = false; this.cdr.detectChanges();
     });
   }
 
-  translateFeatDescToAr(): void {
-    if (!this.newFeature.desc_en?.trim() || this.translating.featDescToAr) return;
-    this.translating.featDescToAr = true;
-    this.translateErrors.featDescToAr = false;
-    this.translationService.translate(this.newFeature.desc_en, 'en', 'ar').subscribe(result => {
-      if (result !== null) this.newFeature.desc_ar = result;
-      else this.translateErrors.featDescToAr = true;
-      this.translating.featDescToAr = false;
-      this.cdr.detectChanges();
+  translateFeatSubtitleToAr(): void {
+    if (!this.newFeature.subtitle_en?.trim() || this.translating.featSubtitleToAr) return;
+    this.translating.featSubtitleToAr = true; this.translateErrors.featSubtitleToAr = false;
+    this.translationService.translate(this.newFeature.subtitle_en, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.newFeature.subtitle_ar = r; else this.translateErrors.featSubtitleToAr = true;
+      this.translating.featSubtitleToAr = false; this.cdr.detectChanges();
     });
-  }
-
-  private emptyFeature(): ProjectFeature {
-    return { title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '', desc_ar: '', desc_en: '', images: [] };
   }
 
   // ── Gallery ───────────────────────────────────────────────
@@ -144,9 +138,7 @@ export class ProjectFormComponent {
     this.galleryInput = '';
   }
 
-  removeGalleryImage(index: number): void {
-    this.form.gallery.splice(index, 1);
-  }
+  removeGalleryImage(index: number): void { this.form.gallery.splice(index, 1); }
 
   onGalleryKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter') { event.preventDefault(); this.addGalleryImage(); }
@@ -160,24 +152,25 @@ export class ProjectFormComponent {
     this.featureImageInput = '';
   }
 
-  removeFeatureImage(index: number): void {
-    this.newFeature.images.splice(index, 1);
-  }
+  removeFeatureImage(index: number): void { this.newFeature.images.splice(index, 1); }
 
   onFeatureImageKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter') { event.preventDefault(); this.addFeatureImage(); }
   }
 
   // ── Feature CRUD ──────────────────────────────────────────
-  openFeatureForm(): void {
-    this.newFeature      = this.emptyFeature();
-    this.featureImageInput = '';
-    this.showFeatureForm = true;
+  private emptyFeature(): ProjectFeature {
+    return { title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '', images: [] };
   }
 
-  cancelFeature(): void {
-    this.showFeatureForm = false;
+  openFeatureForm(): void {
+    this.newFeature        = this.emptyFeature();
+    this.featureImageInput = '';
+    this.showFeatureForm   = true;
+    Object.keys(this.translateErrors).forEach(k => (this.translateErrors as any)[k] = false);
   }
+
+  cancelFeature(): void { this.showFeatureForm = false; }
 
   addFeature(): void {
     if (!this.newFeature.title_ar && !this.newFeature.title_en) return;
@@ -186,9 +179,7 @@ export class ProjectFormComponent {
     this.featureImageInput = '';
   }
 
-  removeFeature(index: number): void {
-    this.form.features.splice(index, 1);
-  }
+  removeFeature(index: number): void { this.form.features.splice(index, 1); }
 
   onMainImageUploaded(urls: string[]): void {
     if (urls.length) this.form.main_image = urls[0];
@@ -205,10 +196,9 @@ export class ProjectFormComponent {
   // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
     if (!this.form.name_ar.trim()) {
-      this.errorMessage = 'Arabic name (name_ar) is required.';
+      this.errorMessage = 'Arabic name is required.';
       return;
     }
-
     this.isSubmitting = true;
     this.errorMessage = '';
 
@@ -225,7 +215,5 @@ export class ProjectFormComponent {
     });
   }
 
-  goBack(): void {
-    this.router.navigate(['/dashboard/projects']);
-  }
+  goBack(): void { this.router.navigate(['/dashboard/projects']); }
 }

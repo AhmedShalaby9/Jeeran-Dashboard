@@ -229,6 +229,34 @@ $border:       #e5e7eb;
   &:hover { background: $primary-dark; }
 }
 
+// ── Bilingual card ────────────────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 0; }
+}
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
 // ── Translate row ─────────────────────────────────────────
 .translate-row {
   display: flex;
