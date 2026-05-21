@@ -112,9 +112,9 @@
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
               <span class="feature-text">
-                <span class="feature-en" *ngIf="f.en">{{ f.en }}</span>
-                <span class="feature-sep" *ngIf="f.en && f.ar"> / </span>
-                <span class="feature-ar" *ngIf="f.ar" dir="rtl">{{ f.ar }}</span>
+                <span class="feature-en">{{ f?.en || f }}</span>
+                <span class="feature-sep" *ngIf="f?.en && f?.ar"> / </span>
+                <span class="feature-ar" *ngIf="f?.ar" dir="rtl">{{ f?.ar }}</span>
               </span>
             </div>
           </div>
@@ -339,9 +339,9 @@
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
               <span class="feature-text">
-                <span class="feature-en" *ngIf="f.en">{{ f.en }}</span>
-                <span class="feature-sep" *ngIf="f.en && f.ar"> / </span>
-                <span class="feature-ar" *ngIf="f.ar" dir="rtl">{{ f.ar }}</span>
+                <span class="feature-en">{{ f?.en || f }}</span>
+                <span class="feature-sep" *ngIf="f?.en && f?.ar"> / </span>
+                <span class="feature-ar" *ngIf="f?.ar" dir="rtl">{{ f?.ar }}</span>
               </span>
               <button type="button" class="btn-remove-feature" (click)="removeFeature(i)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
