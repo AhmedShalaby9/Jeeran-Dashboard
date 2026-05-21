@@ -127,6 +127,36 @@ $border:      #e5e7eb;
 }
 
 // ── Features Section ──────────────────────────────────────
+.feature-bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.feature-bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 0; }
+}
+
+.feature-add-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+.feature-text { flex: 1; display: flex; align-items: center; gap: 0.25rem; flex-wrap: wrap; }
+.feature-en { color: inherit; }
+.feature-sep { color: #9ca3af; font-size: 0.8rem; }
+.feature-ar { color: inherit; }
+
 .feature-input-row {
   display: flex;
   gap: 0.75rem;
@@ -207,7 +237,35 @@ $border:      #e5e7eb;
   padding: 0.5rem 0;
 }
 
-// ── Translate row ─────────────────────────────────────────
+// ── Bilingual card ────────────────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+
+  .form-group { margin-bottom: 0; }
+}
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+// ── Translate row (legacy — kept for feature block) ───────
 .translate-row {
   display: flex;
   align-items: center;

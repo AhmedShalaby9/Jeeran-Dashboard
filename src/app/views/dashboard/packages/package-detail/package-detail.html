@@ -111,7 +111,11 @@
                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              {{ f }}
+              <span class="feature-text">
+                <span class="feature-en" *ngIf="f.en">{{ f.en }}</span>
+                <span class="feature-sep" *ngIf="f.en && f.ar"> / </span>
+                <span class="feature-ar" *ngIf="f.ar" dir="rtl">{{ f.ar }}</span>
+              </span>
             </div>
           </div>
           <p class="no-features" *ngIf="!pkg.features || pkg.features.length === 0">No features defined.</p>
@@ -136,25 +140,103 @@
         <div class="form-section">
           <h2 class="section-title">Edit Package Info</h2>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Title (English) <span class="required">*</span></label>
-              <input type="text" [(ngModel)]="editForm.title_en" name="title_en" />
+          <!-- Title — bilingual card -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Title (Arabic) <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Title (English) <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.title_en" name="title_en" />
+              </div>
             </div>
-            <div class="form-group">
-              <label>Title (Arabic) <span class="required">*</span></label>
-              <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar" dir="rtl" />
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateTitleToAr()"
+                [disabled]="translating.titleToAr || !editForm.title_en?.trim()">
+                <span *ngIf="!translating.titleToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateTitleToEn()"
+                [disabled]="translating.titleToEn || !editForm.title_ar?.trim()">
+                <span *ngIf="!translating.titleToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+              Translation failed — please try again.
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label>Description (English)</label>
-              <input type="text" [(ngModel)]="editForm.description_en" name="description_en" />
+          <!-- Description — bilingual card -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Description (Arabic)</label>
+                <input type="text" [(ngModel)]="editForm.description_ar" name="description_ar" dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Description (English)</label>
+                <input type="text" [(ngModel)]="editForm.description_en" name="description_en" />
+              </div>
             </div>
-            <div class="form-group">
-              <label>Description (Arabic)</label>
-              <input type="text" [(ngModel)]="editForm.description_ar" name="description_ar" dir="rtl" />
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateDescToAr()"
+                [disabled]="translating.descToAr || !editForm.description_en?.trim()">
+                <span *ngIf="!translating.descToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateDescToEn()"
+                [disabled]="translating.descToEn || !editForm.description_ar?.trim()">
+                <span *ngIf="!translating.descToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+              Translation failed — please try again.
             </div>
           </div>
 
@@ -185,19 +267,69 @@
 
         <div class="form-section">
           <h2 class="section-title">Features</h2>
-          <p class="section-desc">Press Enter or click Add to insert a feature.</p>
+          <p class="section-desc">Add bilingual features. Fill at least one language and press Add.</p>
 
-          <div class="feature-input-row">
-            <input type="text" [(ngModel)]="featureInput" name="featureInput"
-              placeholder="e.g. 20 active listings / month"
-              (keydown)="onFeatureKeydown($event)" class="feature-input" />
-            <button type="button" class="btn-add-feature" (click)="addFeature()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              Add
-            </button>
+          <div class="feature-bilingual-block">
+            <div class="feature-bilingual-inputs">
+              <div class="form-group">
+                <label>Feature (Arabic)</label>
+                <input type="text" [(ngModel)]="featureInputAr" name="featureInputAr"
+                  placeholder="مثال: 20 إعلان نشط / شهر" dir="rtl"
+                  (keydown)="onFeatureKeydown($event)" />
+              </div>
+              <div class="form-group">
+                <label>Feature (English)</label>
+                <input type="text" [(ngModel)]="featureInputEn" name="featureInputEn"
+                  placeholder="e.g. 20 active listings / month"
+                  (keydown)="onFeatureKeydown($event)" />
+              </div>
+            </div>
+            <div class="translate-row" style="margin-top: 0.75rem;">
+              <button type="button" class="btn-translate"
+                (click)="translateFeatureToAr()"
+                [disabled]="translating.featureToAr || !featureInputEn.trim()">
+                <span *ngIf="!translating.featureToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.featureToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateFeatureToEn()"
+                [disabled]="translating.featureToEn || !featureInputAr.trim()">
+                <span *ngIf="!translating.featureToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.featureToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.featureToEn || translateErrors.featureToAr">
+              Translation failed — please try again.
+            </div>
+            <div class="feature-add-row">
+              <button type="button" class="btn-add-feature" (click)="addFeature()"
+                [disabled]="!featureInputEn.trim() && !featureInputAr.trim()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                Add Feature
+              </button>
+            </div>
           </div>
 
           <div class="features-list" *ngIf="editForm.features && editForm.features.length > 0">
@@ -206,7 +338,11 @@
                 stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="20 6 9 17 4 12"/>
               </svg>
-              <span>{{ f }}</span>
+              <span class="feature-text">
+                <span class="feature-en" *ngIf="f.en">{{ f.en }}</span>
+                <span class="feature-sep" *ngIf="f.en && f.ar"> / </span>
+                <span class="feature-ar" *ngIf="f.ar" dir="rtl">{{ f.ar }}</span>
+              </span>
               <button type="button" class="btn-remove-feature" (click)="removeFeature(i)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
