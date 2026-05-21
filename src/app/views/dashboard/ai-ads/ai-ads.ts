@@ -44,8 +44,8 @@ export class AiAdsComponent implements OnInit {
     }).subscribe({
       next: (res) => {
         this.ads      = res.data;
-        this.total    = res.meta?.total ?? 0;
-        this.pages    = res.meta?.pages ?? 1;
+        this.total    = res.pagination?.total ?? 0;
+        this.pages    = res.pagination?.pages ?? 1;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
