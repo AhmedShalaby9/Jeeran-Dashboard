@@ -27,10 +27,12 @@ export interface AiAd {
 export interface AiAdsResponse {
   success: boolean;
   data: AiAd[];
-  meta: {
+  pagination: {
     page: number;
     limit: number;
     total: number;
     pages: number;
+    sort: string;
+    order: string;
   };
 }

@@ -34,6 +34,18 @@ export class AiAdService {
     });
   }
 
+  adminGet(id: number): Observable<{ success: boolean; data: AiAd }> {
+    return this.http.get<{ success: boolean; data: AiAd }>(`${this.url}/admin/${id}`, {
+      headers: this.headers(),
+    });
+  }
+
+  adminListTrials(id: number): Observable<{ success: boolean; data: AiAd[] }> {
+    return this.http.get<{ success: boolean; data: AiAd[] }>(`${this.url}/admin/${id}/trials`, {
+      headers: this.headers(),
+    });
+  }
+
   adminList(filters: AiAdFilters = {}): Observable<AiAdsResponse> {
     let params = new HttpParams();
     if (filters.status)         params = params.set('status', filters.status);

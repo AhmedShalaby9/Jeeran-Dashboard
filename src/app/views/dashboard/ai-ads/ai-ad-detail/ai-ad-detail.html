@@ -1,0 +1,222 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>AI Ad #{{ ad?.id || '...' }}</h1>
+        <p>{{ ad?.user?.name || '—' }} &middot; {{ ad?.user?.phone }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="load-error" *ngIf="!isLoading && loadError">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ loadError }}
+  </div>
+
+  <ng-container *ngIf="!isLoading && ad">
+
+    <div class="layout">
+
+      <!-- ── Left column: generated image ─────────────────────── -->
+      <div class="col-image">
+        <div class="detail-card image-card">
+          <div class="card-header">
+            <span class="card-title">Generated Image</span>
+            <span class="badge" [ngClass]="'badge-' + ad.status">{{ statusLabel(ad.status) }}</span>
+          </div>
+
+          <div class="gen-image-wrap" *ngIf="ad.generated_image_url">
+            <img [src]="ad.generated_image_url" alt="Generated Ad" class="gen-image" />
+            <a [href]="ad.generated_image_url" target="_blank" class="btn-open">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+              Open full size
+            </a>
+          </div>
+
+          <div class="no-image-placeholder" *ngIf="!ad.generated_image_url">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p *ngIf="ad.status === 'pending'">Generation in progress…</p>
+            <p *ngIf="ad.status === 'awaiting_payment'">Awaiting payment</p>
+            <p *ngIf="ad.status === 'failed'">Generation failed</p>
+          </div>
+
+          <div class="error-block" *ngIf="ad.error_message">
+            <span class="error-label">Error</span>
+            <p>{{ ad.error_message }}</p>
+          </div>
+        </div>
+
+        <!-- Source Images -->
+        <div class="detail-card" *ngIf="ad.source_images?.length">
+          <div class="card-header">
+            <span class="card-title">Source Images</span>
+            <span class="count-badge">{{ ad.source_images.length }}</span>
+          </div>
+          <div class="source-grid">
+            <a *ngFor="let img of ad.source_images; let i = index"
+               [href]="img" target="_blank" class="source-thumb-link">
+              <img [src]="img" [alt]="'source-' + i" class="source-thumb" />
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Right column: metadata ────────────────────────────── -->
+      <div class="col-meta">
+
+        <!-- Info Card -->
+        <div class="detail-card">
+          <div class="card-header">
+            <span class="card-title">Details</span>
+          </div>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-label">Status</span>
+              <span class="badge" [ngClass]="'badge-' + ad.status">{{ statusLabel(ad.status) }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Payment</span>
+              <span class="badge" [ngClass]="'badge-pay-' + ad.payment_status">{{ ad.payment_status }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">User</span>
+              <span class="info-value">{{ ad.user?.name || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ ad.user?.phone || '—' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">User ID</span>
+              <span class="info-value">#{{ ad.user_id }}</span>
+            </div>
+            <div class="info-row" *ngIf="ad.payment_order_id">
+              <span class="info-label">Order ID</span>
+              <span class="info-value mono">{{ ad.payment_order_id }}</span>
+            </div>
+            <div class="info-row" *ngIf="ad.model">
+              <span class="info-label">Model</span>
+              <span class="info-value mono">{{ ad.model }}</span>
+            </div>
+            <div class="info-row" *ngIf="ad.duration_ms">
+              <span class="info-label">Duration</span>
+              <span class="info-value">{{ ad.duration_ms | number }} ms</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Created</span>
+              <span class="info-value">{{ ad.created_at | date:'dd MMM yyyy, HH:mm' }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Updated</span>
+              <span class="info-value">{{ ad.updated_at | date:'dd MMM yyyy, HH:mm' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Caption Card -->
+        <div class="detail-card">
+          <div class="card-header">
+            <span class="card-title">Caption / Instructions</span>
+          </div>
+          <p class="caption-text">{{ ad.caption }}</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Trials Section ──────────────────────────────────────── -->
+    <div class="trials-section" *ngIf="ad.status === 'done'">
+      <div class="trials-header">
+        <h2 class="trials-title">Trials</h2>
+        <span class="count-badge" *ngIf="!trialsLoading">{{ trials.length }}</span>
+        <div class="spinner-sm" *ngIf="trialsLoading"></div>
+      </div>
+
+      <div class="trials-empty" *ngIf="!trialsLoading && trials.length === 0">
+        No trials have been created for this ad yet.
+      </div>
+
+      <div class="trials-grid" *ngIf="trials.length > 0">
+        <div class="trial-card" *ngFor="let trial of trials" (click)="toggleTrial(trial.id)">
+
+          <div class="trial-image-wrap">
+            <img *ngIf="trial.generated_image_url" [src]="trial.generated_image_url"
+              class="trial-image" [alt]="'Trial ' + trial.trial_number" />
+            <div class="trial-no-image" *ngIf="!trial.generated_image_url">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="trial-meta">
+            <div class="trial-top">
+              <span class="trial-number">Trial {{ trial.trial_number }}</span>
+              <span class="badge" [ngClass]="'badge-' + trial.status">{{ statusLabel(trial.status) }}</span>
+            </div>
+            <p class="trial-caption">{{ trial.caption }}</p>
+            <div class="trial-footer">
+              <span *ngIf="trial.duration_ms" class="trial-dur">{{ trial.duration_ms | number }} ms</span>
+              <span class="trial-date">{{ trial.created_at | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+
+          <!-- Expanded detail -->
+          <div class="trial-expanded" *ngIf="expandedTrial === trial.id" (click)="$event.stopPropagation()">
+            <div class="trial-exp-image" *ngIf="trial.generated_image_url">
+              <img [src]="trial.generated_image_url" alt="Trial full" />
+              <a [href]="trial.generated_image_url" target="_blank" class="btn-open">Open full size</a>
+            </div>
+            <div class="trial-exp-meta">
+              <div class="info-row" *ngIf="trial.model">
+                <span class="info-label">Model</span>
+                <span class="info-value mono">{{ trial.model }}</span>
+              </div>
+              <div class="info-row" *ngIf="trial.error_message">
+                <span class="info-label">Error</span>
+                <span class="info-value error-val">{{ trial.error_message }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Created</span>
+                <span class="info-value">{{ trial.created_at | date:'dd MMM yyyy, HH:mm' }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
