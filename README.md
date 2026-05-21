@@ -61,3 +61,5 @@ For more information on using the Angular CLI, including detailed command refere
 
 // http://admin.jeeran-realestate.com live dashboard
 //http://dashboard-stg.jeeran-realestate.com stg 
+
+http://api-stg.jeeran-realestate.com/api/auth/admin/login
