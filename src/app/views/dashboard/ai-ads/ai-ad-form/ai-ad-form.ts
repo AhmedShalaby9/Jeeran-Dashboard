@@ -16,6 +16,7 @@ export class AiAdFormComponent {
   caption      = '';
   sourceImages: string[] = [];
   imageInput   = '';
+  language: 'ar' | 'en' = 'ar';
 
   isSubmitting = false;
   errorMessage = '';
@@ -62,6 +63,7 @@ export class AiAdFormComponent {
     this.aiAdService.adminGenerate({
       source_images: this.sourceImages,
       caption: this.caption.trim(),
+      language: this.language,
     }).subscribe({
       next: () => {
         this.isSubmitting = false;

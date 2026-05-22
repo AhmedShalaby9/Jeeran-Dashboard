@@ -34,6 +34,18 @@
 
 .required { color: #ef4444; }
 
+// ── Language toggle ────────────────────────────────────────────────────────────
+.lang-toggle {
+  display: inline-flex; border: 1.5px solid #e5e7eb; border-radius: 9px; overflow: hidden;
+}
+
+.lang-btn {
+  padding: 0.55rem 1.5rem; font-size: 0.9rem; font-weight: 600; cursor: pointer;
+  background: #ffffff; color: #6b7280; border: none; transition: background 0.15s, color 0.15s;
+  &:hover:not(.active) { background: #f4f6f8; color: #1a1f2e; }
+  &.active { background: #1e3a6e; color: #ffffff; }
+}
+
 // ── Media ──────────────────────────────────────────────────────────────────────
 .url-fallback   { margin-top: 1rem; }
 .or-label       { font-size: 0.8rem; color: #6b7280; display: block; margin-bottom: 0.5rem; }
