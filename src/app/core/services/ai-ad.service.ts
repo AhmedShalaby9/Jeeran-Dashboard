@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 export interface AdminGeneratePayload {
   source_images: string[];
   caption: string;
+  language: 'ar' | 'en';
 }
 
 export interface AiAdFilters {
