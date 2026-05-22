@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AiAdService } from '../../../../core/services/ai-ad.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
@@ -21,8 +22,11 @@ export class AiAdFormComponent {
   isSubmitting = false;
   errorMessage = '';
 
+  private readonly arabicPattern = /[\u0600-\u06FF]/;
+
   constructor(
     private aiAdService: AiAdService,
+    private translationService: TranslationService,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -60,21 +64,39 @@ export class AiAdFormComponent {
 
     this.isSubmitting = true;
 
-    this.aiAdService.adminGenerate({
-      source_images: this.sourceImages,
-      caption: this.caption.trim(),
-      language: this.language,
-    }).subscribe({
-      next: () => {
-        this.isSubmitting = false;
-        this.router.navigate(['/dashboard/ai-ads']);
-      },
-      error: (err) => {
-        this.isSubmitting = false;
-        this.errorMessage = err?.error?.message || 'Failed to generate AI ad.';
-        this.cdr.detectChanges();
-      },
-    });
+    const caption = this.caption.trim();
+    const needsTranslation = this.arabicPattern.test(caption);
+
+    const translate$ = needsTranslation
+      ? this.translationService.translate(caption, 'ar', 'en')
+      : null;
+
+    const doGenerate = (finalCaption: string) => {
+      this.aiAdService.adminGenerate({
+        source_images: this.sourceImages,
+        caption: finalCaption,
+        language: this.language,
+      }).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.router.navigate(['/dashboard/ai-ads']);
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.errorMessage = err?.error?.message || 'Failed to generate AI ad.';
+          this.cdr.detectChanges();
+        },
+      });
+    };
+
+    if (translate$) {
+      translate$.subscribe({
+        next: (translated) => doGenerate(translated ?? caption),
+        error: () => doGenerate(caption), // fallback to original on translation failure
+      });
+    } else {
+      doGenerate(caption);
+    }
   }
 
   goBack(): void {
