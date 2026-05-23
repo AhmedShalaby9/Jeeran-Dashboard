@@ -9,6 +9,7 @@ export interface AppSettings {
   about_us_ar: string;
   ad_generation_price: number;
   ad_generation_trials: number;
+  in_review: boolean;
 }
 
 export interface SettingsResponse {

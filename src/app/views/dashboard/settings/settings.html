@@ -35,6 +35,17 @@
     <div class="settings-card" *ngIf="activeTab === 'app'">
 
       <div class="settings-section">
+        <p class="section-title">App Review Mode</p>
+        <p class="section-desc">Enable this while the app is under App Store / Google Play review. It hides AI Ads, the AI Chatbot, and Packages &amp; Subscriptions from the mobile app so reviewers don't encounter payment or AI features.</p>
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="form.in_review" />
+          <span class="toggle-label">App is currently in review</span>
+        </label>
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="settings-section">
         <p class="section-title">Minimum App Versions</p>
         <p class="section-desc">Users on lower versions will be prompted to update.</p>
         <div class="form-row">
