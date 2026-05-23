@@ -33,6 +33,7 @@ export class SettingsComponent implements OnInit {
     privacy_policy_ar:    '',
     ad_generation_price:  50,
     ad_generation_trials: 5,
+    in_review:            false,
   };
 
   constructor(private settingService: SettingService, private cdr: ChangeDetectorRef) {}
