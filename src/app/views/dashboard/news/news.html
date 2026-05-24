@@ -14,6 +14,12 @@
     </button>
   </div>
 
+  <div class="filter-bar">
+    <button class="filter-btn" [class.active]="activeFilter === 'all'" (click)="setFilter('all')">All</button>
+    <button class="filter-btn" [class.active]="activeFilter === 'active'" (click)="setFilter('active')">Active</button>
+    <button class="filter-btn" [class.active]="activeFilter === 'inactive'" (click)="setFilter('inactive')">Inactive</button>
+  </div>
+
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner-lg"></div>
     <p>Loading news...</p>

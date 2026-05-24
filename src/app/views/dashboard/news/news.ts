@@ -14,6 +14,7 @@ import { News } from '../../../core/models/news.model';
 export class NewsComponent implements OnInit {
   newsList: News[] = [];
   isLoading = false;
+  activeFilter: 'all' | 'active' | 'inactive' = 'all';
 
   constructor(
     private newsService: NewsService,
@@ -25,9 +26,17 @@ export class NewsComponent implements OnInit {
     this.load();
   }
 
+  setFilter(f: 'all' | 'active' | 'inactive'): void {
+    if (this.activeFilter === f) return;
+    this.activeFilter = f;
+    this.load();
+  }
+
   load(): void {
     this.isLoading = true;
-    this.newsService.getAll().subscribe({
+    const active = this.activeFilter === 'all' ? 'all'
+                 : this.activeFilter === 'active' ? 'true' : 'false';
+    this.newsService.getAll(active as any).subscribe({
       next: (res) => {
         this.newsList  = res.data;
         this.isLoading = false;
