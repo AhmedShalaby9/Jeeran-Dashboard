@@ -36,6 +36,7 @@ import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-for
 import { AiAdDetailComponent } from './views/dashboard/ai-ads/ai-ad-detail/ai-ad-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
+import { FavoritesComponent } from './views/dashboard/favorites/favorites';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -97,6 +98,9 @@ export const routes: Routes = [
       { path: 'ai-ads',     component: AiAdsComponent },
       { path: 'ai-ads/new', component: AiAdFormComponent },
       { path: 'ai-ads/:id', component: AiAdDetailComponent },
+
+      // Favorites
+      { path: 'favorites', component: FavoritesComponent },
 
       // Settings
       { path: 'settings', component: SettingsComponent },
