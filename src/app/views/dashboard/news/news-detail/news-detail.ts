@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NewsService } from '../../../../core/services/news.service';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { News, CreateNewsDto } from '../../../../core/models/news.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-news-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent],
   templateUrl: './news-detail.html',
   styleUrl: './news-detail.scss',
 })
@@ -159,6 +160,11 @@ export class NewsDetailComponent implements OnInit {
 
   onMediaKeydown(event: KeyboardEvent): void {
     if (event.key === 'Enter') { event.preventDefault(); this.addMedia(); }
+  }
+
+  onMediaUploaded(urls: string[]): void {
+    this.editForm.media.push(...urls);
+    this.cdr.detectChanges();
   }
 
   // ── Save / Delete ──────────────────────────────────────────
