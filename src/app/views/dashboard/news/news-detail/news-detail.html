@@ -261,7 +261,15 @@
 
         <div class="form-section">
           <h2 class="section-title">Media</h2>
-          <p class="section-desc">Add image or video URLs. Press Enter or click Add.</p>
+
+          <app-media-uploader
+            folder="news"
+            [multiple]="true"
+            accept="image/*,video/*"
+            (uploaded)="onMediaUploaded($event)">
+          </app-media-uploader>
+
+          <p class="section-desc" style="margin-top: 1rem;">Or paste a URL and press Enter or click Add.</p>
 
           <div class="media-input-row">
             <input type="text" [(ngModel)]="mediaInput" name="mediaInput"
