@@ -10,6 +10,12 @@ export interface AppSettings {
   ad_generation_price: number;
   ad_generation_trials: number;
   in_review: boolean;
+  promo_ai_ads_visible: boolean;
+  promo_seller_visible: boolean;
+  promo_ai_ads_order: number;
+  promo_seller_order: number;
+  ai_guide_video_url?: string;
+  ai_guide_video_visible: boolean;
 }
 
 export interface SettingsResponse {

@@ -145,3 +145,56 @@ $border:     #e5e7eb;
   font-weight: 600;
   color: $text-dark;
 }
+
+.promo-banner-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.promo-banner-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.promo-banner-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: $text-dark;
+}
+
+.promo-banner-sublabel {
+  font-size: 0.8rem;
+  color: $text-muted;
+}
+
+.promo-banner-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-shrink: 0;
+}
+
+.order-radios {
+  display: flex;
+  gap: 1rem;
+}
+
+.radio-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: $text-dark;
+
+  input[type='radio'] {
+    accent-color: $primary;
+    cursor: pointer;
+    width: 1rem;
+    height: 1rem;
+  }
+}
