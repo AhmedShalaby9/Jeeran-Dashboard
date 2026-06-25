@@ -46,7 +46,7 @@
           <td class="td-center">{{ pkg.duration_days }}d</td>
           <td class="td-center">{{ pkg.available_listings }}</td>
           <td class="td-features">
-            <span class="feature-tag" *ngFor="let f of pkg.features">{{ f }}</span>
+            <span class="feature-tag" *ngFor="let f of pkg.features">{{ f?.en || f?.ar || f }}</span>
           </td>
           <td>
             <span class="badge" [class.badge-active]="pkg.is_active" [class.badge-inactive]="!pkg.is_active">

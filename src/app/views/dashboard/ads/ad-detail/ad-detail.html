@@ -11,8 +11,8 @@
         Back
       </button>
       <div>
-        <h1>{{ ad?.title || 'Ad Detail' }}</h1>
-        <p>{{ ad?.name }}</p>
+        <h1>{{ ad?.title_en || ad?.title_ar || 'Ad Detail' }}</h1>
+        <p>{{ ad?.name_en || ad?.name_ar }}</p>
       </div>
     </div>
     <div class="header-actions" *ngIf="ad && !isEditMode">
@@ -59,13 +59,21 @@
         <div class="detail-section">
           <h2 class="section-title">Ad Info</h2>
           <div class="info-grid">
-            <div class="info-item full-width">
-              <span class="info-label">Title</span>
-              <span class="info-value">{{ ad.title }}</span>
+            <div class="info-item">
+              <span class="info-label">Title (English)</span>
+              <span class="info-value">{{ ad.title_en || '—' }}</span>
             </div>
-            <div class="info-item full-width">
-              <span class="info-label">Name (Company)</span>
-              <span class="info-value">{{ ad.name }}</span>
+            <div class="info-item">
+              <span class="info-label">Title (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ ad.title_ar || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Name (English)</span>
+              <span class="info-value">{{ ad.name_en || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Name (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ ad.name_ar || '—' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Phone Number</span>
@@ -88,7 +96,17 @@
 
         <div class="detail-section">
           <h2 class="section-title">Description</h2>
-          <p class="ad-description">{{ ad.description }}</p>
+          <div class="bilingual-desc" *ngIf="ad.description_en || ad.description_ar">
+            <div *ngIf="ad.description_en">
+              <span class="desc-lang-label">EN</span>
+              <p class="ad-description">{{ ad.description_en }}</p>
+            </div>
+            <div *ngIf="ad.description_ar">
+              <span class="desc-lang-label">AR</span>
+              <p class="ad-description" dir="rtl">{{ ad.description_ar }}</p>
+            </div>
+          </div>
+          <p class="ad-description" *ngIf="!ad.description_en && !ad.description_ar">—</p>
         </div>
 
         <div class="detail-divider"></div>
@@ -128,19 +146,160 @@
         <div class="form-section">
           <h2 class="section-title">Edit Ad Info</h2>
 
-          <div class="form-group">
-            <label>Title <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="editForm.title" name="title" placeholder="Ad title" />
+          <!-- Title — bilingual block -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Title (Arabic)</label>
+                <input type="text" [(ngModel)]="editForm.title_ar" name="title_ar"
+                  placeholder="عنوان الإعلان بالعربية..." dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Title (English) <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.title_en" name="title_en"
+                  placeholder="Ad title in English..." />
+              </div>
+            </div>
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateTitleToAr()"
+                [disabled]="translating.titleToAr || !editForm.title_en?.trim()">
+                <span *ngIf="!translating.titleToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.titleToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateTitleToEn()"
+                [disabled]="translating.titleToEn || !editForm.title_ar?.trim()">
+                <span *ngIf="!translating.titleToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.titleToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.titleToEn || translateErrors.titleToAr">
+              Translation failed — please try again.
+            </div>
           </div>
 
-          <div class="form-group">
-            <label>Name (Company) <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="editForm.name" name="name" placeholder="Company or advertiser name" />
+          <!-- Name — bilingual block -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Name / Company (Arabic)</label>
+                <input type="text" [(ngModel)]="editForm.name_ar" name="name_ar"
+                  placeholder="اسم الشركة أو المعلن بالعربية..." dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>Name / Company (English) <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.name_en" name="name_en"
+                  placeholder="Company or advertiser name..." />
+              </div>
+            </div>
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateNameToAr()"
+                [disabled]="translating.nameToAr || !editForm.name_en?.trim()">
+                <span *ngIf="!translating.nameToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.nameToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateNameToEn()"
+                [disabled]="translating.nameToEn || !editForm.name_ar?.trim()">
+                <span *ngIf="!translating.nameToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.nameToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.nameToEn || translateErrors.nameToAr">
+              Translation failed — please try again.
+            </div>
           </div>
 
-          <div class="form-group">
-            <label>Description <span class="required">*</span></label>
-            <textarea [(ngModel)]="editForm.description" name="description" rows="6" placeholder="Ad description..."></textarea>
+          <!-- Description — bilingual block -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Description (Arabic)</label>
+                <textarea [(ngModel)]="editForm.description_ar" name="description_ar" rows="5"
+                  placeholder="وصف الإعلان بالعربية..." dir="rtl"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Description (English)</label>
+                <textarea [(ngModel)]="editForm.description_en" name="description_en" rows="5"
+                  placeholder="Ad description in English..."></textarea>
+              </div>
+            </div>
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateDescToAr()"
+                [disabled]="translating.descToAr || !editForm.description_en?.trim()">
+                <span *ngIf="!translating.descToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  EN → AR
+                </span>
+                <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16"/>
+                </svg>
+                Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateDescToEn()"
+                [disabled]="translating.descToEn || !editForm.description_ar?.trim()">
+                <span *ngIf="!translating.descToEn">
+                  AR → EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+              Translation failed — please try again.
+            </div>
           </div>
 
           <div class="form-row">
@@ -224,7 +383,7 @@
         </svg>
       </div>
       <h3>Delete Ad</h3>
-      <p>Are you sure you want to delete <strong>{{ ad?.title }}</strong>? This action cannot be undone.</p>
+      <p>Are you sure you want to delete <strong>{{ ad?.title_en || ad?.title_ar }}</strong>? This action cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
         <button class="btn-danger-solid" (click)="deleteAd()" [disabled]="isDeleting">

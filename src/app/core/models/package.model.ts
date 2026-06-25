@@ -1,4 +1,7 @@
-// MODEL — defines the shape of package data
+export interface PackageFeature {
+  en: string;
+  ar: string;
+}
 
 export interface Package {
   id: number;
@@ -9,7 +12,8 @@ export interface Package {
   price: string;
   duration_days: number;
   available_listings: number;
-  features: string[];
+  featured_listings: number;
+  features: PackageFeature[];
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -23,7 +27,8 @@ export interface CreatePackageDto {
   description_en?: string | null;
   description_ar?: string | null;
   available_listings?: number;
-  features?: string[];
+  featured_listings?: number;
+  features?: PackageFeature[];
 }
 
 export interface PackagesResponse {

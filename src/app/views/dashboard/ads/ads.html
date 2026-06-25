@@ -26,7 +26,7 @@
       <!-- Image Preview -->
       <div class="card-media">
         <ng-container *ngIf="item.images && item.images.length > 0; else noImage">
-          <img [src]="item.images[0]" [alt]="item.title" class="media-preview" />
+          <img [src]="item.images[0]" [alt]="item.title_en" class="media-preview" />
         </ng-container>
         <ng-template #noImage>
           <div class="media-placeholder">
@@ -49,9 +49,9 @@
             {{ item.is_active ? 'Active' : 'Inactive' }}
           </span>
         </div>
-        <h3 class="card-title">{{ item.title }}</h3>
-        <p class="card-name">{{ item.name }}</p>
-        <p class="card-description">{{ item.description }}</p>
+        <h3 class="card-title">{{ item.title_en || item.title_ar }}</h3>
+        <p class="card-name">{{ item.name_en || item.name_ar }}</p>
+        <p class="card-description">{{ item.description_en || item.description_ar }}</p>
         <div class="card-footer">
           <span class="card-phone" *ngIf="item.phone_number">
             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"

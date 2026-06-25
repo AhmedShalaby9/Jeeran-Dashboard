@@ -1,0 +1,132 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>AI Ad Generations</h1>
+      <p>All user-generated AI ads — {{ total }} total</p>
+    </div>
+    <button class="btn-secondary" (click)="goToNew()">+ Generate AI Ad</button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <select [(ngModel)]="filterStatus" (change)="applyFilters()">
+      <option value="">All Statuses</option>
+      <option value="awaiting_payment">Awaiting Payment</option>
+      <option value="pending">Pending</option>
+      <option value="done">Done</option>
+      <option value="failed">Failed</option>
+    </select>
+
+    <select [(ngModel)]="filterPaymentStatus" (change)="applyFilters()">
+      <option value="">All Payments</option>
+      <option value="unpaid">Unpaid</option>
+      <option value="paid">Paid</option>
+      <option value="failed">Payment Failed</option>
+    </select>
+
+    <input
+      type="text"
+      [(ngModel)]="filterUserId"
+      placeholder="User ID..."
+      (keyup.enter)="applyFilters()"
+    />
+
+    <button class="btn-secondary" (click)="applyFilters()">Search</button>
+    <button class="btn-ghost" (click)="resetFilters()">Reset</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap" *ngIf="!isLoading">
+    <table class="data-table" *ngIf="ads.length > 0; else emptyState">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Image</th>
+          <th>User</th>
+          <th>Caption</th>
+          <th>Status</th>
+          <th>Payment</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ad of ads" (click)="openDetail(ad)" class="clickable-row">
+          <td class="col-id">#{{ ad.id }}</td>
+          <td class="col-img">
+            <div class="thumb-wrap">
+              <img
+                *ngIf="ad.generated_image_url; else sourceThumb"
+                [src]="ad.generated_image_url"
+                class="thumb"
+                alt="Generated"
+              />
+              <ng-template #sourceThumb>
+                <img
+                  *ngIf="ad.source_images?.length; else noThumb"
+                  [src]="ad.source_images[0]"
+                  class="thumb"
+                  alt="Source"
+                />
+              </ng-template>
+              <ng-template #noThumb>
+                <div class="thumb-placeholder">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5"/>
+                    <path d="M2 20c0-4 4-7 10-7s10 3 10 7"/>
+                  </svg>
+                </div>
+              </ng-template>
+            </div>
+          </td>
+          <td class="col-user">
+            <span class="user-name">{{ ad.user?.name || '—' }}</span>
+            <span class="user-phone">{{ ad.user?.phone }}</span>
+          </td>
+          <td class="col-caption">{{ ad.caption }}</td>
+          <td>
+            <span class="badge" [ngClass]="'badge-' + ad.status">
+              {{ statusLabel(ad.status) }}
+            </span>
+          </td>
+          <td>
+            <span class="badge" [ngClass]="'badge-pay-' + ad.payment_status">
+              {{ ad.payment_status }}
+            </span>
+          </td>
+          <td class="col-date">{{ ad.created_at | date:'dd MMM yyyy' }}</td>
+          <td>
+            <button class="btn-view" (click)="$event.stopPropagation(); openDetail(ad)">View</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <p>No AI ads found.</p>
+      </div>
+    </ng-template>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="pages > 1">
+      <button (click)="goToPage(page - 1)" [disabled]="page === 1">‹</button>
+      <button
+        *ngFor="let p of pageNumbers"
+        (click)="goToPage(p)"
+        [class.active]="p === page"
+      >{{ p }}</button>
+      <button (click)="goToPage(page + 1)" [disabled]="page === pages">›</button>
+    </div>
+  </div>
+
+
+</div>

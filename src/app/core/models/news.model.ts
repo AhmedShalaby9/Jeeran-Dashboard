@@ -2,8 +2,12 @@
 
 export interface News {
   id: number;
-  title: string;
-  content: string;
+  title: string;           // computed fallback from API
+  title_ar: string | null;
+  title_en: string | null;
+  content: string;         // computed fallback from API
+  content_ar: string | null;
+  content_en: string | null;
   media: string[];
   is_active: boolean;
   published_at: string;
@@ -13,8 +17,10 @@ export interface News {
 }
 
 export interface CreateNewsDto {
-  title: string;
-  content: string;
+  title_ar: string | null;
+  title_en: string | null;
+  content_ar: string | null;
+  content_en: string | null;
   media: string[];
   is_active: boolean;
   published_at: string;

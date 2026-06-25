@@ -51,6 +51,73 @@ $border:       #e5e7eb;
   &.badge-inactive { background: #fee2e2; color: #dc2626; }
 }
 
+// ── Bilingual description (view mode) ────────────────────────
+.bilingual-desc { display: flex; flex-direction: column; gap: 1rem; }
+.desc-lang-label {
+  display: inline-block; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em;
+  background: #eff3fb; color: $primary; padding: 0.1rem 0.45rem; border-radius: 4px;
+  margin-bottom: 0.35rem;
+}
+
+// ── Bilingual block (edit mode) ───────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+}
+
+.bilingual-inputs .form-group { margin-bottom: 0; }
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+.translate-divider {
+  display: flex; align-items: center; gap: 0.35rem;
+  font-size: 0.75rem; color: $text-muted; font-weight: 500;
+  padding: 0 0.5rem; white-space: nowrap;
+}
+
+.btn-translate {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.38rem 0.9rem;
+  background: $white; border: 1.5px solid #c8d3f0; color: $primary;
+  border-radius: 6px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; white-space: nowrap; min-width: 130px;
+  justify-content: center; transition: all 0.15s;
+  &:hover:not(:disabled) { background: $primary; color: $white; border-color: $primary; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.translate-error {
+  text-align: center; font-size: 0.78rem;
+  color: #dc2626; margin-top: 0.4rem;
+}
+
+.spinner-xs {
+  display: inline-block; width: 13px; height: 13px;
+  border: 2px solid currentColor; border-top-color: transparent;
+  border-radius: 50%; animation: spin-xs 0.7s linear infinite;
+}
+
+@keyframes spin-xs { to { transform: rotate(360deg); } }
+
 // ── Description ──────────────────────────────────────────────
 .ad-description {
   font-size: 0.95rem; color: $text-dark; line-height: 1.8;

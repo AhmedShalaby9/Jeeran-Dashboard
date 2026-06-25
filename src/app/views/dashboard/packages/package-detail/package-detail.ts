@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { PackageService } from '../../../../core/services/package.service';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { Package, CreatePackageDto } from '../../../../core/models/package.model';
 import { LangService, Lang } from '../../../../core/services/lang.service';
 
@@ -23,7 +24,9 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
   showDeleteModal = false;
   errorMessage    = '';
   successMessage  = '';
-  featureInput    = '';
+
+  featureInputEn = '';
+  featureInputAr = '';
 
   lang: Lang = 'en';
   private langSub!: Subscription;
@@ -32,15 +35,28 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
     title_en: '', title_ar: '',
     price: 0, duration_days: 30,
     description_en: '', description_ar: '',
-    available_listings: 0, features: [],
+    available_listings: 0, featured_listings: 0, features: [],
+  };
+
+  translating = {
+    titleToEn: false, titleToAr: false,
+    descToEn:  false, descToAr:  false,
+    featureToEn: false, featureToAr: false,
+  };
+
+  translateErrors = {
+    titleToEn: false, titleToAr: false,
+    descToEn:  false, descToAr:  false,
+    featureToEn: false, featureToAr: false,
   };
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private packageService: PackageService,
-    private cdr: ChangeDetectorRef,
-    private langService: LangService,
+    private route:              ActivatedRoute,
+    private router:             Router,
+    private packageService:     PackageService,
+    private translationService: TranslationService,
+    private cdr:                ChangeDetectorRef,
+    private langService:        LangService,
   ) {}
 
   ngOnInit(): void {
@@ -91,24 +107,111 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
       description_en:     this.pkg.description_en     ?? '',
       description_ar:     this.pkg.description_ar     ?? '',
       available_listings: this.pkg.available_listings,
-      features:           [...(this.pkg.features || [])],
+      featured_listings:  this.pkg.featured_listings,
+      features:           (this.pkg.features || []).map(f =>
+        typeof f === 'string' ? { en: f as string, ar: '' } : { ...f }
+      ),
     };
-    this.errorMessage = '';
-    this.isEditMode   = true;
+    this.featureInputEn = '';
+    this.featureInputAr = '';
+    this.errorMessage   = '';
+    this.isEditMode     = true;
     this.cdr.detectChanges();
   }
 
   cancelEdit(): void {
     this.isEditMode   = false;
     this.errorMessage = '';
+    this.featureInputEn = '';
+    this.featureInputAr = '';
   }
 
+  // ── Title translation ─────────────────────────────────────
+  translateTitleToEn(): void {
+    if (!this.editForm.title_ar?.trim() || this.translating.titleToEn) return;
+    this.translating.titleToEn = true;
+    this.translateErrors.titleToEn = false;
+    this.translationService.translate(this.editForm.title_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.title_en = result;
+      else this.translateErrors.titleToEn = true;
+      this.translating.titleToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateTitleToAr(): void {
+    if (!this.editForm.title_en?.trim() || this.translating.titleToAr) return;
+    this.translating.titleToAr = true;
+    this.translateErrors.titleToAr = false;
+    this.translationService.translate(this.editForm.title_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.title_ar = result;
+      else this.translateErrors.titleToAr = true;
+      this.translating.titleToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ── Description translation ───────────────────────────────
+  translateDescToEn(): void {
+    if (!this.editForm.description_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true;
+    this.translateErrors.descToEn = false;
+    this.translationService.translate(this.editForm.description_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.editForm.description_en = result;
+      else this.translateErrors.descToEn = true;
+      this.translating.descToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.editForm.description_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true;
+    this.translateErrors.descToAr = false;
+    this.translationService.translate(this.editForm.description_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.editForm.description_ar = result;
+      else this.translateErrors.descToAr = true;
+      this.translating.descToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ── Feature pending-input translation ─────────────────────
+  translateFeatureToEn(): void {
+    if (!this.featureInputAr.trim() || this.translating.featureToEn) return;
+    this.translating.featureToEn = true;
+    this.translateErrors.featureToEn = false;
+    this.translationService.translate(this.featureInputAr, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.featureInputEn = result;
+      else this.translateErrors.featureToEn = true;
+      this.translating.featureToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatureToAr(): void {
+    if (!this.featureInputEn.trim() || this.translating.featureToAr) return;
+    this.translating.featureToAr = true;
+    this.translateErrors.featureToAr = false;
+    this.translationService.translate(this.featureInputEn, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.featureInputAr = result;
+      else this.translateErrors.featureToAr = true;
+      this.translating.featureToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ── Feature list helpers ──────────────────────────────────
   addFeature(): void {
-    const val = this.featureInput.trim();
-    if (!val) return;
+    const en = this.featureInputEn.trim();
+    const ar = this.featureInputAr.trim();
+    if (!en && !ar) return;
     if (!this.editForm.features) this.editForm.features = [];
-    this.editForm.features.push(val);
-    this.featureInput = '';
+    this.editForm.features.push({ en, ar });
+    this.featureInputEn = '';
+    this.featureInputAr = '';
+    this.translateErrors.featureToEn = false;
+    this.translateErrors.featureToAr = false;
   }
 
   removeFeature(index: number): void {
@@ -119,13 +222,14 @@ export class PackageDetailComponent implements OnInit, OnDestroy {
     if (event.key === 'Enter') { event.preventDefault(); this.addFeature(); }
   }
 
+  // ── Save / Delete ──────────────────────────────────────────
   saveEdit(): void {
     if (!this.editForm.title_en?.trim() && !this.editForm.title_ar?.trim()) {
       this.errorMessage = 'At least one title (English or Arabic) is required.';
       return;
     }
-    if (!this.editForm.price || !this.editForm.duration_days) {
-      this.errorMessage = 'Price and duration are required.';
+    if (!this.editForm.duration_days) {
+      this.errorMessage = 'Duration is required.';
       return;
     }
     this.isSubmitting = true;

@@ -22,25 +22,31 @@ export class PackageFormComponent {
     description_en:     '',
     description_ar:     '',
     available_listings: 0,
+    featured_listings:  0,
     features:           [],
   };
 
-  featureInput = '';
+  featureInputEn = '';
+  featureInputAr = '';
   isSubmitting = false;
   errorMessage = '';
 
   translating = {
-    titleToEn: false,
-    titleToAr: false,
-    descToEn:  false,
-    descToAr:  false,
+    titleToEn:     false,
+    titleToAr:     false,
+    descToEn:      false,
+    descToAr:      false,
+    featureToEn:   false,
+    featureToAr:   false,
   };
 
   translateErrors = {
-    titleToEn: false,
-    titleToAr: false,
-    descToEn:  false,
-    descToAr:  false,
+    titleToEn:     false,
+    titleToAr:     false,
+    descToEn:      false,
+    descToAr:      false,
+    featureToEn:   false,
+    featureToAr:   false,
   };
 
   constructor(
@@ -50,6 +56,7 @@ export class PackageFormComponent {
     private cdr:                ChangeDetectorRef,
   ) {}
 
+  // ── Title translation ─────────────────────────────────────
   translateTitleToEn(): void {
     if (!this.form.title_ar?.trim() || this.translating.titleToEn) return;
     this.translating.titleToEn = true;
@@ -74,6 +81,7 @@ export class PackageFormComponent {
     });
   }
 
+  // ── Description translation ───────────────────────────────
   translateDescToEn(): void {
     if (!this.form.description_ar?.trim() || this.translating.descToEn) return;
     this.translating.descToEn = true;
@@ -98,12 +106,42 @@ export class PackageFormComponent {
     });
   }
 
+  // ── Feature pending-input translation ─────────────────────
+  translateFeatureToEn(): void {
+    if (!this.featureInputAr.trim() || this.translating.featureToEn) return;
+    this.translating.featureToEn = true;
+    this.translateErrors.featureToEn = false;
+    this.translationService.translate(this.featureInputAr, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.featureInputEn = result;
+      else this.translateErrors.featureToEn = true;
+      this.translating.featureToEn = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  translateFeatureToAr(): void {
+    if (!this.featureInputEn.trim() || this.translating.featureToAr) return;
+    this.translating.featureToAr = true;
+    this.translateErrors.featureToAr = false;
+    this.translationService.translate(this.featureInputEn, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.featureInputAr = result;
+      else this.translateErrors.featureToAr = true;
+      this.translating.featureToAr = false;
+      this.cdr.detectChanges();
+    });
+  }
+
+  // ── Feature list helpers ──────────────────────────────────
   addFeature(): void {
-    const val = this.featureInput.trim();
-    if (!val) return;
+    const en = this.featureInputEn.trim();
+    const ar = this.featureInputAr.trim();
+    if (!en && !ar) return;
     if (!this.form.features) this.form.features = [];
-    this.form.features.push(val);
-    this.featureInput = '';
+    this.form.features.push({ en, ar });
+    this.featureInputEn = '';
+    this.featureInputAr = '';
+    this.translateErrors.featureToEn = false;
+    this.translateErrors.featureToAr = false;
   }
 
   removeFeature(index: number): void {
@@ -117,13 +155,14 @@ export class PackageFormComponent {
     }
   }
 
+  // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
     if (!this.form.title_en?.trim() && !this.form.title_ar?.trim()) {
       this.errorMessage = 'At least one title (English or Arabic) is required.';
       return;
     }
-    if (!this.form.price || !this.form.duration_days) {
-      this.errorMessage = 'Price and duration are required.';
+    if (!this.form.duration_days) {
+      this.errorMessage = 'Duration is required.';
       return;
     }
 

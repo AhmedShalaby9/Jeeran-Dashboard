@@ -5,8 +5,6 @@ export interface ProjectFeature {
   title_en:    string;
   subtitle_ar: string;
   subtitle_en: string;
-  desc_ar:     string;
-  desc_en:     string;
   images:      string[];
 }
 
@@ -14,6 +12,8 @@ export interface Project {
   id:          number;
   name_ar:     string;
   name_en:     string;
+  desc_ar:     string | null;
+  desc_en:     string | null;
   main_image:  string | null;
   gallery:     string[];
   features:    ProjectFeature[];
@@ -25,6 +25,8 @@ export interface Project {
 export interface CreateProjectDto {
   name_ar:    string;
   name_en:    string;
+  desc_ar?:   string | null;
+  desc_en?:   string | null;
   main_image: string | null;
   gallery:    string[];
   features:   ProjectFeature[];

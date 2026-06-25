@@ -30,10 +30,23 @@
       <button class="tab-btn" [class.active]="activeTab === 'about'"   (click)="setTab('about')">About Us</button>
       <button class="tab-btn" [class.active]="activeTab === 'privacy'" (click)="setTab('privacy')">Privacy Policy</button>
       <button class="tab-btn" [class.active]="activeTab === 'ai-ads'"  (click)="setTab('ai-ads')">AI Ads</button>
+      <button class="tab-btn" [class.active]="activeTab === 'banners'" (click)="setTab('banners')">Promo Banners</button>
+      <button class="tab-btn" [class.active]="activeTab === 'guide-video'" (click)="setTab('guide-video')">AI Guide Video</button>
     </div>
 
     <!-- App & Versions tab -->
     <div class="settings-card" *ngIf="activeTab === 'app'">
+
+      <div class="settings-section">
+        <p class="section-title">App Review Mode</p>
+        <p class="section-desc">Enable this while the app is under App Store / Google Play review. It hides AI Ads, the AI Chatbot, and Packages &amp; Subscriptions from the mobile app so reviewers don't encounter payment or AI features.</p>
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="form.in_review" />
+          <span class="toggle-label">App is currently in review</span>
+        </label>
+      </div>
+
+      <hr class="section-divider" />
 
       <div class="settings-section">
         <p class="section-title">Minimum App Versions</p>
@@ -143,6 +156,106 @@
         <p class="section-desc" style="margin-top: 8px;">
           Trials are free re-generations using the same images but a new caption. Users can request up to the limit above per original paid ad.
         </p>
+      </div>
+    </div>
+
+    <!-- Promo Banners tab -->
+    <div class="settings-card" *ngIf="activeTab === 'banners'">
+
+      <div class="settings-section">
+        <p class="section-title">Promotional Banners</p>
+        <p class="section-desc">
+          Two fixed banners shown on the home screen. Control which ones are visible and which appears first.
+          Changes take effect immediately after saving.
+        </p>
+
+        <!-- AI Ads Banner -->
+        <div class="promo-banner-row">
+          <div class="promo-banner-info">
+            <span class="promo-banner-label">AI Ads Banner</span>
+            <span class="promo-banner-sublabel">Tapping opens the AI Ad Generation screen</span>
+          </div>
+          <label class="toggle-row">
+            <input type="checkbox" [(ngModel)]="form.promo_ai_ads_visible" />
+            <span class="toggle-label">Visible</span>
+          </label>
+        </div>
+
+        <hr class="section-divider" style="margin: 1.25rem 0;" />
+
+        <!-- Seller Banner -->
+        <div class="promo-banner-row">
+          <div class="promo-banner-info">
+            <span class="promo-banner-label">Join as Seller Banner</span>
+            <span class="promo-banner-sublabel">Tapping opens the seller registration flow</span>
+          </div>
+          <label class="toggle-row">
+            <input type="checkbox" [(ngModel)]="form.promo_seller_visible" />
+            <span class="toggle-label">Visible</span>
+          </label>
+        </div>
+
+        <hr class="section-divider" style="margin: 1.25rem 0;" />
+
+        <!-- Display Order -->
+        <div class="settings-section" style="padding: 0;">
+          <p class="section-title">Display Order</p>
+          <p class="section-desc">Which banner appears first on the home screen.</p>
+          <div class="order-radios">
+            <label class="radio-row">
+              <input type="radio" name="promo_order_group" [value]="true" [(ngModel)]="aiAdsFirst" />
+              <span>AI Ads banner first</span>
+            </label>
+            <label class="radio-row">
+              <input type="radio" name="promo_order_group" [value]="false" [(ngModel)]="aiAdsFirst" />
+              <span>Join as Seller banner first</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- AI Guide Video tab -->
+    <div class="settings-card" *ngIf="activeTab === 'guide-video'">
+
+      <div class="settings-section">
+        <p class="section-title">AI Ad Guide Video</p>
+        <p class="section-desc">
+          A one-time intro video shown to users the first time they tap "Generate Ad".
+          Upload a video or paste a direct URL. Toggle visibility to enable or disable it.
+        </p>
+
+        <!-- Visibility toggle -->
+        <label class="toggle-row" style="margin-bottom: 1.25rem;">
+          <input type="checkbox" [(ngModel)]="form.ai_guide_video_visible" />
+          <span class="toggle-label">Show guide video to users</span>
+        </label>
+
+        <hr class="section-divider" />
+
+        <!-- Current URL (editable) -->
+        <div class="settings-field" style="margin-top: 1.25rem;">
+          <label class="field-label">Video URL</label>
+          <input class="field-input" type="url" [(ngModel)]="form.ai_guide_video_url"
+                 placeholder="https://..." />
+        </div>
+
+        <!-- Upload -->
+        <div style="margin-top: 1rem;">
+          <p class="section-desc" style="margin-bottom: .5rem;">Or upload a new video (MP4, max 50 MB):</p>
+          <app-media-uploader
+            folder="uploads"
+            accept="video/mp4,video/*"
+            (uploaded)="onGuideVideoUploaded($event)">
+          </app-media-uploader>
+        </div>
+
+        <!-- Preview -->
+        <div *ngIf="form.ai_guide_video_url" style="margin-top: 1.25rem;">
+          <p class="section-desc" style="margin-bottom: .5rem;">Preview:</p>
+          <video [src]="form.ai_guide_video_url" controls style="width:100%; max-height:320px; border-radius:8px;"></video>
+        </div>
       </div>
     </div>
 

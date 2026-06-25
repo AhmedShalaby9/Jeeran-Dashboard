@@ -1,10 +1,11 @@
-// MODEL — defines the shape of ad data
-
 export interface Ad {
   id: number;
-  title: string;
-  name: string;
-  description: string;
+  title_en: string;
+  title_ar: string | null;
+  name_en: string;
+  name_ar: string | null;
+  description_en: string | null;
+  description_ar: string | null;
   images: string[];
   phone_number: string;
   whatsapp_number: string;
@@ -14,9 +15,12 @@ export interface Ad {
 }
 
 export interface CreateAdDto {
-  title: string;
-  name: string;
-  description: string;
+  title_en: string;
+  title_ar: string;
+  name_en: string;
+  name_ar: string;
+  description_en: string;
+  description_ar: string;
   images: string[];
   phone_number: string;
   whatsapp_number: string;

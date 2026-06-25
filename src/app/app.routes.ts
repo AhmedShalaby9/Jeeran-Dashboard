@@ -31,8 +31,12 @@ import { NotificationsComponent } from './views/dashboard/notifications/notifica
 import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscriptions';
 import { SubscriptionDetailComponent } from './views/dashboard/subscriptions/subscription-detail/subscription-detail';
 import { SettingsComponent } from './views/dashboard/settings/settings';
+import { AiAdsComponent } from './views/dashboard/ai-ads/ai-ads';
+import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-form';
+import { AiAdDetailComponent } from './views/dashboard/ai-ads/ai-ad-detail/ai-ad-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
+import { FavoritesComponent } from './views/dashboard/favorites/favorites';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -89,6 +93,14 @@ export const routes: Routes = [
       // Subscriptions
       { path: 'subscriptions',     component: SubscriptionsComponent },
       { path: 'subscriptions/:id', component: SubscriptionDetailComponent },
+
+      // AI Ads
+      { path: 'ai-ads',     component: AiAdsComponent },
+      { path: 'ai-ads/new', component: AiAdFormComponent },
+      { path: 'ai-ads/:id', component: AiAdDetailComponent },
+
+      // Favorites
+      { path: 'favorites', component: FavoritesComponent },
 
       // Settings
       { path: 'settings', component: SettingsComponent },
