@@ -8,7 +8,7 @@ $text-muted:   #6b7280;
 $border:       #e5e7eb;
 $success:      #059669;
 $error:        #dc2626;
-$panel-w:      520px;
+$panel-w:      560px;
 
 // ── Page shell ────────────────────────────────────────────
 .page {
@@ -99,11 +99,27 @@ $panel-w:      520px;
   tr:hover td { background: #f9fafb; }
 }
 
-.td-id     { color: $text-muted; font-size: 0.8rem; width: 50px; }
-.td-title  { max-width: 180px; font-weight: 500; }
-.td-body   { max-width: 240px; color: $text-muted; font-size: 0.85rem; }
-.td-sender { color: $text-muted; font-size: 0.85rem; white-space: nowrap; }
-.td-date   { color: $text-muted; font-size: 0.8rem; white-space: nowrap; }
+.td-id    { color: $text-muted; font-size: 0.8rem; width: 50px; }
+.td-title { width: 200px; }
+.td-body  { width: 260px; }
+.td-date  { color: $text-muted; font-size: 0.8rem; white-space: nowrap; }
+
+.bilingual-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+
+  .cell-en {
+    font-size: 0.875rem;
+    color: $text-dark;
+    line-height: 1.4;
+  }
+  .cell-ar {
+    font-size: 0.8rem;
+    color: $text-muted;
+    line-height: 1.4;
+  }
+}
 
 .empty-row {
   text-align: center;
@@ -112,8 +128,23 @@ $panel-w:      520px;
   font-size: 0.9rem;
 }
 
-// ── Target badge ──────────────────────────────────────────
-.target-badge {
+// ── Type badge ────────────────────────────────────────────
+.type-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+
+  &.type-general      { background: #e0f2fe; color: #0369a1; }
+  &.type-subscription { background: #fef3c7; color: #b45309; }
+  &.type-property     { background: #d1fae5; color: #065f46; }
+}
+
+// ── Audience badge ────────────────────────────────────────
+.audience-badge {
   display: inline-block;
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
@@ -121,9 +152,10 @@ $panel-w:      520px;
   font-weight: 500;
   white-space: nowrap;
 
-  &.target-all  { background: #ede9fe; color: #6d28d9; }
-  &.target-type { background: #fff7ed; color: #c2410c; }
-  &.target-user { background: #f0fdf4; color: #15803d; }
+  &.badge-all    { background: #ede9fe; color: #6d28d9; }
+  &.badge-date   { background: #fce7f3; color: #be185d; }
+  &.badge-type   { background: #fff7ed; color: #c2410c; }
+  &.badge-single { background: #f0fdf4; color: #15803d; }
 }
 
 // ── Pagination ────────────────────────────────────────────
@@ -266,8 +298,12 @@ $panel-w:      520px;
   margin: 0;
   padding-bottom: 0.5rem;
   border-bottom: 1px solid $border;
+}
 
-  .hint { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
 .field-group {
@@ -281,6 +317,8 @@ $panel-w:      520px;
     font-size: 0.8rem;
     font-weight: 600;
     color: $text-dark;
+
+    .hint { font-weight: 400; color: $text-muted; }
   }
 
   input, select, textarea {
@@ -300,12 +338,6 @@ $panel-w:      520px;
 
   textarea { resize: none; min-height: 60px; }
   select   { cursor: pointer; }
-
-  .code-textarea {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 0.82rem;
-    min-height: 70px;
-  }
 }
 
 .body-line-hint {
@@ -315,12 +347,6 @@ $panel-w:      520px;
   margin-top: -0.1rem;
 
   &.at-limit { color: $error; font-weight: 600; }
-}
-
-.field-hint {
-  font-size: 0.75rem;
-  color: $text-muted;
-  line-height: 1.4;
 }
 
 .required { color: $error; margin-left: 2px; }
@@ -399,7 +425,7 @@ $panel-w:      520px;
   background: $bg;
 }
 
-// ── Spinners ──────────────────────────────────────────────
+// ── Spinner ───────────────────────────────────────────────
 .spinner-sm {
   display: inline-block;
   width: 16px; height: 16px;
