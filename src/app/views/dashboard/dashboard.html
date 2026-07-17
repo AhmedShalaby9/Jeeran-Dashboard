@@ -190,6 +190,19 @@
     <header class="topbar">
       <div></div>
       <div class="topbar-right">
+
+        <!-- Bell icon -->
+        <button class="topbar-bell" (click)="toggleInbox()" title="My notifications">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="bell-badge" *ngIf="unreadCount > 0">
+            {{ unreadCount > 99 ? '99+' : unreadCount }}
+          </span>
+        </button>
+
         <div class="topbar-user">
           <div class="topbar-avatar">{{ currentUser?.name?.charAt(0) }}</div>
           <div class="topbar-info">
@@ -212,3 +225,74 @@
   </main>
 
 </div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!-- ── Inbox Drawer ── -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div class="inbox-backdrop" *ngIf="showInbox" (click)="closeInbox()"></div>
+
+<div class="inbox-drawer" [class.open]="showInbox">
+
+  <div class="inbox-header">
+    <div>
+      <h2>My Notifications</h2>
+      <p *ngIf="unreadCount > 0">{{ unreadCount }} unread</p>
+      <p *ngIf="unreadCount === 0">All caught up</p>
+    </div>
+    <div class="inbox-header-actions">
+      <button class="btn-mark-all" (click)="markAllRead()" *ngIf="unreadCount > 0"
+        title="Mark all as read">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Mark all read
+      </button>
+      <button class="btn-close-inbox" (click)="closeInbox()" title="Close">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="inbox-body">
+
+    <!-- Loading (first page) -->
+    <div class="inbox-loading-center" *ngIf="inboxLoading && inboxItems.length === 0">
+      <div class="spinner-dark"></div>
+    </div>
+
+    <!-- Empty -->
+    <div class="inbox-empty" *ngIf="!inboxLoading && inboxItems.length === 0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+      <p>No notifications yet</p>
+    </div>
+
+    <!-- List -->
+    <div *ngFor="let item of inboxItems"
+      class="inbox-item"
+      [class.unread]="!item.is_read"
+      (click)="markRead(item)">
+      <div class="inbox-unread-dot" *ngIf="!item.is_read"></div>
+      <div class="inbox-item-content">
+        <div class="inbox-item-title">{{ item.notification.title }}</div>
+        <div class="inbox-item-body">{{ item.notification.body }}</div>
+        <div class="inbox-item-time">{{ formatDate(item.notification.created_at) }}</div>
+      </div>
+    </div>
+
+    <!-- Load more -->
+    <button class="btn-load-more" *ngIf="inboxHasMore" (click)="loadMoreInbox()" [disabled]="inboxLoading">
+      <span *ngIf="!inboxLoading">Load more</span>
+      <span *ngIf="inboxLoading" class="spinner-sm-dark"></span>
+    </button>
+
+  </div>
+</div>
+

@@ -4,7 +4,7 @@
   <div class="page-header">
     <div>
       <h1>Notifications</h1>
-      <p>Send push notifications to users and track history</p>
+      <p>Send push notifications to users and view history</p>
     </div>
     <button class="btn-primary" (click)="openPanel()">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -33,7 +33,6 @@
   <!-- ── Table ── -->
   <div class="table-card" *ngIf="!isLoading">
 
-    <!-- Count row -->
     <div class="table-meta" *ngIf="total > 0">
       Showing {{ rangeStart }}–{{ rangeEnd }} of {{ total }} notifications
     </div>
@@ -44,38 +43,26 @@
           <th>#</th>
           <th>Title</th>
           <th>Body</th>
-          <th>Type</th>
-          <th>Audience</th>
-          <th>Sent At</th>
+          <th>Target</th>
+          <th>Sent by</th>
+          <th>Sent at</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let n of notifications">
           <td class="td-id">{{ n.id }}</td>
 
-          <td class="td-title">
-            <div class="bilingual-cell">
-              <span class="cell-en">{{ n.title_en || '—' }}</span>
-              <span class="cell-ar" dir="rtl" *ngIf="n.title_ar">{{ n.title_ar }}</span>
-            </div>
-          </td>
+          <td class="td-title">{{ n.title || '—' }}</td>
 
-          <td class="td-body">
-            <div class="bilingual-cell">
-              <span class="cell-en">{{ n.body_en || '—' }}</span>
-              <span class="cell-ar" dir="rtl" *ngIf="n.body_ar">{{ n.body_ar }}</span>
-            </div>
-          </td>
+          <td class="td-body">{{ n.body || '—' }}</td>
 
           <td>
-            <span class="type-badge" [ngClass]="typeClass(n.type)">{{ n.type }}</span>
-          </td>
-
-          <td>
-            <span class="audience-badge" [ngClass]="audienceBadgeClass(n.target?.audience)">
-              {{ audienceLabel(n) }}
+            <span class="target-badge" [ngClass]="targetBadgeClass(n)">
+              {{ targetLabel(n) }}
             </span>
           </td>
+
+          <td class="td-sender">{{ n.sender?.name || '#' + n.sent_by }}</td>
 
           <td class="td-date">{{ formatDate(n.created_at) }}</td>
         </tr>
@@ -135,119 +122,78 @@
 
     <!-- ── Title ── -->
     <div class="panel-section">
-      <h3 class="panel-section-title">Title</h3>
-      <div class="field-row">
-        <div class="field-group">
-          <label>English</label>
-          <input type="text" [(ngModel)]="form.title_en" name="title_en" placeholder="e.g. New Update" />
-        </div>
-        <div class="field-group">
-          <label>Arabic</label>
-          <input type="text" [(ngModel)]="form.title_ar" name="title_ar" placeholder="مثال: تحديث جديد" dir="rtl" />
-        </div>
+      <h3 class="panel-section-title">Title <span class="required">*</span></h3>
+      <div class="field-group">
+        <input type="text" [(ngModel)]="form.title" name="title" placeholder="e.g. New Update Available" />
       </div>
     </div>
 
     <!-- ── Body ── -->
     <div class="panel-section">
-      <h3 class="panel-section-title">Body</h3>
-      <div class="field-row">
-        <div class="field-group">
-          <label>English</label>
-          <textarea [(ngModel)]="form.body_en" name="body_en" rows="2"
-            placeholder="e.g. Check out the latest properties!"
-            (keydown)="onBodyKeydown('body_en', $event)"
-            (input)="onBodyInput('body_en')"></textarea>
-          <div class="body-line-hint" [class.at-limit]="bodyLineCount('body_en') >= 2">
-            {{ bodyLineCount('body_en') }} / 2 lines
-          </div>
-        </div>
-        <div class="field-group">
-          <label>Arabic</label>
-          <textarea [(ngModel)]="form.body_ar" name="body_ar" rows="2"
-            placeholder="تفقد أحدث العقارات!" dir="rtl"
-            (keydown)="onBodyKeydown('body_ar', $event)"
-            (input)="onBodyInput('body_ar')"></textarea>
-          <div class="body-line-hint" [class.at-limit]="bodyLineCount('body_ar') >= 2">
-            {{ bodyLineCount('body_ar') }} / 2 lines
-          </div>
+      <h3 class="panel-section-title">Body <span class="required">*</span></h3>
+      <div class="field-group">
+        <textarea [(ngModel)]="form.body" name="body" rows="2"
+          placeholder="e.g. Check out the latest properties!"
+          (keydown)="onBodyKeydown($event)"
+          (input)="onBodyInput()"></textarea>
+        <div class="body-line-hint" [class.at-limit]="bodyLineCount() >= 2">
+          {{ bodyLineCount() }} / 2 lines
         </div>
       </div>
     </div>
 
-    <!-- ── Type & Entity ── -->
-    <div class="panel-section">
-      <h3 class="panel-section-title">Notification Type</h3>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Type</label>
-          <select [(ngModel)]="form.type" name="type">
-            <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
-          </select>
-        </div>
-        <div class="field-group" *ngIf="form.type !== 'general'">
-          <label>Entity ID <span class="hint">(optional)</span></label>
-          <input type="number" [(ngModel)]="form.entity_id" name="entity_id"
-            placeholder="e.g. 42" min="1" />
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Audience ── -->
+    <!-- ── Target Audience ── -->
     <div class="panel-section">
       <h3 class="panel-section-title">Target Audience</h3>
 
       <div class="audience-tabs">
-        <button *ngFor="let a of audiences"
+        <button *ngFor="let t of targetTypes"
           type="button"
           class="audience-tab"
-          [class.active]="form.audience === a.value"
-          (click)="form.audience = a.value">
-          {{ a.label }}
+          [class.active]="form.target_type === t.value"
+          (click)="form.target_type = t.value">
+          {{ t.label }}
         </button>
       </div>
 
-      <!-- registered_between fields -->
-      <div class="conditional-fields" *ngIf="form.audience === 'registered_between'">
-        <div class="field-row">
-          <div class="field-group">
-            <label>Registered From <span class="required">*</span></label>
-            <input type="date" [(ngModel)]="form.date_from" name="date_from" />
-          </div>
-          <div class="field-group">
-            <label>Registered To <span class="required">*</span></label>
-            <input type="date" [(ngModel)]="form.date_to" name="date_to" />
-          </div>
-        </div>
-      </div>
-
       <!-- user_type fields -->
-      <div class="conditional-fields" *ngIf="form.audience === 'user_type'">
+      <div class="conditional-fields" *ngIf="form.target_type === 'user_type'">
         <div class="field-group half">
           <label>User Type <span class="required">*</span></label>
-          <select [(ngModel)]="form.user_type" name="user_type">
-            <option *ngFor="let ut of userTypes" [value]="ut">{{ ut | titlecase }}</option>
+          <select [(ngModel)]="form.target_user_type" name="target_user_type">
+            <option *ngFor="let ut of userTypes" [value]="ut">{{ formatUserType(ut) }}</option>
           </select>
         </div>
       </div>
 
-      <!-- single_user fields -->
-      <div class="conditional-fields" *ngIf="form.audience === 'single_user'">
+      <!-- user fields -->
+      <div class="conditional-fields" *ngIf="form.target_type === 'user'">
         <div class="field-group half">
           <label>User ID <span class="required">*</span></label>
-          <input type="number" [(ngModel)]="form.user_id" name="user_id"
-            placeholder="e.g. 1" min="1" />
+          <input type="number" [(ngModel)]="form.target_user_id" name="target_user_id"
+            placeholder="e.g. 5" min="1" />
         </div>
       </div>
 
-      <!-- all — no extra fields -->
-      <div class="all-note" *ngIf="form.audience === 'all'">
+      <!-- all — note -->
+      <div class="all-note" *ngIf="form.target_type === 'all'">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/>
           <line x1="12" y1="8" x2="12.01" y2="8"/>
         </svg>
         This notification will be sent to <strong>all registered users</strong>.
+      </div>
+    </div>
+
+    <!-- ── Optional Data ── -->
+    <div class="panel-section">
+      <h3 class="panel-section-title">Extra Data <span class="hint">(optional JSON)</span></h3>
+      <div class="field-group">
+        <textarea [(ngModel)]="form.data_json" name="data_json" rows="3"
+          placeholder='{"type": "order", "id": 123}'
+          class="code-textarea"></textarea>
+        <div class="field-hint">Attach a JSON object for deep-linking (e.g. navigate to a specific order or property).</div>
       </div>
     </div>
 
