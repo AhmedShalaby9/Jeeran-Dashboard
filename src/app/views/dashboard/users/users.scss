@@ -84,6 +84,19 @@
 .td-id    { color: #6b7280; width: 40px; }
 .td-name  { font-weight: 600; }
 .td-muted { color: #6b7280; }
+.td-phone { color: #6b7280; white-space: nowrap; }
+
+.country-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  background: #eff3fb;
+  color: #1e3a6e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-right: 0.35rem;
+}
 
 .badge {
   display: inline-block;

@@ -66,7 +66,13 @@
           <td class="td-id">{{ user.id }}</td>
           <td class="td-name">{{ user.name }}</td>
           <td class="td-muted">{{ user.email }}</td>
-          <td class="td-muted">{{ user.phone || '—' }}</td>
+          <td class="td-phone">
+            <ng-container *ngIf="user.country_code && user.phone_number; else rawPhone">
+              <span class="country-badge">{{ user.country_code }}</span>
+              {{ user.phone_number }}
+            </ng-container>
+            <ng-template #rawPhone>{{ user.phone || '—' }}</ng-template>
+          </td>
           <td>
             <span class="type-badge type-{{ user.user_type }}">{{ user.user_type | titlecase }}</span>
           </td>
