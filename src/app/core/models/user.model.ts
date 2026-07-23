@@ -3,14 +3,17 @@
 export type UserType = 'buyer' | 'seller' | 'admin' | 'super_admin';
 
 export interface User {
-  id:         number;
-  name:       string;
-  email:      string;
-  phone?:     string;
-  user_type:  UserType;
-  is_active?: boolean;
-  created_at?: string;
-  updated_at?: string;
+  id:           number;
+  name:         string;
+  email:        string;
+  phone?:       string;
+  country_code?: string;
+  phone_number?: string;
+  country?:     string;
+  user_type:    UserType;
+  is_active?:   boolean;
+  created_at?:  string;
+  updated_at?:  string;
 }
 
 export interface LoginCredentials {

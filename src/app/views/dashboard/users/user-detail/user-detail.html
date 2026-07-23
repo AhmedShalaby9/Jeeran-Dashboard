@@ -68,7 +68,17 @@
             </div>
             <div class="info-item">
               <span class="info-label">Phone</span>
-              <span class="info-value">{{ user.phone || '—' }}</span>
+              <span class="info-value">
+                <ng-container *ngIf="user.country_code && user.phone_number; else fullPhone">
+                  <span class="country-badge">{{ user.country_code }}</span>
+                  {{ user.phone_number }}
+                </ng-container>
+                <ng-template #fullPhone>{{ user.phone || '—' }}</ng-template>
+              </span>
+            </div>
+            <div class="info-item" *ngIf="user.country">
+              <span class="info-label">Country</span>
+              <span class="info-value">{{ user.country }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Type</span>
