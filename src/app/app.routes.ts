@@ -36,9 +36,6 @@ import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-for
 import { AiAdDetailComponent } from './views/dashboard/ai-ads/ai-ad-detail/ai-ad-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
-import { DevelopersComponent } from './views/dashboard/developers/developers';
-import { DeveloperFormComponent } from './views/dashboard/developers/developer-form/developer-form';
-import { DeveloperDetailComponent } from './views/dashboard/developers/developer-detail/developer-detail';
 import { FavoritesComponent } from './views/dashboard/favorites/favorites';
 
 export const routes: Routes = [
@@ -60,11 +57,6 @@ export const routes: Routes = [
       { path: 'banners',           component: BannersComponent },
       { path: 'banners/new',       component: BannerFormComponent },
       { path: 'banners/:id',       component: BannerDetailComponent },
-
-      // Developers
-      { path: 'developers',        component: DevelopersComponent },
-      { path: 'developers/new',    component: DeveloperFormComponent },
-      { path: 'developers/:id',    component: DeveloperDetailComponent },
 
       // Projects
       { path: 'projects',          component: ProjectsComponent },

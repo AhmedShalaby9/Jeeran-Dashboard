@@ -14,13 +14,6 @@ export type PropertyStatus =
   | 'for_rent'
   | 'for_rent_furnished';
 
-export type ListingType = 'primary' | 'resale';
-
-export const LISTING_TYPE_LABELS: Record<ListingType, { en: string; ar: string }> = {
-  primary: { en: 'Primary',  ar: 'أساسي'      },
-  resale:  { en: 'Resale',   ar: 'إعادة بيع'  },
-};
-
 export const PROPERTY_TYPE_LABELS: Record<PropertyType, { en: string; ar: string }> = {
   villa:            { en: 'Villa',            ar: 'فيلا'          },
   apartment:        { en: 'Apartment',        ar: 'شقة'           },
@@ -51,7 +44,6 @@ export interface Property {
   content_html:     string | null;
   property_type:    string;
   property_status:  string;
-  listing_type:     string;
   price:            number;
   size:             number | null;
   bedrooms:         number | null;
@@ -88,7 +80,6 @@ export interface CreatePropertyDto {
   content_html?:    string | null;
   property_type:    string;
   property_status:  string;
-  listing_type?:    string;
   price:            number;
   size?:            number | null;
   bedrooms?:        number | null;

@@ -60,11 +60,11 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">Name</span>
-              <span class="info-value">{{ user.name || '—' }}</span>
+              <span class="info-value">{{ user.name }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Email</span>
-              <span class="info-value">{{ user.email || '—' }}</span>
+              <span class="info-value">{{ user.email }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Phone</span>
@@ -76,73 +76,23 @@
                 <ng-template #fullPhone>{{ user.phone || '—' }}</ng-template>
               </span>
             </div>
-            <div class="info-item">
-              <span class="info-label">Gender</span>
-              <span class="info-value">{{ user.gender ? (user.gender | titlecase) : '—' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Date of Birth</span>
-              <span class="info-value">{{ user.date_of_birth ? (user.date_of_birth | date:'mediumDate') : '—' }}</span>
-            </div>
-            <div class="info-item">
+            <div class="info-item" *ngIf="user.country">
               <span class="info-label">Country</span>
-              <span class="info-value">{{ user.country || '—' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">City</span>
-              <span class="info-value">{{ user.city || '—' }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Preferred Language</span>
-              <span class="info-value">{{ user.preferred_language || '—' }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="detail-divider"></div>
-
-        <div class="detail-section">
-          <h2 class="section-title">Account</h2>
-          <div class="info-grid">
-            <div class="info-item">
-              <span class="info-label">Auth Provider</span>
-              <span class="provider-badge provider-{{ user.auth_provider || 'phone' }}">
-                {{ (user.auth_provider || 'phone') | titlecase }}
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Social Login</span>
-              <span class="badge" [class.badge-active]="user.is_social_login" [class.badge-inactive]="!user.is_social_login">
-                {{ user.is_social_login ? 'Yes' : 'No' }}
-              </span>
+              <span class="info-value">{{ user.country }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Type</span>
               <span class="type-badge type-{{ user.user_type }}">{{ user.user_type | titlecase }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">Profile Status</span>
-              <span class="badge" [class.badge-active]="user.is_profile_complete" [class.badge-inactive]="!user.is_profile_complete">
-                {{ user.is_profile_complete ? 'Complete' : 'Incomplete' }}
-              </span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Account Status</span>
+              <span class="info-label">Status</span>
               <span class="badge" [class.badge-active]="user.is_active" [class.badge-inactive]="!user.is_active">
                 {{ user.is_active ? 'Active' : 'Inactive' }}
               </span>
             </div>
-            <div class="info-item" *ngIf="user.referral_code">
-              <span class="info-label">Referral Code</span>
-              <span class="info-value">{{ user.referral_code }}</span>
-            </div>
             <div class="info-item" *ngIf="user.created_at">
               <span class="info-label">Created</span>
               <span class="info-value">{{ user.created_at | date:'mediumDate' }}</span>
-            </div>
-            <div class="info-item" *ngIf="user.updated_at">
-              <span class="info-label">Last Updated</span>
-              <span class="info-value">{{ user.updated_at | date:'mediumDate' }}</span>
             </div>
           </div>
         </div>

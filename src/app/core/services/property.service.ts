@@ -8,22 +8,20 @@ import { Property, CreatePropertyDto, PropertyListResponse, PropertyResponse } f
 import { AuthService } from './auth.service';
 
 export interface PropertyFilters {
-  page?:         number;
-  limit?:        number;
-  type?:         string;
-  status?:       string;
-  listing_type?: string;
-  project_id?:   number;
-  developer_id?: number;
-  is_featured?:  boolean;
-  is_approved?:  'true' | 'false' | 'null'; // 'null' = pending
-  min_price?:    number;
-  max_price?:    number;
-  bedrooms?:     number;
-  agent_name?:   string;
-  q?:            string;
-  sort?:         string;
-  order?:        'ASC' | 'DESC';
+  page?:        number;
+  limit?:       number;
+  type?:        string;
+  status?:      string;
+  project_id?:  number;
+  is_featured?: boolean;
+  is_approved?: 'true' | 'false' | 'null'; // 'null' = pending
+  min_price?:   number;
+  max_price?:   number;
+  bedrooms?:    number;
+  agent_name?:  string;
+  q?:           string;
+  sort?:        string;
+  order?:       'ASC' | 'DESC';
 }
 
 @Injectable({ providedIn: 'root' })

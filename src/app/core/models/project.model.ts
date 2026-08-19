@@ -8,39 +8,29 @@ export interface ProjectFeature {
   images:      string[];
 }
 
-export interface ProjectDeveloper {
-  id:       number;
-  name_ar:  string;
-  name_en:  string | null;
-  logo:     string | null;
-}
-
 export interface Project {
-  id:           number;
-  developer_id: number;
-  name_ar:      string;
-  name_en:      string;
-  desc_ar:      string | null;
-  desc_en:      string | null;
-  main_image:   string | null;
-  gallery:      string[];
-  features:     ProjectFeature[];
-  is_active:    boolean;
-  created_at:   string;
-  updated_at:   string;
-  developer?:   ProjectDeveloper;
+  id:          number;
+  name_ar:     string;
+  name_en:     string;
+  desc_ar:     string | null;
+  desc_en:     string | null;
+  main_image:  string | null;
+  gallery:     string[];
+  features:    ProjectFeature[];
+  is_active:   boolean;
+  created_at:  string;
+  updated_at:  string;
 }
 
 export interface CreateProjectDto {
-  developer_id: number;
-  name_ar:      string;
-  name_en:      string;
-  desc_ar?:     string | null;
-  desc_en?:     string | null;
-  main_image:   string | null;
-  gallery:      string[];
-  features:     ProjectFeature[];
-  is_active:    boolean;
+  name_ar:    string;
+  name_en:    string;
+  desc_ar?:   string | null;
+  desc_en?:   string | null;
+  main_image: string | null;
+  gallery:    string[];
+  features:   ProjectFeature[];
+  is_active:  boolean;
 }
 
 export interface ProjectResponse {

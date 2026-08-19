@@ -93,7 +93,6 @@
                 <span class="status-pill" [ngClass]="statusClass(property.property_status)">
                   {{ statusLabel(property.property_status) }}
                 </span>
-                <span class="listing-pill" *ngIf="property.listing_type">{{ listingLabel(property.listing_type) }}</span>
                 <span class="featured-pill" *ngIf="property.is_featured">
                   ★ Featured
                 </span>
@@ -297,12 +296,6 @@
               <label>Status</label>
               <select [(ngModel)]="editForm.property_status" name="property_status">
                 <option *ngFor="let s of propertyStatuses" [value]="s.value">{{ s.en }}</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Listing Type</label>
-              <select [(ngModel)]="editForm.listing_type" name="listing_type">
-                <option *ngFor="let lt of listingTypes" [value]="lt.value">{{ lt.en }}</option>
               </select>
             </div>
           </div>

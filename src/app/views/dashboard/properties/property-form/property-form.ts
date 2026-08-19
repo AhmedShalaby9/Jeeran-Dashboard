@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
 import { ProjectService } from '../../../../core/services/project.service';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { CreatePropertyDto, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../../core/models/property.model';
+import { CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
 import { Project } from '../../../../core/models/project.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
@@ -53,11 +53,6 @@ export class PropertyFormComponent implements OnInit {
       value: key, ...PROPERTY_STATUS_LABELS[key],
     }));
 
-  readonly listingTypes: { value: ListingType; en: string; ar: string }[] =
-    (Object.keys(LISTING_TYPE_LABELS) as ListingType[]).map(key => ({
-      value: key, ...LISTING_TYPE_LABELS[key],
-    }));
-
   typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
     return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
   }
@@ -91,7 +86,6 @@ export class PropertyFormComponent implements OnInit {
     content_html:    '',
     property_type:   'villa',
     property_status: 'for_sale',
-    listing_type:    'primary',
     price:           0,
     size:            null,
     bedrooms:        null,

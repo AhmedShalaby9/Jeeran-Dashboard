@@ -235,20 +235,6 @@
 
         </div>
 
-        <div class="field-group" style="margin-bottom: 1.25rem;">
-          <label class="field-label">Listing Type</label>
-          <div class="chip-row">
-            <button
-              type="button"
-              *ngFor="let lt of listingTypes"
-              class="type-chip"
-              [class.selected]="form.listing_type === lt.value"
-              (click)="form.listing_type = lt.value">
-              {{ lt.en }}
-            </button>
-          </div>
-        </div>
-
         <div class="field-grid">
 
           <div class="field-group">

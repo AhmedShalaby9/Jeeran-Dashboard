@@ -31,10 +31,6 @@
       <option value="">All Statuses</option>
       <option *ngFor="let s of propertyStatuses" [value]="s.value">{{ s.en }}</option>
     </select>
-    <select [(ngModel)]="listingFilter" (change)="applyFilters()">
-      <option value="">All Listings</option>
-      <option *ngFor="let lt of listingTypes" [value]="lt.value">{{ lt.en }}</option>
-    </select>
     <select [(ngModel)]="projectFilter" (change)="applyFilters()">
       <option [ngValue]="null">All Projects</option>
       <option *ngFor="let p of projects" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
@@ -48,7 +44,7 @@
       <input type="text" [(ngModel)]="agentFilter" placeholder="Filter by agent..." (keydown.enter)="applyFilters()" />
     </div>
     <button class="btn-filter" (click)="applyFilters()">Apply</button>
-    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || listingFilter || agentFilter || projectFilter">
+    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || agentFilter || projectFilter">
       Clear
     </button>
   </div>

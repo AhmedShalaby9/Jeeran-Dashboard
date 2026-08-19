@@ -4,8 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectService } from '../../../../core/services/project.service';
 import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
-import { DeveloperService } from '../../../../core/services/developer.service';
-import { Developer } from '../../../../core/models/developer.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 import { TranslationService } from '../../../../core/services/translation.service';
 
@@ -17,10 +15,7 @@ import { TranslationService } from '../../../../core/services/translation.servic
   styleUrl: './project-form.scss',
 })
 export class ProjectFormComponent {
-  developers: Developer[] = [];
-
   form: CreateProjectDto = {
-    developer_id: 0,
     name_ar:    '',
     name_en:    '',
     desc_ar:    '',
@@ -54,20 +49,10 @@ export class ProjectFormComponent {
 
   constructor(
     private projectService:     ProjectService,
-    private developerService:   DeveloperService,
     private translationService: TranslationService,
     private router:             Router,
     private cdr:                ChangeDetectorRef,
-  ) {
-    this.loadDevelopers();
-  }
-
-  loadDevelopers(): void {
-    this.developerService.getAll(true).subscribe({
-      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
-      error: () => {},
-    });
-  }
+  ) {}
 
   // ── Project name ──────────────────────────────────────────
   translateNameToEn(): void {
@@ -210,10 +195,6 @@ export class ProjectFormComponent {
 
   // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
-    if (!this.form.developer_id) {
-      this.errorMessage = 'Please select a developer.';
-      return;
-    }
     if (!this.form.name_ar.trim()) {
       this.errorMessage = 'Arabic name is required.';
       return;

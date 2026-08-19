@@ -6,8 +6,6 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { Project, CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
 import { PropertyService } from '../../../../core/services/property.service';
 import { Property } from '../../../../core/models/property.model';
-import { DeveloperService } from '../../../../core/services/developer.service';
-import { Developer } from '../../../../core/models/developer.model';
 import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
@@ -37,10 +35,7 @@ export class ProjectDetailComponent implements OnInit {
   propsPageNumbers: number[] = [];
   readonly propsPageSizes = [10, 20, 50];
 
-  developers: Developer[] = [];
-
   editForm: CreateProjectDto = {
-    developer_id: 0,
     name_ar: '', name_en: '', desc_ar: '', desc_en: '',
     main_image: null, gallery: [], features: [], is_active: true,
   };
@@ -72,7 +67,6 @@ export class ProjectDetailComponent implements OnInit {
     private router: Router,
     private projectService: ProjectService,
     private propertyService: PropertyService,
-    private developerService: DeveloperService,
     private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -177,24 +171,9 @@ export class ProjectDetailComponent implements OnInit {
     return map[status] || '';
   }
 
-  loadDevelopers(): void {
-    this.developerService.getAll(true).subscribe({
-      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
-      error: () => {},
-    });
-  }
-
-  goToDeveloper(): void {
-    if (this.project?.developer_id) {
-      this.router.navigate(['/dashboard/developers', this.project.developer_id]);
-    }
-  }
-
   enableEdit(): void {
     if (!this.project) return;
-    this.loadDevelopers();
     this.editForm = {
-      developer_id: this.project.developer_id,
       name_ar:    this.project.name_ar,
       name_en:    this.project.name_en,
       desc_ar:    this.project.desc_ar ?? '',
