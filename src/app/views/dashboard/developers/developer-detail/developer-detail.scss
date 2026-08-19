@@ -1,0 +1,291 @@
+@use '../../shared-page';
+
+$primary:     #1e3a6e;
+$primary-dark:#152c54;
+$accent:      #b8a882;
+$white:       #ffffff;
+$bg:          #f4f6f8;
+$text-dark:   #1a1f2e;
+$text-muted:  #6b7280;
+$border:      #e5e7eb;
+
+.header-left    { display: flex; align-items: center; gap: 1rem; }
+.header-actions { display: flex; gap: 0.75rem; }
+
+.btn-back {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  padding: 0.5rem 0.85rem; border: 1.5px solid $border; border-radius: 8px;
+  background: $white; color: $text-muted; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.15s;
+  &:hover { color: $text-dark; border-color: #9ca3af; }
+}
+
+.detail-card    { background: $white; border-radius: 12px; border: 1px solid $border; }
+.detail-section { padding: 1.75rem 2rem; }
+.detail-divider { border: none; border-top: 1px solid $border; }
+
+.section-title {
+  font-size: 1rem; font-weight: 700; color: $text-dark; margin: 0 0 1.25rem;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.25rem;
+}
+
+.info-item  { display: flex; flex-direction: column; gap: 0.3rem; }
+
+.info-label {
+  font-size: 0.78rem; font-weight: 600; color: $text-muted;
+  text-transform: uppercase; letter-spacing: 0.5px;
+}
+
+.info-value { font-size: 0.95rem; color: $text-dark; font-weight: 500; }
+
+.badge {
+  display: inline-block; padding: 0.25rem 0.65rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600; width: fit-content;
+  &.badge-active   { background: #dcfce7; color: #16a34a; }
+  &.badge-inactive { background: #fee2e2; color: #dc2626; }
+}
+
+.desc-block { margin-bottom: 1rem; &:last-child { margin-bottom: 0; } }
+.desc-lang  { font-size: 0.78rem; font-weight: 600; color: $text-muted; text-transform: uppercase; letter-spacing: 0.5px; }
+.desc-text  { font-size: 0.9rem; color: $text-dark; line-height: 1.6; margin: 0.3rem 0 0; }
+
+.logo-view {
+  img {
+    max-width: 200px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 10px;
+    border: 1px solid $border;
+    display: block;
+    background: $white;
+  }
+}
+
+.no-content {
+  font-size: 0.85rem; color: $text-muted; font-style: italic;
+}
+
+// ── Projects Section ─────────────────────────────────────
+.projects-count-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: $primary; color: $white; font-size: 0.7rem; font-weight: 700;
+  border-radius: 20px; padding: 0.1rem 0.55rem; margin-left: 0.5rem; vertical-align: middle;
+}
+
+.projects-loading {
+  display: flex; align-items: center; gap: 0.6rem;
+  color: $text-muted; font-size: 0.88rem; padding: 0.75rem 0;
+}
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.project-card {
+  border: 1px solid $border; border-radius: 12px; overflow: hidden;
+  background: $white; cursor: pointer; transition: box-shadow 0.2s, transform 0.15s;
+  &:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.09); transform: translateY(-2px); }
+}
+
+.project-cover {
+  position: relative; aspect-ratio: 16/9; background: #e9ecf3; overflow: hidden;
+}
+
+.project-cover-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.project-cover-placeholder {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  color: #9ca3af;
+}
+
+.project-body { padding: 0.85rem; }
+
+.project-name {
+  font-size: 0.9rem; font-weight: 700; color: $text-dark; margin: 0.4rem 0 0.15rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+.project-name-ar {
+  font-size: 0.82rem; color: $text-muted; margin: 0;
+}
+
+// ── Bilingual card ────────────────────────────────────────
+.bilingual-block {
+  background: #f8faff;
+  border: 1.5px solid #dce3f5;
+  border-radius: 10px;
+  padding: 1.25rem 1.25rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.bilingual-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 640px) { grid-template-columns: 1fr; }
+  .form-group { margin-bottom: 0; }
+}
+
+.translate-strip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 0.9rem 0 0.25rem;
+  margin-top: 1rem;
+  border-top: 1px dashed #dce3f5;
+}
+
+.translate-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  color: $text-muted;
+  font-weight: 500;
+  padding: 0 0.5rem;
+  white-space: nowrap;
+}
+
+.btn-translate {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.9rem;
+  background: #f0f4ff;
+  border: 1.5px solid #c8d3f0;
+  color: $primary;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  min-width: 140px;
+  justify-content: center;
+
+  &:hover:not(:disabled) { background: $primary; color: $white; border-color: $primary; }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.translate-error {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #dc2626;
+  margin-bottom: 0.75rem;
+}
+
+.spinner-xs {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin-xs 0.7s linear infinite;
+}
+
+@keyframes spin-xs { to { transform: rotate(360deg); } }
+
+// ── Edit Form ─────────────────────────────────────────────
+.form-card    { background: $white; border-radius: 12px; border: 1px solid $border; }
+.form-section { padding: 1.75rem 2rem; }
+.form-divider { border: none; border-top: 1px solid $border; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  &:last-child { margin-bottom: 0; }
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 0.4rem;
+
+  label { font-size: 0.82rem; font-weight: 600; color: $text-dark; }
+
+  input, textarea {
+    padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+    font-size: 0.9rem; color: $text-dark; outline: none; width: 100%; box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s; font-family: inherit;
+    &::placeholder { color: #b0b7c3; }
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+  }
+
+  textarea { resize: vertical; min-height: 90px; }
+}
+
+.check-group { justify-content: flex-end; padding-bottom: 0.25rem; }
+
+.checkbox-label {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-size: 0.9rem; font-weight: 500; color: $text-dark; cursor: pointer;
+  input[type="checkbox"] { width: 16px; height: 16px; accent-color: $primary; cursor: pointer; }
+}
+
+.required { color: #ef4444; }
+
+.url-fallback {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 0.6rem;
+}
+
+.or-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.url-input {
+  flex: 1; padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+  font-size: 0.9rem; color: $text-dark; outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  &::placeholder { color: #b0b7c3; }
+  &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.form-actions {
+  padding: 1.25rem 2rem; display: flex; justify-content: flex-end; gap: 0.75rem;
+  background: $bg; border-top: 1px solid $border;
+}
+
+// ── Delete Modal ──────────────────────────────────────────
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+}
+
+.modal-confirm {
+  background: $white; border-radius: 14px; padding: 2rem;
+  width: 100%; max-width: 420px; text-align: center;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  h3 { font-size: 1.1rem; font-weight: 700; color: $text-dark; margin: 0.75rem 0 0.5rem; }
+  p  { font-size: 0.9rem; color: $text-muted; margin: 0 0 1.5rem; line-height: 1.5; }
+}
+
+.modal-icon {
+  width: 56px; height: 56px; background: #fee2e2; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto; color: #dc2626;
+}
+
+.modal-btns { display: flex; gap: 0.75rem; justify-content: center; }
+
+.btn-danger-solid {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.65rem 1.4rem; background: #dc2626; color: $white;
+  border: none; border-radius: 8px; font-size: 0.875rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+  &:hover    { background: #b91c1c; }
+  &:disabled { opacity: 0.7; cursor: not-allowed; }
+}

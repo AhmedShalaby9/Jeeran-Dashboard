@@ -31,6 +31,16 @@
     <div class="form-section">
       <h2 class="section-title">Project Info</h2>
 
+      <div class="form-row">
+        <div class="form-group">
+          <label>Developer <span class="required">*</span></label>
+          <select [(ngModel)]="form.developer_id" name="developer_id">
+            <option [ngValue]="0" disabled>Select a developer</option>
+            <option *ngFor="let d of developers" [ngValue]="d.id">{{ d.name_en || d.name_ar }}</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Name bilingual card -->
       <div class="bilingual-block">
         <div class="bilingual-inputs">

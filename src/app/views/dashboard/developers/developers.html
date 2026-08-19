@@ -1,0 +1,83 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Developers</h1>
+      <p>Manage real-estate developers and their projects</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Developer
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading developers...</p>
+  </div>
+
+  <div class="developers-grid" *ngIf="!isLoading">
+
+    <div class="developer-card" *ngFor="let item of developers" (click)="goToDetail(item.id)">
+
+      <div class="card-cover">
+        <img *ngIf="item.logo" [src]="item.logo" [alt]="item.name_en || item.name_ar" class="cover-logo" />
+        <div *ngIf="!item.logo" class="cover-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+            <path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/>
+          </svg>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="card-top">
+          <span class="badge" [class.badge-active]="item.is_active" [class.badge-inactive]="!item.is_active">
+            {{ item.is_active ? 'Active' : 'Inactive' }}
+          </span>
+          <span class="card-date">{{ item.created_at | date:'mediumDate' }}</span>
+        </div>
+
+        <h3 class="card-name-en">{{ item.name_en || '—' }}</h3>
+        <p class="card-name-ar" dir="rtl">{{ item.name_ar }}</p>
+
+        <div class="card-stats">
+          <span class="stat" *ngIf="item.projects">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+            {{ item.projects.length }} project{{ item.projects.length !== 1 ? 's' : '' }}
+          </span>
+          <span class="stat" *ngIf="item.email">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <polyline points="22 7 12 13 2 7"/>
+            </svg>
+            {{ item.email }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="empty-state" *ngIf="developers.length === 0">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/>
+        <path d="M9 9h1"/><path d="M9 13h1"/><path d="M9 17h1"/>
+      </svg>
+      <p>No developers yet.</p>
+      <button class="btn-primary" (click)="goToNew()">Create First Developer</button>
+    </div>
+
+  </div>
+
+</div>
