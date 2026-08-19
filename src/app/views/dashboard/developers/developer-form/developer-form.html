@@ -1,0 +1,238 @@
+<div class="page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>New Developer</h1>
+        <p>Add a new real-estate developer</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="errorMessage">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+      <line x1="12" y1="16" x2="12.01" y2="16"/>
+    </svg>
+    {{ errorMessage }}
+  </div>
+
+  <form class="form-card" (ngSubmit)="onSubmit()">
+
+    <!-- Name -->
+    <div class="form-section">
+      <h2 class="section-title">Developer Info</h2>
+
+      <div class="bilingual-block">
+        <div class="bilingual-inputs">
+          <div class="form-group">
+            <label>Arabic Name <span class="required">*</span></label>
+            <input type="text" [(ngModel)]="form.name_ar" name="name_ar"
+              placeholder="طلعت مصطفى جروب" dir="rtl" />
+          </div>
+          <div class="form-group">
+            <label>English Name</label>
+            <input type="text" [(ngModel)]="form.name_en" name="name_en"
+              placeholder="Talaat Moustafa Group" />
+          </div>
+        </div>
+        <div class="translate-strip">
+          <button type="button" class="btn-translate"
+            (click)="translateNameToAr()"
+            [disabled]="translating.nameToAr || !form.name_en?.trim()">
+            <span *ngIf="!translating.nameToAr">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+              Translate EN &rarr; AR
+            </span>
+            <span *ngIf="translating.nameToAr" class="spinner-xs"></span>
+          </button>
+          <span class="translate-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+            </svg>
+            Name Auto-translate
+          </span>
+          <button type="button" class="btn-translate"
+            (click)="translateNameToEn()"
+            [disabled]="translating.nameToEn || !form.name_ar?.trim()">
+            <span *ngIf="!translating.nameToEn">
+              Translate AR &rarr; EN
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+            <span *ngIf="translating.nameToEn" class="spinner-xs"></span>
+          </button>
+        </div>
+        <div class="translate-error" *ngIf="translateErrors.nameToEn || translateErrors.nameToAr">
+          Translation failed — please try again.
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="bilingual-block">
+        <div class="bilingual-inputs">
+          <div class="form-group">
+            <label>Description (Arabic)</label>
+            <textarea [(ngModel)]="form.desc_ar" name="desc_ar"
+              rows="3" placeholder="وصف المطور بالعربية" dir="rtl"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Description (English)</label>
+            <textarea [(ngModel)]="form.desc_en" name="desc_en"
+              rows="3" placeholder="Developer description in English"></textarea>
+          </div>
+        </div>
+        <div class="translate-strip">
+          <button type="button" class="btn-translate"
+            (click)="translateDescToAr()"
+            [disabled]="translating.descToAr || !form.desc_en?.trim()">
+            <span *ngIf="!translating.descToAr">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="15 18 9 12 15 6"/>
+              </svg>
+              Translate EN &rarr; AR
+            </span>
+            <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+          </button>
+          <span class="translate-divider">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+            </svg>
+            Description Auto-translate
+          </span>
+          <button type="button" class="btn-translate"
+            (click)="translateDescToEn()"
+            [disabled]="translating.descToEn || !form.desc_ar?.trim()">
+            <span *ngIf="!translating.descToEn">
+              Translate AR &rarr; EN
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+            <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+          </button>
+        </div>
+        <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+          Translation failed — please try again.
+        </div>
+      </div>
+
+      <div class="form-group check-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
+          <span>Active</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Logo -->
+    <div class="form-section">
+      <h2 class="section-title">Logo</h2>
+      <p class="section-desc">Developer logo image.</p>
+
+      <app-media-uploader
+        folder="developers"
+        [multiple]="false"
+        (uploaded)="onLogoUploaded($event)">
+      </app-media-uploader>
+
+      <div class="url-fallback">
+        <span class="or-label">or paste URL</span>
+        <input type="text" [(ngModel)]="form.logo" name="logo"
+          placeholder="https://example.com/logo.png" class="url-input" />
+      </div>
+
+      <div class="main-image-preview" *ngIf="form.logo">
+        <img [src]="form.logo" alt="logo preview" />
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Contact Info -->
+    <div class="form-section">
+      <h2 class="section-title">Contact Information</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" [(ngModel)]="form.phone" name="phone" placeholder="+20-2-XXXX" />
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="form.email" name="email" placeholder="info@developer.com" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Website</label>
+          <input type="url" [(ngModel)]="form.website" name="website" placeholder="https://developer.com" />
+        </div>
+        <div class="form-group">
+          <label>Address</label>
+          <input type="text" [(ngModel)]="form.address" name="address" placeholder="Cairo, Egypt" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <!-- Social Links -->
+    <div class="form-section">
+      <h2 class="section-title">Social Links</h2>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Facebook</label>
+          <input type="url" [(ngModel)]="form.facebook" name="facebook" placeholder="https://facebook.com/..." />
+        </div>
+        <div class="form-group">
+          <label>Instagram</label>
+          <input type="url" [(ngModel)]="form.instagram" name="instagram" placeholder="https://instagram.com/..." />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>X (Twitter)</label>
+          <input type="url" [(ngModel)]="form.twitter" name="twitter" placeholder="https://x.com/..." />
+        </div>
+        <div class="form-group">
+          <label>LinkedIn</label>
+          <input type="url" [(ngModel)]="form.linkedin" name="linkedin" placeholder="https://linkedin.com/company/..." />
+        </div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Create Developer</span>
+        <span *ngIf="isSubmitting" class="spinner-sm"></span>
+      </button>
+    </div>
+
+  </form>
+</div>

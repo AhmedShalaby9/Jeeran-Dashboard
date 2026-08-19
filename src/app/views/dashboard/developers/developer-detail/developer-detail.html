@@ -1,0 +1,441 @@
+<div class="page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="15 18 9 12 15 6"/>
+        </svg>
+        Back
+      </button>
+      <div>
+        <h1>{{ developer?.name_en || developer?.name_ar || 'Developer' }}</h1>
+        <p dir="rtl" *ngIf="developer?.name_ar">{{ developer?.name_ar }}</p>
+      </div>
+    </div>
+    <div class="header-actions" *ngIf="developer && !isEditMode">
+      <button class="btn-secondary" (click)="enableEdit()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        </svg>
+        Edit
+      </button>
+      <button class="btn-danger" (click)="confirmDelete()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+        Delete
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading developer...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading && developer">
+
+    <div class="toast-success" *ngIf="successMessage">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      {{ successMessage }}
+    </div>
+
+    <!-- VIEW MODE -->
+    <div *ngIf="!isEditMode">
+      <div class="detail-card">
+
+        <!-- Info -->
+        <div class="detail-section">
+          <h2 class="section-title">Developer Info</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Name (English)</span>
+              <span class="info-value">{{ developer.name_en || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Name (Arabic)</span>
+              <span class="info-value" dir="rtl">{{ developer.name_ar }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Status</span>
+              <span class="badge" [class.badge-active]="developer.is_active" [class.badge-inactive]="!developer.is_active">
+                {{ developer.is_active ? 'Active' : 'Inactive' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Created At</span>
+              <span class="info-value">{{ developer.created_at | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Description -->
+        <div class="detail-section" *ngIf="developer.desc_en || developer.desc_ar">
+          <h2 class="section-title">Description</h2>
+          <div class="desc-block" *ngIf="developer.desc_en">
+            <span class="desc-lang">English</span>
+            <p class="desc-text">{{ developer.desc_en }}</p>
+          </div>
+          <div class="desc-block" *ngIf="developer.desc_ar">
+            <span class="desc-lang">Arabic</span>
+            <p class="desc-text" dir="rtl">{{ developer.desc_ar }}</p>
+          </div>
+        </div>
+
+        <div class="detail-divider" *ngIf="developer.desc_en || developer.desc_ar"></div>
+
+        <!-- Logo -->
+        <div class="detail-section" *ngIf="developer.logo">
+          <h2 class="section-title">Logo</h2>
+          <div class="logo-view">
+            <img [src]="developer.logo" [alt]="developer.name_en || developer.name_ar" />
+          </div>
+        </div>
+
+        <div class="detail-divider" *ngIf="developer.logo"></div>
+
+        <!-- Contact Info -->
+        <div class="detail-section">
+          <h2 class="section-title">Contact Information</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ developer.phone || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ developer.email || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Website</span>
+              <span class="info-value">{{ developer.website || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ developer.address || '—' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Social Links -->
+        <div class="detail-section">
+          <h2 class="section-title">Social Links</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Facebook</span>
+              <span class="info-value">{{ developer.facebook || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Instagram</span>
+              <span class="info-value">{{ developer.instagram || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">X (Twitter)</span>
+              <span class="info-value">{{ developer.twitter || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">LinkedIn</span>
+              <span class="info-value">{{ developer.linkedin || '—' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Projects -->
+        <div class="detail-section">
+          <h2 class="section-title">
+            Projects
+            <span class="projects-count-badge" *ngIf="projects.length > 0">{{ projects.length }}</span>
+          </h2>
+
+          <div class="projects-loading" *ngIf="projectsLoading">
+            <div class="spinner-sm"></div>
+            <span>Loading projects...</span>
+          </div>
+
+          <ng-container *ngIf="!projectsLoading">
+            <div class="projects-grid" *ngIf="projects.length > 0">
+              <div class="project-card" *ngFor="let p of projects" (click)="goToProject(p.id)">
+                <div class="project-cover">
+                  <img *ngIf="p.main_image" [src]="p.main_image" [alt]="p.name_en || p.name_ar" class="project-cover-img" />
+                  <div *ngIf="!p.main_image" class="project-cover-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                      <polyline points="2 17 12 22 22 17"/>
+                      <polyline points="2 12 12 17 22 12"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="project-body">
+                  <span class="badge" [class.badge-active]="p.is_active" [class.badge-inactive]="!p.is_active">
+                    {{ p.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                  <h3 class="project-name">{{ p.name_en || p.name_ar }}</h3>
+                  <p class="project-name-ar" dir="rtl" *ngIf="p.name_ar && p.name_en">{{ p.name_ar }}</p>
+                </div>
+              </div>
+            </div>
+
+            <p class="no-content" *ngIf="projects.length === 0">No projects linked to this developer.</p>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div *ngIf="isEditMode">
+      <div class="error-msg" *ngIf="errorMessage">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>
+          <line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+
+      <form class="form-card" (ngSubmit)="saveEdit()">
+
+        <!-- Name -->
+        <div class="form-section">
+          <h2 class="section-title">Developer Info</h2>
+
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Arabic Name <span class="required">*</span></label>
+                <input type="text" [(ngModel)]="editForm.name_ar" name="name_ar" dir="rtl" />
+              </div>
+              <div class="form-group">
+                <label>English Name</label>
+                <input type="text" [(ngModel)]="editForm.name_en" name="name_en" />
+              </div>
+            </div>
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateNameToAr()"
+                [disabled]="translating.nameToAr || !editForm.name_en?.trim()">
+                <span *ngIf="!translating.nameToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Translate EN &rarr; AR
+                </span>
+                <span *ngIf="translating.nameToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+                </svg>
+                Name Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateNameToEn()"
+                [disabled]="translating.nameToEn || !editForm.name_ar?.trim()">
+                <span *ngIf="!translating.nameToEn">
+                  Translate AR &rarr; EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.nameToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.nameToEn || translateErrors.nameToAr">
+              Translation failed — please try again.
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="bilingual-block">
+            <div class="bilingual-inputs">
+              <div class="form-group">
+                <label>Description (Arabic)</label>
+                <textarea [(ngModel)]="editForm.desc_ar" name="desc_ar" rows="3" dir="rtl"></textarea>
+              </div>
+              <div class="form-group">
+                <label>Description (English)</label>
+                <textarea [(ngModel)]="editForm.desc_en" name="desc_en" rows="3"></textarea>
+              </div>
+            </div>
+            <div class="translate-strip">
+              <button type="button" class="btn-translate"
+                (click)="translateDescToAr()"
+                [disabled]="translating.descToAr || !editForm.desc_en?.trim()">
+                <span *ngIf="!translating.descToAr">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Translate EN &rarr; AR
+                </span>
+                <span *ngIf="translating.descToAr" class="spinner-xs"></span>
+              </button>
+              <span class="translate-divider">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 8l4-4 4 4M9 4v16M19 8l-4 4 4 4M15 4v16" />
+                </svg>
+                Description Auto-translate
+              </span>
+              <button type="button" class="btn-translate"
+                (click)="translateDescToEn()"
+                [disabled]="translating.descToEn || !editForm.desc_ar?.trim()">
+                <span *ngIf="!translating.descToEn">
+                  Translate AR &rarr; EN
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </span>
+                <span *ngIf="translating.descToEn" class="spinner-xs"></span>
+              </button>
+            </div>
+            <div class="translate-error" *ngIf="translateErrors.descToEn || translateErrors.descToAr">
+              Translation failed — please try again.
+            </div>
+          </div>
+
+          <div class="form-group check-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
+              <span>Active</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Logo -->
+        <div class="form-section">
+          <h2 class="section-title">Logo</h2>
+
+          <app-media-uploader
+            folder="developers"
+            [multiple]="false"
+            (uploaded)="onLogoUploaded($event)">
+          </app-media-uploader>
+
+          <div class="url-fallback">
+            <span class="or-label">or paste URL</span>
+            <input type="text" [(ngModel)]="editForm.logo" name="logo"
+              placeholder="https://example.com/logo.png" class="url-input" />
+          </div>
+
+          <div class="logo-view" *ngIf="editForm.logo">
+            <img [src]="editForm.logo" alt="logo preview" />
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Contact Info -->
+        <div class="form-section">
+          <h2 class="section-title">Contact Information</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone</label>
+              <input type="text" [(ngModel)]="editForm.phone" name="phone" placeholder="+20-2-XXXX" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" [(ngModel)]="editForm.email" name="email" placeholder="info@developer.com" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Website</label>
+              <input type="url" [(ngModel)]="editForm.website" name="website" placeholder="https://developer.com" />
+            </div>
+            <div class="form-group">
+              <label>Address</label>
+              <input type="text" [(ngModel)]="editForm.address" name="address" placeholder="Cairo, Egypt" />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <!-- Social Links -->
+        <div class="form-section">
+          <h2 class="section-title">Social Links</h2>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Facebook</label>
+              <input type="url" [(ngModel)]="editForm.facebook" name="facebook" placeholder="https://facebook.com/..." />
+            </div>
+            <div class="form-group">
+              <label>Instagram</label>
+              <input type="url" [(ngModel)]="editForm.instagram" name="instagram" placeholder="https://instagram.com/..." />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>X (Twitter)</label>
+              <input type="url" [(ngModel)]="editForm.twitter" name="twitter" placeholder="https://x.com/..." />
+            </div>
+            <div class="form-group">
+              <label>LinkedIn</label>
+              <input type="url" [(ngModel)]="editForm.linkedin" name="linkedin" placeholder="https://linkedin.com/company/..." />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Changes</span>
+            <span *ngIf="isSubmitting" class="spinner-sm"></span>
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </ng-container>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+        </svg>
+      </div>
+      <h3>Delete Developer</h3>
+      <p>Are you sure you want to delete <strong>{{ developer?.name_en || developer?.name_ar }}</strong>? This action cannot be undone.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger-solid" (click)="deleteDeveloper()" [disabled]="isDeleting">
+          <span *ngIf="!isDeleting">Yes, Delete</span>
+          <span *ngIf="isDeleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
