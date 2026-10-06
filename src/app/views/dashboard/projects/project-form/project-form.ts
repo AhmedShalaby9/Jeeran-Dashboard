@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,16 +6,27 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { DeveloperService } from '../../../../core/services/developer.service';
+import { Developer } from '../../../../core/models/developer.model';
+import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
 
 @Component({
   selector: 'app-project-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, ProjectLaunchFieldsComponent],
   templateUrl: './project-form.html',
   styleUrl: './project-form.scss',
 })
-export class ProjectFormComponent {
+export class ProjectFormComponent implements OnInit {
+  developers: Developer[] = [];
+
   form: CreateProjectDto = {
+    developer_id:  null,
+    is_new_launch: false,
+    launched_at:   null,
+    state:         null,
+    area_ar:       '',
+    area_en:       '',
     name_ar:    '',
     name_en:    '',
     desc_ar:    '',
@@ -50,9 +61,17 @@ export class ProjectFormComponent {
   constructor(
     private projectService:     ProjectService,
     private translationService: TranslationService,
+    private developerService:   DeveloperService,
     private router:             Router,
     private cdr:                ChangeDetectorRef,
   ) {}
+
+  ngOnInit(): void {
+    this.developerService.getAll(true).subscribe({
+      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
+  }
 
   // ── Project name ──────────────────────────────────────────
   translateNameToEn(): void {
@@ -199,10 +218,17 @@ export class ProjectFormComponent {
       this.errorMessage = 'Arabic name is required.';
       return;
     }
+    if (!this.form.developer_id) {
+      this.errorMessage = 'Pick the developer this project belongs to.';
+      return;
+    }
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.projectService.create(this.form).subscribe({
+    this.projectService.create({
+      ...this.form,
+      launched_at: this.form.is_new_launch ? (this.form.launched_at || null) : null,
+    }).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.router.navigate(['/dashboard/projects']);

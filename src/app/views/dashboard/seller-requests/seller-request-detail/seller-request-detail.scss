@@ -1,4 +1,5 @@
 @use '../../shared-page';
+@use '../../modal';
 
 $primary:      #1e3a6e;
 $primary-dark: #152c54;
@@ -163,4 +164,15 @@ $border:       #e5e7eb;
   background: #dc2626;
   color: white;
   &:not(:disabled):hover { background: #b91c1c; }
+}
+
+.reject-modal {
+  text-align: left;
+  textarea {
+    width: 100%; box-sizing: border-box; padding: 0.7rem 0.9rem; border: 1.5px solid $border;
+    border-radius: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical; outline: none;
+    &:focus { border-color: $primary; box-shadow: 0 0 0 3px #e8ecf5; }
+  }
+  .reason-count { display: block; text-align: right; color: $text-muted; margin: 0.3rem 0 1rem; }
+  h3, p { text-align: left; }
 }

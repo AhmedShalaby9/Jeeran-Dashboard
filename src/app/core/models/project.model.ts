@@ -8,8 +8,26 @@ export interface ProjectFeature {
   images:      string[];
 }
 
+export type ProjectState = 'cairo' | 'north_coast' | 'sharm_el_sheikh';
+
+export const PROJECT_STATES: { value: ProjectState; label: string }[] = [
+  { value: 'cairo',           label: 'Cairo' },
+  { value: 'north_coast',     label: 'North Coast' },
+  { value: 'sharm_el_sheikh', label: 'Sharm El Sheikh' },
+];
+
 export interface Project {
   id:          number;
+  developer_id: number;
+  developer?:  { id: number; name_ar: string; name_en: string | null; logo: string | null };
+  is_new_launch: boolean;
+  launched_at: string | null;
+  state:       ProjectState | null;
+  area_ar:     string | null;
+  area_en:     string | null;
+  min_price?:  number | null;
+  units_count?: number;
+  followers_count?: number;
   name_ar:     string;
   name_en:     string;
   desc_ar:     string | null;
@@ -23,6 +41,12 @@ export interface Project {
 }
 
 export interface CreateProjectDto {
+  developer_id: number | null;
+  is_new_launch: boolean;
+  launched_at: string | null;
+  state:       ProjectState | null;
+  area_ar:     string | null;
+  area_en:     string | null;
   name_ar:    string;
   name_en:    string;
   desc_ar?:   string | null;

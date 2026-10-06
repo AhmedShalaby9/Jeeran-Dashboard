@@ -75,6 +75,22 @@
               </span>
             </div>
             <div class="info-item">
+              <span class="info-label">Developer</span>
+              <span class="info-value">{{ project.developer?.name_en || project.developer?.name_ar || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ project.area_en || project.area_ar || stateLabel(project.state) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">New launch</span>
+              <span class="info-value">{{ project.is_new_launch ? 'Yes' + (project.launched_at ? ' · ' + (project.launched_at | date:'mediumDate') : '') : 'No' }}</span>
+            </div>
+            <div class="info-item" *ngIf="project.units_count !== undefined">
+              <span class="info-label">Listings</span>
+              <span class="info-value">{{ project.units_count }}</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Created At</span>
               <span class="info-value">{{ project.created_at | date:'medium' }}</span>
             </div>
@@ -370,6 +386,13 @@
         <div class="form-divider"></div>
 
         <!-- Main Image -->
+        <div class="form-section">
+          <h2 class="section-title">Developer &amp; Location</h2>
+          <app-project-launch-fields [form]="editForm" [developers]="developers"></app-project-launch-fields>
+        </div>
+
+        <div class="form-divider"></div>
+
         <div class="form-section">
           <h2 class="section-title">Main Image</h2>
           <div class="form-group">

@@ -6,7 +6,8 @@ export interface SellerRequest {
   id:         number;
   user_id:    number;
   status:     SellerRequestStatus;
-  notes?:     string | null;
+  rejection_reason?: string | null;
+  reviewed_at?: string | null;
   user?: {
     id:     number;
     name:   string;

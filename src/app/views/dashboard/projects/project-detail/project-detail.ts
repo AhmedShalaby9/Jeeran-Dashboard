@@ -7,11 +7,15 @@ import { Project, CreateProjectDto, ProjectFeature } from '../../../../core/mode
 import { PropertyService } from '../../../../core/services/property.service';
 import { Property } from '../../../../core/models/property.model';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { DeveloperService } from '../../../../core/services/developer.service';
+import { Developer } from '../../../../core/models/developer.model';
+import { PROJECT_STATES } from '../../../../core/models/project.model';
+import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ProjectLaunchFieldsComponent],
   templateUrl: './project-detail.html',
   styleUrl: './project-detail.scss',
 })
@@ -35,7 +39,14 @@ export class ProjectDetailComponent implements OnInit {
   propsPageNumbers: number[] = [];
   readonly propsPageSizes = [10, 20, 50];
 
+  developers: Developer[] = [];
+
+  stateLabel(v: string | null): string {
+    return PROJECT_STATES.find((s) => s.value === v)?.label ?? '—';
+  }
+
   editForm: CreateProjectDto = {
+    developer_id: null, is_new_launch: false, launched_at: null, state: null, area_ar: '', area_en: '',
     name_ar: '', name_en: '', desc_ar: '', desc_en: '',
     main_image: null, gallery: [], features: [], is_active: true,
   };
@@ -68,12 +79,17 @@ export class ProjectDetailComponent implements OnInit {
     private projectService: ProjectService,
     private propertyService: PropertyService,
     private translationService: TranslationService,
+    private developerService: DeveloperService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadProject(id);
+    this.developerService.getAll(true).subscribe({
+      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
   }
 
   private emptyFeature(): ProjectFeature {
@@ -174,6 +190,12 @@ export class ProjectDetailComponent implements OnInit {
   enableEdit(): void {
     if (!this.project) return;
     this.editForm = {
+      developer_id:  this.project.developer_id,
+      is_new_launch: this.project.is_new_launch,
+      launched_at:   this.project.launched_at,
+      state:         this.project.state,
+      area_ar:       this.project.area_ar ?? '',
+      area_en:       this.project.area_en ?? '',
       name_ar:    this.project.name_ar,
       name_en:    this.project.name_en,
       desc_ar:    this.project.desc_ar ?? '',
@@ -352,7 +374,14 @@ export class ProjectDetailComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.projectService.update(this.project!.id, this.editForm).subscribe({
+    if (!this.editForm.developer_id) {
+      this.errorMessage = 'Pick the developer this project belongs to.';
+      return;
+    }
+    this.projectService.update(this.project!.id, {
+      ...this.editForm,
+      launched_at: this.editForm.is_new_launch ? (this.editForm.launched_at || null) : null,
+    }).subscribe({
       next: (res) => {
         this.project        = res.data;
         this.isSubmitting   = false;

@@ -42,11 +42,14 @@ export class SellerRequestService {
     return this.http.get<SellerRequestResponse>(`${this.url}/${id}`, { headers: this.headers() });
   }
 
-  approve(id: number): Observable<SellerRequestResponse> {
-    return this.http.put<SellerRequestResponse>(`${this.url}/${id}/approve`, {}, { headers: this.headers() });
+  // The API answers approve/reject with { success, message } only — reload the request afterwards.
+  approve(id: number): Observable<{ success: boolean; message: string }> {
+    return this.http.put<{ success: boolean; message: string }>(`${this.url}/${id}/approve`, {}, { headers: this.headers() });
   }
 
-  reject(id: number): Observable<SellerRequestResponse> {
-    return this.http.put<SellerRequestResponse>(`${this.url}/${id}/reject`, {}, { headers: this.headers() });
+  /** `reason` is shown to the applicant (in the app and in the push notification). */
+  reject(id: number, reason?: string): Observable<{ success: boolean; message: string }> {
+    return this.http.put<{ success: boolean; message: string }>(
+      `${this.url}/${id}/reject`, { reason: reason?.trim() || undefined }, { headers: this.headers() });
   }
 }

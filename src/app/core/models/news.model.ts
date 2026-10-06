@@ -12,6 +12,8 @@ export interface News {
   is_active: boolean;
   published_at: string;
   published_by: string;
+  project_id: number | null;
+  developer_id: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -25,6 +27,8 @@ export interface CreateNewsDto {
   is_active: boolean;
   published_at: string;
   published_by: string;
+  project_id: number | null;
+  developer_id: number | null;
 }
 
 export interface NewsResponse {

@@ -13,6 +13,8 @@ import { AdDetailComponent } from './views/dashboard/ads/ad-detail/ad-detail';
 import { BannersComponent } from './views/dashboard/banners/banners';
 import { BannerFormComponent } from './views/dashboard/banners/banner-form/banner-form';
 import { BannerDetailComponent } from './views/dashboard/banners/banner-detail/banner-detail';
+import { DevelopersComponent } from './views/dashboard/developers/developers';
+import { DeveloperFormComponent } from './views/dashboard/developers/developer-form/developer-form';
 import { ProjectsComponent } from './views/dashboard/projects/projects';
 import { ProjectFormComponent } from './views/dashboard/projects/project-form/project-form';
 import { ProjectDetailComponent } from './views/dashboard/projects/project-detail/project-detail';
@@ -58,6 +60,9 @@ export const routes: Routes = [
       { path: 'banners/:id',       component: BannerDetailComponent },
 
       // Projects
+      { path: 'developers',        component: DevelopersComponent },
+      { path: 'developers/new',    component: DeveloperFormComponent },
+      { path: 'developers/:id',    component: DeveloperFormComponent },
       { path: 'projects',          component: ProjectsComponent },
       { path: 'projects/new',      component: ProjectFormComponent },
       { path: 'projects/:id',      component: ProjectDetailComponent },

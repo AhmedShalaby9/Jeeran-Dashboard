@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SellerRequestService } from '../../../../core/services/seller-request.service';
 import { SellerRequest } from '../../../../core/models/seller-request.model';
@@ -7,7 +8,7 @@ import { SellerRequest } from '../../../../core/models/seller-request.model';
 @Component({
   selector: 'app-seller-request-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './seller-request-detail.html',
   styleUrl: './seller-request-detail.scss',
 })
@@ -15,6 +16,9 @@ export class SellerRequestDetailComponent implements OnInit {
   request: SellerRequest | null = null;
   isLoading    = false;
   isActing     = false;
+  showRejectModal = false;
+  rejectReason    = '';
+  readonly reasonMax = 1000;
   successMessage = '';
   errorMessage   = '';
 
@@ -49,39 +53,50 @@ export class SellerRequestDetailComponent implements OnInit {
   approve(): void {
     if (!this.request) return;
     this.isActing = true;
+    this.errorMessage = '';
     this.sellerRequestService.approve(this.request.id).subscribe({
-      next: (res) => {
-        this.request       = res.data;
-        this.isActing      = false;
-        this.successMessage = 'Request approved successfully.';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+      next: () => this.afterAction('Request approved successfully.'),
+      error: (err) => this.actionFailed(err, 'Failed to approve request.'),
+    });
+  }
+
+  openReject(): void {
+    this.rejectReason = '';
+    this.showRejectModal = true;
+  }
+
+  cancelReject(): void {
+    this.showRejectModal = false;
+  }
+
+  confirmReject(): void {
+    if (!this.request) return;
+    this.isActing = true;
+    this.errorMessage = '';
+    this.sellerRequestService.reject(this.request.id, this.rejectReason).subscribe({
+      next: () => {
+        this.showRejectModal = false;
+        this.afterAction('Request rejected. The applicant was notified.');
       },
       error: (err) => {
-        this.isActing    = false;
-        this.errorMessage = err.error?.message || 'Failed to approve request.';
-        this.cdr.detectChanges();
+        this.showRejectModal = false;
+        this.actionFailed(err, 'Failed to reject request.');
       },
     });
   }
 
-  reject(): void {
-    if (!this.request) return;
-    this.isActing = true;
-    this.sellerRequestService.reject(this.request.id).subscribe({
-      next: (res) => {
-        this.request       = res.data;
-        this.isActing      = false;
-        this.successMessage = 'Request rejected.';
-        this.cdr.detectChanges();
-        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
-      },
-      error: (err) => {
-        this.isActing    = false;
-        this.errorMessage = err.error?.message || 'Failed to reject request.';
-        this.cdr.detectChanges();
-      },
-    });
+  private afterAction(message: string): void {
+    const id = this.request!.id;
+    this.isActing = false;
+    this.successMessage = message;
+    this.load(id); // approve/reject don't return the record
+    setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 4000);
+  }
+
+  private actionFailed(err: any, fallback: string): void {
+    this.isActing = false;
+    this.errorMessage = err.error?.message || fallback;
+    this.cdr.detectChanges();
   }
 
   goBack(): void {

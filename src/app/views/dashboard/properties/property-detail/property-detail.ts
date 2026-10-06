@@ -230,6 +230,31 @@ export class PropertyDetailComponent implements OnInit {
     });
   }
 
+  isTogglingSold = false;
+
+  toggleSold(): void {
+    if (!this.property || this.isTogglingSold) return;
+    const sold = !this.property.sold_at;
+    this.isTogglingSold = true;
+    this.errorMessage = '';
+    this.propertyService.markSold(this.property.id, sold).subscribe({
+      next: (res) => {
+        this.property       = { ...this.property!, sold_at: res.data.sold_at ?? null };
+        this.isTogglingSold = false;
+        this.successMessage = sold
+          ? 'Marked as sold. People who saved it were notified and it is hidden from the app lists.'
+          : 'Listing reopened.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 4000);
+      },
+      error: (err) => {
+        this.isTogglingSold = false;
+        this.errorMessage = err.error?.message || 'Failed to update the sold status.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   confirmDelete(): void  { this.showDeleteModal = true; }
   cancelDelete(): void   { this.showDeleteModal = false; }
 

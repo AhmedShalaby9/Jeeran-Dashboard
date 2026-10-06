@@ -1,0 +1,49 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Developers</h1>
+      <p>Real-estate developers that own projects (compounds) in the app</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Developer
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading developers...</p>
+  </div>
+
+  <div class="dev-grid" *ngIf="!isLoading">
+
+    <div class="dev-card" *ngFor="let d of developers" (click)="goToDetail(d.id)">
+      <div class="dev-logo">
+        <img *ngIf="d.logo" [src]="d.logo" [alt]="d.name_en || d.name_ar" />
+        <span *ngIf="!d.logo">{{ initial(d) }}</span>
+      </div>
+      <div class="dev-info">
+        <div class="dev-name">{{ d.name_en || d.name_ar }}</div>
+        <div class="dev-name-ar" *ngIf="d.name_en">{{ d.name_ar }}</div>
+        <div class="dev-meta">
+          <span class="badge" [class.badge-active]="d.is_active" [class.badge-inactive]="!d.is_active">
+            {{ d.is_active ? 'Active' : 'Inactive' }}
+          </span>
+          <span class="badge badge-verified" *ngIf="d.is_verified">Verified</span>
+          <span class="dev-count">{{ d.projects?.length || 0 }} project{{ (d.projects?.length || 0) === 1 ? '' : 's' }} · {{ d.followers_count || 0 }} follower{{ (d.followers_count || 0) === 1 ? '' : 's' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty-state" *ngIf="developers.length === 0">
+      <p>No developers yet. Projects need a developer, so add one first.</p>
+      <button class="btn-primary" (click)="goToNew()">Create First Developer</button>
+    </div>
+
+  </div>
+
+</div>

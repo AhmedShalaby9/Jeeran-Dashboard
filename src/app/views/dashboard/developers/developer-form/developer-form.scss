@@ -1,0 +1,33 @@
+@use '../../form-base';
+@use '../../modal';
+
+$white:      #ffffff;
+$text-dark:  #1a1f2e;
+$text-muted: #6b7280;
+$border:     #e5e7eb;
+
+textarea {
+  padding: 0.7rem 0.9rem; border: 1.5px solid $border; border-radius: 8px;
+  font-size: 0.9rem; color: $text-dark; outline: none; width: 100%; box-sizing: border-box;
+  font-family: inherit; resize: vertical; min-height: 84px;
+  &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+
+.header-actions { display: flex; gap: 0.6rem; }
+.logo-preview {
+  width: 96px; height: 96px; border-radius: 14px; border: 1px solid $border;
+  background: $white; margin-bottom: 1rem; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  img { width: 100%; height: 100%; object-fit: contain; }
+}
+
+.project-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.project-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.7rem 0.9rem; border: 1px solid $border; border-radius: 8px;
+  cursor: pointer; font-size: 0.9rem; color: $text-dark;
+  &:hover { background: #f9fafb; }
+  small { color: $text-muted; }
+}
+
+.verify-note { margin: -0.25rem 0 1.25rem; font-size: 0.8rem; color: #6b7280; line-height: 1.5; }

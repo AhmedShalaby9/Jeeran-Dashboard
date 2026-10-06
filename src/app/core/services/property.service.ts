@@ -66,6 +66,11 @@ export class PropertyService {
     return this.http.get<PropertyListResponse>(`${this.url}/${id}/similar`, { headers: this.headers() });
   }
 
+  /** Mark a listing sold (or reopen it). Savers are notified when it sells. */
+  markSold(id: number, sold = true): Observable<PropertyResponse> {
+    return this.http.patch<PropertyResponse>(`${this.url}/${id}/sold`, { sold }, { headers: this.headers() });
+  }
+
   approve(id: number): Observable<PropertyResponse> {
     return this.http.patch<PropertyResponse>(`${this.url}/${id}/approve`, {}, { headers: this.headers() });
   }

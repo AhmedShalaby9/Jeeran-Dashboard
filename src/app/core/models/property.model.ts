@@ -64,6 +64,8 @@ export interface Property {
   is_approved:      boolean | null;
   published_at:     string | null;
   views_count:      number;
+  sold_at?:         string | null;
+  saves_count?:     number;
   agent_name:       string | null;
   agent_mobile:     string | null;
   agent_whatsapp:   string | null;

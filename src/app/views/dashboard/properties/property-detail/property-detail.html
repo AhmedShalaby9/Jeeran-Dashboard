@@ -24,6 +24,9 @@
         </svg>
         Edit
       </button>
+      <button class="btn-secondary" (click)="toggleSold()" [disabled]="isTogglingSold">
+        {{ property.sold_at ? 'Reopen listing' : 'Mark as sold' }}
+      </button>
       <button class="btn-danger" (click)="confirmDelete()">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -164,6 +167,14 @@
               <div class="info-item">
                 <span class="info-label">Views</span>
                 <span class="info-value">{{ property.views_count }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Saved by</span>
+                <span class="info-value">{{ property.saves_count ?? 0 }} {{ (property.saves_count ?? 0) === 1 ? 'person' : 'people' }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.sold_at">
+                <span class="info-label">Sold on</span>
+                <span class="info-value">{{ property.sold_at | date:'medium' }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">Published At</span>

@@ -50,6 +50,11 @@
 
         <h3 class="card-name-en">{{ item.name_en || '—' }}</h3>
         <p class="card-name-ar" dir="rtl">{{ item.name_ar }}</p>
+        <p class="card-dev" *ngIf="item.developer">
+          {{ item.developer.name_en || item.developer.name_ar }}
+          <span class="launch-chip" *ngIf="item.is_new_launch">New launch</span>
+          <span class="follow-count">{{ item.followers_count || 0 }} follower{{ (item.followers_count || 0) === 1 ? '' : 's' }}</span>
+        </p>
 
         <div class="card-stats">
           <span class="stat">

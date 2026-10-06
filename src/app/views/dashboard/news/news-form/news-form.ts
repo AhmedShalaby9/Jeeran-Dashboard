@@ -7,10 +7,12 @@ import { TranslationService } from '../../../../core/services/translation.servic
 import { CreateNewsDto } from '../../../../core/models/news.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
+import { NewsLinkFieldsComponent } from '../../../../shared/components/news-link-fields/news-link-fields';
+
 @Component({
   selector: 'app-news-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, NewsLinkFieldsComponent, MediaUploaderComponent],
   templateUrl: './news-form.html',
   styleUrl: './news-form.scss',
 })
@@ -24,6 +26,8 @@ export class NewsFormComponent {
     is_active:    true,
     published_at: new Date().toISOString().slice(0, 16),
     published_by: '',
+    project_id:   null,
+    developer_id: null,
   };
 
   mediaInput   = '';
@@ -136,6 +140,8 @@ export class NewsFormComponent {
       is_active:    this.form.is_active,
       published_at: this.form.published_at,
       published_by: this.form.published_by,
+      project_id:   this.form.project_id,
+      developer_id: this.form.developer_id,
     };
 
     this.newsService.create(payload).subscribe({

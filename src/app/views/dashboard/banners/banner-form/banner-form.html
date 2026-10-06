@@ -11,7 +11,7 @@
       </button>
       <div>
         <h1>New Banner</h1>
-        <p>Create a new promotional banner</p>
+        <p>Media, caption and where it opens — placed in the app by slot</p>
       </div>
     </div>
   </div>
@@ -27,56 +27,7 @@
 
   <form class="form-card" (ngSubmit)="onSubmit()">
 
-    <div class="form-section">
-      <h2 class="section-title">Banner Image</h2>
-      <p class="section-desc">Provide the banner image URL.</p>
-
-      <div class="form-group">
-        <label>Image <span class="required">*</span></label>
-        <app-media-uploader
-          folder="banners"
-          [multiple]="false"
-          (uploaded)="onImageUploaded($event)">
-        </app-media-uploader>
-        <div class="url-fallback">
-          <span class="or-label">or paste URL</span>
-          <input type="text" [(ngModel)]="form.image_url" name="image_url"
-            placeholder="https://example.com/banner.jpg" />
-        </div>
-      </div>
-
-      <!-- Image Preview -->
-      <div class="image-preview" *ngIf="form.image_url">
-        <span class="preview-tag">Preview</span>
-        <img [src]="form.image_url" alt="banner preview" class="preview-img"
-          (error)="$any($event.target).style.display='none'" />
-      </div>
-    </div>
-
-    <div class="form-divider"></div>
-
-    <div class="form-section">
-      <h2 class="section-title">Settings</h2>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Link URL</label>
-          <input type="text" [(ngModel)]="form.link" name="link"
-            placeholder="https://example.com" />
-        </div>
-        <div class="form-group">
-          <label>Phone Number</label>
-          <input type="tel" [(ngModel)]="form.phone" name="phone"
-            placeholder="+20 100 000 0000" />
-        </div>
-        <div class="form-group check-group">
-          <label class="checkbox-label">
-            <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
-            <span>Active</span>
-          </label>
-        </div>
-      </div>
-    </div>
+    <app-banner-fields [form]="form" [developers]="developers"></app-banner-fields>
 
     <div class="form-divider"></div>
 
