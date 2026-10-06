@@ -17,9 +17,10 @@ export class NewsService {
     return new HttpHeaders({ Authorization: `Bearer ${this.authService.getToken()}` });
   }
 
-  getAll(active?: boolean): Observable<NewsResponse> {
+  getAll(active?: 'all' | 'true' | 'false'): Observable<NewsResponse> {
     let params = new HttpParams();
-    if (active !== undefined) params = params.set('active', String(active));
+    if (active && active !== 'all') params = params.set('active', active);
+    if (active === 'all') params = params.set('active', 'all');
     return this.http.get<NewsResponse>(this.url, { headers: this.headers(), params });
   }
 

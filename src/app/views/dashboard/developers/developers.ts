@@ -22,6 +22,10 @@ export class DevelopersComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadDevelopers();
+  }
+
+  loadDevelopers(): void {
     this.isLoading = true;
     this.developerService.getAll().subscribe({
       next: (res) => {
@@ -34,10 +38,6 @@ export class DevelopersComponent implements OnInit {
         this.cdr.detectChanges();
       },
     });
-  }
-
-  initial(d: Developer): string {
-    return (d.name_en || d.name_ar || '?').trim().charAt(0).toUpperCase();
   }
 
   goToNew(): void {

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../core/services/property.service';
-import { Property, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../core/models/property.model';
+import { Property, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../core/models/property.model';
 import { ProjectService } from '../../../core/services/project.service';
 import { Project } from '../../../core/models/project.model';
 import { FilterStateService } from '../../../core/services/filter-state.service';
@@ -29,10 +29,11 @@ export class PropertiesComponent implements OnInit {
   readonly pageSizes = [10, 20, 50, 100];
 
   // Filters
-  searchQ       = '';
-  typeFilter    = '';
-  statusFilter  = '';
-  agentFilter   = '';
+  searchQ         = '';
+  typeFilter      = '';
+  statusFilter    = '';
+  listingFilter   = '';
+  agentFilter     = '';
   projectFilter: number | null = null;
 
   // Projects for dropdown
@@ -49,6 +50,16 @@ export class PropertiesComponent implements OnInit {
       value: key,
       ...PROPERTY_STATUS_LABELS[key],
     }));
+
+  readonly listingTypes: { value: ListingType; en: string; ar: string }[] =
+    (Object.keys(LISTING_TYPE_LABELS) as ListingType[]).map(key => ({
+      value: key,
+      ...LISTING_TYPE_LABELS[key],
+    }));
+
+  listingLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return LISTING_TYPE_LABELS[type as ListingType]?.[lang] ?? type;
+  }
 
   typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
     return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
@@ -77,6 +88,7 @@ export class PropertiesComponent implements OnInit {
       searchQ:       this.searchQ,
       typeFilter:    this.typeFilter,
       statusFilter:  this.statusFilter,
+      listingFilter: this.listingFilter,
       agentFilter:   this.agentFilter,
       projectFilter: this.projectFilter,
       currentPage:   this.currentPage,
@@ -90,6 +102,7 @@ export class PropertiesComponent implements OnInit {
     this.searchQ       = s.searchQ       ?? '';
     this.typeFilter    = s.typeFilter    ?? '';
     this.statusFilter  = s.statusFilter  ?? '';
+    this.listingFilter = s.listingFilter ?? '';
     this.agentFilter   = s.agentFilter   ?? '';
     this.projectFilter = s.projectFilter ?? null;
     this.currentPage   = s.currentPage   ?? 1;
@@ -114,8 +127,9 @@ export class PropertiesComponent implements OnInit {
     if (this.searchQ.trim())      f.q          = this.searchQ.trim();
     if (this.typeFilter)          f.type       = this.typeFilter;
     if (this.statusFilter)        f.status     = this.statusFilter;
-    if (this.agentFilter.trim())  f.agent_name = this.agentFilter.trim();
-    if (this.projectFilter)       f.project_id = this.projectFilter;
+    if (this.listingFilter)       f.listing_type = this.listingFilter;
+    if (this.agentFilter.trim())  f.agent_name   = this.agentFilter.trim();
+    if (this.projectFilter)       f.project_id   = this.projectFilter;
 
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
@@ -182,6 +196,7 @@ export class PropertiesComponent implements OnInit {
     this.searchQ       = '';
     this.typeFilter    = '';
     this.statusFilter  = '';
+    this.listingFilter = '';
     this.agentFilter   = '';
     this.projectFilter = null;
     this.currentPage   = 1;

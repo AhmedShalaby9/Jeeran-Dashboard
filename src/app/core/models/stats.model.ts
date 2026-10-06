@@ -50,6 +50,10 @@ export interface DashboardStats {
   favorites: {
     total: number;
   };
+  developers: {
+    total: number;
+    active: number;
+  };
 }
 
 export interface StatsResponse {

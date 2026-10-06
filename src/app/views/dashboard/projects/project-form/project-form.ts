@@ -1,13 +1,13 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProjectService } from '../../../../core/services/project.service';
 import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
-import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
-import { TranslationService } from '../../../../core/services/translation.service';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer } from '../../../../core/models/developer.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
 
 @Component({
@@ -17,7 +17,7 @@ import { ProjectLaunchFieldsComponent } from '../../../../shared/components/proj
   templateUrl: './project-form.html',
   styleUrl: './project-form.scss',
 })
-export class ProjectFormComponent implements OnInit {
+export class ProjectFormComponent {
   developers: Developer[] = [];
 
   form: CreateProjectDto = {
@@ -60,13 +60,15 @@ export class ProjectFormComponent implements OnInit {
 
   constructor(
     private projectService:     ProjectService,
-    private translationService: TranslationService,
     private developerService:   DeveloperService,
+    private translationService: TranslationService,
     private router:             Router,
     private cdr:                ChangeDetectorRef,
-  ) {}
+  ) {
+    this.loadDevelopers();
+  }
 
-  ngOnInit(): void {
+  loadDevelopers(): void {
     this.developerService.getAll(true).subscribe({
       next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
       error: () => {},
@@ -214,12 +216,12 @@ export class ProjectFormComponent implements OnInit {
 
   // ── Submit ────────────────────────────────────────────────
   onSubmit(): void {
-    if (!this.form.name_ar.trim()) {
-      this.errorMessage = 'Arabic name is required.';
+    if (!this.form.developer_id) {
+      this.errorMessage = 'Please select a developer.';
       return;
     }
-    if (!this.form.developer_id) {
-      this.errorMessage = 'Pick the developer this project belongs to.';
+    if (!this.form.name_ar.trim()) {
+      this.errorMessage = 'Arabic name is required.';
       return;
     }
     this.isSubmitting = true;

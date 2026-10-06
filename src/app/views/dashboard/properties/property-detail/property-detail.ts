@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { Property, CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
+import { Property, CreatePropertyDto, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../../core/models/property.model';
 
 @Component({
   selector: 'app-property-detail',
@@ -52,6 +52,15 @@ export class PropertyDetailComponent implements OnInit {
     (Object.keys(PROPERTY_STATUS_LABELS) as PropertyStatus[]).map(key => ({
       value: key, ...PROPERTY_STATUS_LABELS[key],
     }));
+
+  readonly listingTypes: { value: ListingType; en: string; ar: string }[] =
+    (Object.keys(LISTING_TYPE_LABELS) as ListingType[]).map(key => ({
+      value: key, ...LISTING_TYPE_LABELS[key],
+    }));
+
+  listingLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return LISTING_TYPE_LABELS[type as ListingType]?.[lang] ?? type;
+  }
 
   typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
     return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
@@ -112,6 +121,7 @@ export class PropertyDetailComponent implements OnInit {
       content_html:    this.property.content_html,
       property_type:   this.property.property_type,
       property_status: this.property.property_status,
+      listing_type:    this.property.listing_type,
       price:           this.property.price,
       size:            this.property.size,
       bedrooms:        this.property.bedrooms,

@@ -6,9 +6,9 @@ import { ProjectService } from '../../../../core/services/project.service';
 import { Project, CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
 import { PropertyService } from '../../../../core/services/property.service';
 import { Property } from '../../../../core/models/property.model';
-import { TranslationService } from '../../../../core/services/translation.service';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer } from '../../../../core/models/developer.model';
+import { TranslationService } from '../../../../core/services/translation.service';
 import { PROJECT_STATES } from '../../../../core/models/project.model';
 import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
 
@@ -78,18 +78,14 @@ export class ProjectDetailComponent implements OnInit {
     private router: Router,
     private projectService: ProjectService,
     private propertyService: PropertyService,
-    private translationService: TranslationService,
     private developerService: DeveloperService,
+    private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadProject(id);
-    this.developerService.getAll(true).subscribe({
-      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
-      error: () => {},
-    });
   }
 
   private emptyFeature(): ProjectFeature {
@@ -187,8 +183,22 @@ export class ProjectDetailComponent implements OnInit {
     return map[status] || '';
   }
 
+  loadDevelopers(): void {
+    this.developerService.getAll(true).subscribe({
+      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
+  }
+
+  goToDeveloper(): void {
+    if (this.project?.developer_id) {
+      this.router.navigate(['/dashboard/developers', this.project.developer_id]);
+    }
+  }
+
   enableEdit(): void {
     if (!this.project) return;
+    this.loadDevelopers();
     this.editForm = {
       developer_id:  this.project.developer_id,
       is_new_launch: this.project.is_new_launch,
@@ -371,13 +381,13 @@ export class ProjectDetailComponent implements OnInit {
       this.errorMessage = 'Arabic name is required.';
       return;
     }
-    this.isSubmitting = true;
-    this.errorMessage = '';
-
     if (!this.editForm.developer_id) {
       this.errorMessage = 'Pick the developer this project belongs to.';
       return;
     }
+    this.isSubmitting = true;
+    this.errorMessage = '';
+
     this.projectService.update(this.project!.id, {
       ...this.editForm,
       launched_at: this.editForm.is_new_launch ? (this.editForm.launched_at || null) : null,

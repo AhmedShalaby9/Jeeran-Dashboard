@@ -12,7 +12,7 @@ import { PROJECT_STATES, CreateProjectDto } from '../../../core/models/project.m
   template: `
     <div class="plf">
       <div class="form-row">
-        <div class="form-group">
+        <div class="form-group" *ngIf="showDeveloper">
           <label>Developer <span class="required">*</span></label>
           <select [(ngModel)]="form.developer_id" name="developer_id">
             <option [ngValue]="null" disabled>Select a developer…</option>
@@ -67,5 +67,7 @@ export class ProjectLaunchFieldsComponent {
   @Input({ required: true }) form!: Pick<CreateProjectDto,
     'developer_id' | 'is_new_launch' | 'launched_at' | 'state' | 'area_ar' | 'area_en'>;
   @Input() developers: Developer[] = [];
+  /** The project form/detail already have their own developer picker; hide this one there. */
+  @Input() showDeveloper = true;
   readonly states = PROJECT_STATES;
 }

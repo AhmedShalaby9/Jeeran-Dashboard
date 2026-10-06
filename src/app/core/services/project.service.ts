@@ -17,9 +17,10 @@ export class ProjectService {
     return new HttpHeaders({ Authorization: `Bearer ${this.authService.getToken()}` });
   }
 
-  getAll(active?: boolean): Observable<ProjectResponse> {
+  getAll(active?: boolean, developerId?: number): Observable<ProjectResponse> {
     let params = new HttpParams();
     if (active !== undefined) params = params.set('active', String(active));
+    if (developerId !== undefined) params = params.set('developer_id', String(developerId));
     return this.http.get<ProjectResponse>(this.url, { headers: this.headers(), params });
   }
 

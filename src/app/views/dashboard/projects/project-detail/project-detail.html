@@ -69,14 +69,17 @@
               <span class="info-value" dir="rtl">{{ project.name_ar }}</span>
             </div>
             <div class="info-item">
+              <span class="info-label">Developer</span>
+              <span class="info-value info-link" *ngIf="project.developer" (click)="goToDeveloper()">
+                {{ project.developer.name_en || project.developer.name_ar }}
+              </span>
+              <span class="info-value" *ngIf="!project.developer">—</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Status</span>
               <span class="badge" [class.badge-active]="project.is_active" [class.badge-inactive]="!project.is_active">
                 {{ project.is_active ? 'Active' : 'Inactive' }}
               </span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">Developer</span>
-              <span class="info-value">{{ project.developer?.name_en || project.developer?.name_ar || '—' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Location</span>
@@ -275,6 +278,16 @@
         <div class="form-section">
           <h2 class="section-title">Project Info</h2>
 
+          <div class="form-row">
+            <div class="form-group">
+              <label>Developer <span class="required">*</span></label>
+              <select [(ngModel)]="editForm.developer_id" name="developer_id">
+                <option [ngValue]="0" disabled>Select a developer</option>
+                <option *ngFor="let d of developers" [ngValue]="d.id">{{ d.name_en || d.name_ar }}</option>
+              </select>
+            </div>
+          </div>
+
           <!-- Name bilingual card -->
           <div class="bilingual-block">
             <div class="bilingual-inputs">
@@ -388,7 +401,7 @@
         <!-- Main Image -->
         <div class="form-section">
           <h2 class="section-title">Developer &amp; Location</h2>
-          <app-project-launch-fields [form]="editForm" [developers]="developers"></app-project-launch-fields>
+          <app-project-launch-fields [form]="editForm" [developers]="developers" [showDeveloper]="false"></app-project-launch-fields>
         </div>
 
         <div class="form-divider"></div>

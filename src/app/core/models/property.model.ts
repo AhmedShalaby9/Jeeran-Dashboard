@@ -5,9 +5,6 @@ export type PropertyType =
   | 'apartment'
   | 'chalet'
   | 'marina_apartment'
-  | 'studio'
-  | 'duplex'
-  | 'land'
   | 'clinic'
   | 'office'
   | 'shop';
@@ -17,17 +14,21 @@ export type PropertyStatus =
   | 'for_rent'
   | 'for_rent_furnished';
 
+export type ListingType = 'primary' | 'resale';
+
+export const LISTING_TYPE_LABELS: Record<ListingType, { en: string; ar: string }> = {
+  primary: { en: 'Primary',  ar: 'أساسي'      },
+  resale:  { en: 'Resale',   ar: 'إعادة بيع'  },
+};
+
 export const PROPERTY_TYPE_LABELS: Record<PropertyType, { en: string; ar: string }> = {
-  villa:            { en: 'Villa',            ar: 'فيلا'       },
-  apartment:        { en: 'Apartment',        ar: 'شقة'        },
-  chalet:           { en: 'Chalet',           ar: 'شاليه'      },
-  marina_apartment: { en: 'Marina Apartment', ar: 'شقة مارينا' },
-  studio:           { en: 'Studio',           ar: 'استوديو'    },
-  duplex:           { en: 'Duplex',           ar: 'دوبلكس'     },
-  land:             { en: 'Land',             ar: 'أرض'        },
-  clinic:           { en: 'Clinic',           ar: 'عيادة'      },
-  office:           { en: 'Office',           ar: 'مكتب'       },
-  shop:             { en: 'Shop',             ar: 'محل'        },
+  villa:            { en: 'Villa',            ar: 'فيلا'          },
+  apartment:        { en: 'Apartment',        ar: 'شقة'           },
+  chalet:           { en: 'Chalet',           ar: 'شاليه'         },
+  marina_apartment: { en: 'Marina Apartment', ar: 'شقة بالمارينا' },
+  clinic:           { en: 'Clinic',           ar: 'عيادة'         },
+  office:           { en: 'Office',           ar: 'مكتب إداري'    },
+  shop:             { en: 'Shop',             ar: 'محل'           },
 };
 
 export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, { en: string; ar: string }> = {
@@ -50,6 +51,7 @@ export interface Property {
   content_html:     string | null;
   property_type:    string;
   property_status:  string;
+  listing_type:     string;
   price:            number;
   size:             number | null;
   bedrooms:         number | null;
@@ -88,6 +90,7 @@ export interface CreatePropertyDto {
   content_html?:    string | null;
   property_type:    string;
   property_status:  string;
+  listing_type?:    string;
   price:            number;
   size?:            number | null;
   bedrooms?:        number | null;

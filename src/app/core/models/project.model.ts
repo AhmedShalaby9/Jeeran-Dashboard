@@ -8,6 +8,13 @@ export interface ProjectFeature {
   images:      string[];
 }
 
+export interface ProjectDeveloper {
+  id:       number;
+  name_ar:  string;
+  name_en:  string | null;
+  logo:     string | null;
+}
+
 export type ProjectState = 'cairo' | 'north_coast' | 'sharm_el_sheikh';
 
 export const PROJECT_STATES: { value: ProjectState; label: string }[] = [
@@ -19,7 +26,7 @@ export const PROJECT_STATES: { value: ProjectState; label: string }[] = [
 export interface Project {
   id:          number;
   developer_id: number;
-  developer?:  { id: number; name_ar: string; name_en: string | null; logo: string | null };
+  developer?:  ProjectDeveloper;
   is_new_launch: boolean;
   launched_at: string | null;
   state:       ProjectState | null;

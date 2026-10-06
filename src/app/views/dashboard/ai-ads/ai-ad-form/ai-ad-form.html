@@ -79,6 +79,30 @@
 
     <div class="form-divider"></div>
 
+    <!-- Ad Language -->
+    <div class="form-section">
+      <h2 class="section-title">Ad Language</h2>
+      <p class="section-desc">Choose the language for all generated text in the ad.</p>
+      <div class="lang-toggle">
+        <button
+          type="button"
+          class="lang-btn"
+          [class.active]="language === 'ar'"
+          (click)="language = 'ar'">
+          العربية
+        </button>
+        <button
+          type="button"
+          class="lang-btn"
+          [class.active]="language === 'en'"
+          (click)="language = 'en'">
+          English
+        </button>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
     <!-- Caption -->
     <div class="form-section">
       <h2 class="section-title">Caption / Instructions</h2>

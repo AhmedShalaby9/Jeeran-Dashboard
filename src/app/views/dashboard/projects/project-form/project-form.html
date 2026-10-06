@@ -31,6 +31,16 @@
     <div class="form-section">
       <h2 class="section-title">Project Info</h2>
 
+      <div class="form-row">
+        <div class="form-group">
+          <label>Developer <span class="required">*</span></label>
+          <select [(ngModel)]="form.developer_id" name="developer_id">
+            <option [ngValue]="0" disabled>Select a developer</option>
+            <option *ngFor="let d of developers" [ngValue]="d.id">{{ d.name_en || d.name_ar }}</option>
+          </select>
+        </div>
+      </div>
+
       <!-- Name bilingual card -->
       <div class="bilingual-block">
         <div class="bilingual-inputs">
@@ -150,7 +160,7 @@
     <div class="form-section">
       <h2 class="section-title">Developer &amp; Location</h2>
       <p class="section-desc">Every project belongs to a developer. Flag it as a new launch to feature it on Explore.</p>
-      <app-project-launch-fields [form]="form" [developers]="developers"></app-project-launch-fields>
+      <app-project-launch-fields [form]="form" [developers]="developers" [showDeveloper]="false"></app-project-launch-fields>
     </div>
 
     <div class="form-divider"></div>

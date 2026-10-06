@@ -1,0 +1,93 @@
+<div class="page">
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h1>Favorites</h1>
+      <p>All properties saved as favorites by users</p>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" [(ngModel)]="filterSearch" name="filterSearch"
+        placeholder="Search by name or phone..." />
+    </div>
+
+    <div class="date-range">
+      <label>From</label>
+      <input type="date" [(ngModel)]="filterDateFrom" name="filterDateFrom" />
+      <label>To</label>
+      <input type="date" [(ngModel)]="filterDateTo" name="filterDateTo" />
+    </div>
+
+    <button class="btn-apply" (click)="applyFilters()">Apply</button>
+    <button class="btn-reset" (click)="resetFilters()">Reset</button>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading favorites...</p>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card" *ngIf="!isLoading">
+    <table class="fav-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Phone</th>
+          <th>Property</th>
+          <th>State</th>
+          <th>Price</th>
+          <th>Date Added</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of favorites; let i = index">
+          <td class="td-id">{{ (currentPage - 1) * limit + i + 1 }}</td>
+          <td class="td-name">{{ item.user?.name || '—' }}</td>
+          <td class="td-muted">{{ item.user?.phone || '—' }}</td>
+          <td class="td-name">{{ item.property?.title_ar || item.property?.title_en || '—' }}</td>
+          <td class="td-muted">{{ item.property?.state || '—' }}</td>
+          <td class="td-price">{{ formatPrice(item.property?.price) }}</td>
+          <td class="td-muted">{{ item.created_at | date:'mediumDate' }}</td>
+          <td>
+            <button class="btn-view" (click)="goToProperty(item.property?.id)" [disabled]="!item.property?.id">
+              View
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="favorites.length === 0">
+          <td colspan="8" class="empty-row">No favorites found.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="totalPages > 1">
+      <span class="pagination-info">{{ rangeStart }}–{{ rangeEnd }} of {{ total }}</span>
+      <div class="pagination-pages">
+        <button class="page-btn" [disabled]="currentPage === 1" (click)="goToPage(currentPage - 1)">‹</button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <span *ngIf="p === -1" class="page-gap">…</span>
+          <button *ngIf="p !== -1" class="page-btn" [class.active]="p === currentPage" (click)="goToPage(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="currentPage === totalPages" (click)="goToPage(currentPage + 1)">›</button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -84,6 +84,19 @@
 .td-id    { color: #6b7280; width: 40px; }
 .td-name  { font-weight: 600; }
 .td-muted { color: #6b7280; }
+.td-phone { color: #6b7280; white-space: nowrap; }
+
+.country-badge {
+  display: inline-block;
+  padding: 0.15rem 0.45rem;
+  border-radius: 5px;
+  background: #eff3fb;
+  color: #1e3a6e;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  margin-right: 0.35rem;
+}
 
 .badge {
   display: inline-block;
@@ -110,6 +123,21 @@
   &.type-admin       { background: #ede9fe; color: #6d28d9; }
   &.type-seller      { background: #dbeafe; color: #1d4ed8; }
   &.type-buyer       { background: #dcfce7; color: #166534; }
+}
+
+.provider-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  background: #f3f4f6;
+  color: #374151;
+
+  &.provider-google { background: #fef3c7; color: #92400e; }
+  &.provider-apple  { background: #e0e7ff; color: #3730a3; }
+  &.provider-phone  { background: #dcfce7; color: #166534; }
 }
 
 .btn-view {

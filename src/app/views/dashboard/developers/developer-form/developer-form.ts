@@ -1,12 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { DeveloperService } from '../../../../core/services/developer.service';
-import { CreateDeveloperDto, Developer } from '../../../../core/models/developer.model';
+import { CreateDeveloperDto } from '../../../../core/models/developer.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
+import { TranslationService } from '../../../../core/services/translation.service';
 
-/** Create (`/developers/new`) and edit (`/developers/:id`) in one screen. */
 @Component({
   selector: 'app-developer-form',
   standalone: true,
@@ -14,54 +14,78 @@ import { MediaUploaderComponent } from '../../../../shared/components/media-uplo
   templateUrl: './developer-form.html',
   styleUrl: './developer-form.scss',
 })
-export class DeveloperFormComponent implements OnInit {
-  developerId: number | null = null;
-  developer: Developer | null = null;
-
+export class DeveloperFormComponent {
   form: CreateDeveloperDto = {
-    name_ar: '', name_en: '', logo: '', desc_ar: '', desc_en: '',
-    phone: '', email: '', website: '', address: '',
-    facebook: '', instagram: '', twitter: '', linkedin: '',
-    is_active: true, is_verified: false,
+    name_ar:   '',
+    name_en:   '',
+    logo:      null,
+    desc_ar:   '',
+    desc_en:   '',
+    phone:     '',
+    email:     '',
+    website:   '',
+    address:   '',
+    facebook:  '',
+    instagram: '',
+    twitter:   '',
+    linkedin:  '',
+    is_active: true,
+    is_verified: false,
   };
 
-  isLoading       = false;
-  isSubmitting    = false;
-  isDeleting      = false;
-  showDeleteModal = false;
-  errorMessage    = '';
-  successMessage  = '';
+  isSubmitting = false;
+  errorMessage = '';
+
+  translating = {
+    nameToEn: false, nameToAr: false,
+    descToEn: false, descToAr: false,
+  };
+
+  translateErrors = {
+    nameToEn: false, nameToAr: false,
+    descToEn: false, descToAr: false,
+  };
 
   constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private developerService: DeveloperService,
-    private cdr: ChangeDetectorRef,
+    private developerService:   DeveloperService,
+    private translationService: TranslationService,
+    private router:             Router,
+    private cdr:                ChangeDetectorRef,
   ) {}
 
-  get isEdit(): boolean { return this.developerId !== null; }
+  translateNameToEn(): void {
+    if (!this.form.name_ar?.trim() || this.translating.nameToEn) return;
+    this.translating.nameToEn = true; this.translateErrors.nameToEn = false;
+    this.translationService.translate(this.form.name_ar, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.form.name_en = r; else this.translateErrors.nameToEn = true;
+      this.translating.nameToEn = false; this.cdr.detectChanges();
+    });
+  }
 
-  ngOnInit(): void {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (!id || id === 'new') return;
-    this.developerId = Number(id);
-    this.isLoading = true;
-    this.developerService.getById(this.developerId).subscribe({
-      next: (res) => {
-        this.developer = res.data;
-        const d = res.data;
-        this.form = {
-          name_ar: d.name_ar, name_en: d.name_en ?? '', logo: d.logo ?? '',
-          desc_ar: d.desc_ar ?? '', desc_en: d.desc_en ?? '',
-          phone: d.phone ?? '', email: d.email ?? '', website: d.website ?? '', address: d.address ?? '',
-          facebook: d.facebook ?? '', instagram: d.instagram ?? '',
-          twitter: d.twitter ?? '', linkedin: d.linkedin ?? '',
-          is_active: d.is_active, is_verified: !!d.is_verified,
-        };
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => this.router.navigate(['/dashboard/developers']),
+  translateNameToAr(): void {
+    if (!this.form.name_en?.trim() || this.translating.nameToAr) return;
+    this.translating.nameToAr = true; this.translateErrors.nameToAr = false;
+    this.translationService.translate(this.form.name_en!, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.form.name_ar = r; else this.translateErrors.nameToAr = true;
+      this.translating.nameToAr = false; this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToEn(): void {
+    if (!this.form.desc_ar?.trim() || this.translating.descToEn) return;
+    this.translating.descToEn = true; this.translateErrors.descToEn = false;
+    this.translationService.translate(this.form.desc_ar!, 'ar', 'en').subscribe(r => {
+      if (r !== null) this.form.desc_en = r; else this.translateErrors.descToEn = true;
+      this.translating.descToEn = false; this.cdr.detectChanges();
+    });
+  }
+
+  translateDescToAr(): void {
+    if (!this.form.desc_en?.trim() || this.translating.descToAr) return;
+    this.translating.descToAr = true; this.translateErrors.descToAr = false;
+    this.translationService.translate(this.form.desc_en!, 'en', 'ar').subscribe(r => {
+      if (r !== null) this.form.desc_ar = r; else this.translateErrors.descToAr = true;
+      this.translating.descToAr = false; this.cdr.detectChanges();
     });
   }
 
@@ -77,54 +101,18 @@ export class DeveloperFormComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    // Empty strings clear the field on the server.
-    const payload = { ...this.form } as CreateDeveloperDto;
-    const req = this.isEdit
-      ? this.developerService.update(this.developerId!, payload)
-      : this.developerService.create(payload);
-
-    req.subscribe({
-      next: (res) => {
+    this.developerService.create(this.form).subscribe({
+      next: () => {
         this.isSubmitting = false;
-        if (this.isEdit) {
-          this.developer = { ...this.developer!, ...res.data };
-          this.successMessage = 'Developer saved.';
-          this.cdr.detectChanges();
-          setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
-        } else {
-          this.router.navigate(['/dashboard/developers']);
-        }
+        this.router.navigate(['/dashboard/developers']);
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err.error?.message || 'Failed to save developer.';
+        this.errorMessage = err.error?.message || 'Failed to create developer.';
         this.cdr.detectChanges();
       },
     });
   }
 
-  confirmDelete(): void { this.showDeleteModal = true; }
-  cancelDelete(): void { this.showDeleteModal = false; }
-
-  deleteDeveloper(): void {
-    this.isDeleting = true;
-    this.developerService.remove(this.developerId!).subscribe({
-      next: () => this.router.navigate(['/dashboard/developers']),
-      error: (err) => {
-        this.isDeleting = false;
-        this.showDeleteModal = false;
-        // the server refuses to delete a developer that still owns projects
-        this.errorMessage = err.error?.message || 'Failed to delete developer.';
-        this.cdr.detectChanges();
-      },
-    });
-  }
-
-  openProject(id: number): void {
-    this.router.navigate(['/dashboard/projects', id]);
-  }
-
-  goBack(): void {
-    this.router.navigate(['/dashboard/developers']);
-  }
+  goBack(): void { this.router.navigate(['/dashboard/developers']); }
 }
