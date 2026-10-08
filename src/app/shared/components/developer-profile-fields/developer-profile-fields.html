@@ -1,0 +1,34 @@
+<div class="pf">
+  <h2 class="pf-title">Page content</h2>
+  <p class="pf-desc">Shown on the developer page in the app.</p>
+
+  <div class="pf-block">
+    <label class="pf-label">Cover image</label>
+    <app-media-uploader folder="developers" [multiple]="false" (uploaded)="onCover($event)"></app-media-uploader>
+    <input class="pf-input" type="text" [(ngModel)]="form.cover_image" name="cover_image" placeholder="or paste URL" />
+    <img class="pf-preview" *ngIf="form.cover_image" [src]="form.cover_image" alt="cover preview" />
+  </div>
+
+  <div class="pf-grid">
+    <label class="pf-field">
+      <span>Founded</span>
+      <input class="pf-input" type="number" [(ngModel)]="form.founded_year" name="founded_year" placeholder="1956" />
+    </label>
+    <label class="pf-field">
+      <span>Listed on</span>
+      <input class="pf-input" type="text" [(ngModel)]="form.stock_listing" name="stock_listing" placeholder="EGX · TMGH" />
+    </label>
+    <label class="pf-field">
+      <span>Delivered units</span>
+      <input class="pf-input" type="number" [(ngModel)]="form.delivered_units" name="delivered_units" placeholder="45000" />
+    </label>
+  </div>
+  <p class="pf-hint">Head office on the page is the Address entered under Contact Information.</p>
+
+  <div class="pf-block">
+    <label class="pf-label">Why we list them</label>
+    <p class="pf-hint">Shown only while the developer is marked <b>Verified</b>. Up to 8 short points.</p>
+    <app-row-list-editor name="trust" [fields]="trustFields" addLabel="Add point"
+      [value]="form.trust_items" (valueChange)="form.trust_items = $event"></app-row-list-editor>
+  </div>
+</div>

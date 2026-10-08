@@ -8,13 +8,13 @@ $text-dark: #1a1f2e;
 $text-muted:#6b7280;
 $border:    #e5e7eb;
 
-.projects-grid {
+.compounds-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.25rem;
 }
 
-.project-card {
+.compound-card {
   background: $white;
   border-radius: 12px;
   border: 1px solid $border;
@@ -144,3 +144,5 @@ $border:    #e5e7eb;
 }
 
 .follow-count { margin-left: 0.5rem; font-size: 0.72rem; color: #6b7280; }
+
+.launch-chip.offer { background: #e0e7ff; color: #3730a3; }

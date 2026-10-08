@@ -4,15 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer, CreateDeveloperDto } from '../../../../core/models/developer.model';
-import { ProjectService } from '../../../../core/services/project.service';
-import { Project } from '../../../../core/models/project.model';
+import { CompoundService } from '../../../../core/services/compound.service';
+import { Compound } from '../../../../core/models/compound.model';
+import { DeveloperProfileFieldsComponent } from '../../../../shared/components/developer-profile-fields/developer-profile-fields';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-developer-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, DeveloperProfileFieldsComponent],
   templateUrl: './developer-detail.html',
   styleUrl: './developer-detail.scss',
 })
@@ -26,8 +27,8 @@ export class DeveloperDetailComponent implements OnInit {
   errorMessage    = '';
   successMessage  = '';
 
-  projects: Project[] = [];
-  projectsLoading = false;
+  compounds: Compound[] = [];
+  compoundsLoading = false;
 
   editForm: CreateDeveloperDto = {
     name_ar: '', name_en: '', logo: null,
@@ -36,6 +37,11 @@ export class DeveloperDetailComponent implements OnInit {
     facebook: '', instagram: '', twitter: '', linkedin: '',
     is_active: true,
     is_verified: false,
+    cover_image: null,
+    founded_year: null,
+    stock_listing: '',
+    delivered_units: null,
+    trust_items: null,
   };
 
   translating = {
@@ -52,7 +58,7 @@ export class DeveloperDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private developerService: DeveloperService,
-    private projectService: ProjectService,
+    private compoundService: CompoundService,
     private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -69,7 +75,7 @@ export class DeveloperDetailComponent implements OnInit {
         this.developer = res.data;
         this.isLoading = false;
         this.cdr.detectChanges();
-        this.loadProjects(id);
+        this.loadCompounds(id);
       },
       error: () => {
         this.isLoading = false;
@@ -79,23 +85,23 @@ export class DeveloperDetailComponent implements OnInit {
     });
   }
 
-  loadProjects(developerId: number): void {
-    this.projectsLoading = true;
-    this.projectService.getAll(undefined, developerId).subscribe({
+  loadCompounds(developerId: number): void {
+    this.compoundsLoading = true;
+    this.compoundService.getAll(undefined, developerId).subscribe({
       next: (res) => {
-        this.projects = res.data;
-        this.projectsLoading = false;
+        this.compounds = res.data;
+        this.compoundsLoading = false;
         this.cdr.detectChanges();
       },
       error: () => {
-        this.projectsLoading = false;
+        this.compoundsLoading = false;
         this.cdr.detectChanges();
       },
     });
   }
 
-  goToProject(id: number): void {
-    this.router.navigate(['/dashboard/projects', id]);
+  goToCompound(id: number): void {
+    this.router.navigate(['/dashboard/compounds', id]);
   }
 
   enableEdit(): void {
@@ -116,6 +122,11 @@ export class DeveloperDetailComponent implements OnInit {
       linkedin:  this.developer.linkedin ?? '',
       is_active: this.developer.is_active,
       is_verified: !!this.developer.is_verified,
+      cover_image: this.developer.cover_image ?? null,
+      founded_year: this.developer.founded_year ?? null,
+      stock_listing: this.developer.stock_listing ?? '',
+      delivered_units: this.developer.delivered_units ?? null,
+      trust_items: this.developer.trust_items ?? null,
     };
     this.errorMessage = '';
     this.isEditMode   = true;

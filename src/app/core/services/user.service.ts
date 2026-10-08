@@ -41,6 +41,13 @@ export class UserService {
     });
   }
 
+  /** An admin vouches for a seller after checking identity and ownership documents. */
+  setSellerVerified(id: number, verified: boolean): Observable<{ success: boolean; data: User }> {
+    return this.http.patch<{ success: boolean; data: User }>(`${this.url}/${id}/seller-verified`, { verified }, {
+      headers: this.headers(),
+    });
+  }
+
   update(id: number, payload: UpdateUserDto): Observable<{ success: boolean; data: User }> {
     return this.http.put<{ success: boolean; data: User }>(`${this.url}/${id}`, payload, {
       headers: this.headers(),

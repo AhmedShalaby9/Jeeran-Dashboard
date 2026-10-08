@@ -2,31 +2,41 @@ import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProjectService } from '../../../../core/services/project.service';
-import { CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
+import { CompoundService } from '../../../../core/services/compound.service';
+import { CreateCompoundDto, CompoundFeature } from '../../../../core/models/compound.model';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer } from '../../../../core/models/developer.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
+import { CompoundProfileFieldsComponent } from '../../../../shared/components/compound-profile-fields/compound-profile-fields';
+import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
+import { AreaService } from '../../../../core/services/area.service';
+import { Area } from '../../../../core/models/area.model';
 
 @Component({
-  selector: 'app-project-form',
+  selector: 'app-compound-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent, ProjectLaunchFieldsComponent],
-  templateUrl: './project-form.html',
-  styleUrl: './project-form.scss',
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent],
+  templateUrl: './compound-form.html',
+  styleUrl: './compound-form.scss',
 })
-export class ProjectFormComponent {
+export class CompoundFormComponent {
   developers: Developer[] = [];
+  areas: Area[] = [];
 
-  form: CreateProjectDto = {
+  form: CreateCompoundDto = {
     developer_id:  null,
-    is_new_launch: false,
-    launched_at:   null,
-    state:         null,
-    area_ar:       '',
-    area_en:       '',
+    area_id:       null,
+    delivery_date: null,
+    finishing:     null,
+    payment_options: null,
+    down_payment_percent: null,
+    installment_years:    null,
+    amenities:     null,
+    facilities_ar: null,
+    facilities_en: null,
+    facts: null,
+    delivered_since: null,
     name_ar:    '',
     name_en:    '',
     desc_ar:    '',
@@ -38,7 +48,7 @@ export class ProjectFormComponent {
   };
 
   galleryInput      = '';
-  newFeature: ProjectFeature = this.emptyFeature();
+  newFeature: CompoundFeature = this.emptyFeature();
   featureImageInput = '';
   showFeatureForm   = false;
   isSubmitting      = false;
@@ -59,13 +69,18 @@ export class ProjectFormComponent {
   };
 
   constructor(
-    private projectService:     ProjectService,
+    private compoundService:     CompoundService,
     private developerService:   DeveloperService,
+    private areaService:        AreaService,
     private translationService: TranslationService,
     private router:             Router,
     private cdr:                ChangeDetectorRef,
   ) {
     this.loadDevelopers();
+    this.areaService.getAll().subscribe({
+      next: (res) => { this.areas = res.data.filter((a) => a.is_active); this.cdr.detectChanges(); },
+      error: () => {},
+    });
   }
 
   loadDevelopers(): void {
@@ -75,7 +90,7 @@ export class ProjectFormComponent {
     });
   }
 
-  // ── Project name ──────────────────────────────────────────
+  // ── Compound name ──────────────────────────────────────────
   translateNameToEn(): void {
     if (!this.form.name_ar?.trim() || this.translating.nameToEn) return;
     this.translating.nameToEn = true; this.translateErrors.nameToEn = false;
@@ -94,7 +109,7 @@ export class ProjectFormComponent {
     });
   }
 
-  // ── Project description ───────────────────────────────────
+  // ── Compound description ───────────────────────────────────
   translateDescToEn(): void {
     if (!this.form.desc_ar?.trim() || this.translating.descToEn) return;
     this.translating.descToEn = true; this.translateErrors.descToEn = false;
@@ -180,7 +195,7 @@ export class ProjectFormComponent {
   }
 
   // ── Feature CRUD ──────────────────────────────────────────
-  private emptyFeature(): ProjectFeature {
+  private emptyFeature(): CompoundFeature {
     return { title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '', images: [] };
   }
 
@@ -227,21 +242,18 @@ export class ProjectFormComponent {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.projectService.create({
-      ...this.form,
-      launched_at: this.form.is_new_launch ? (this.form.launched_at || null) : null,
-    }).subscribe({
+    this.compoundService.create(this.form).subscribe({
       next: () => {
         this.isSubmitting = false;
-        this.router.navigate(['/dashboard/projects']);
+        this.router.navigate(['/dashboard/compounds']);
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err.error?.message || 'Failed to create project.';
+        this.errorMessage = err.error?.message || 'Failed to create compound.';
         this.cdr.detectChanges();
       },
     });
   }
 
-  goBack(): void { this.router.navigate(['/dashboard/projects']); }
+  goBack(): void { this.router.navigate(['/dashboard/compounds']); }
 }

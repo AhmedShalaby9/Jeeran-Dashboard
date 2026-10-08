@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../core/services/property.service';
 import { Property, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../core/models/property.model';
-import { ProjectService } from '../../../core/services/project.service';
-import { Project } from '../../../core/models/project.model';
+import { CompoundService } from '../../../core/services/compound.service';
+import { Compound } from '../../../core/models/compound.model';
 import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
@@ -34,10 +34,10 @@ export class PropertiesComponent implements OnInit {
   statusFilter    = '';
   listingFilter   = '';
   agentFilter     = '';
-  projectFilter: number | null = null;
+  compoundFilter: number | null = null;
 
-  // Projects for dropdown
-  projects: Project[] = [];
+  // Compounds for dropdown
+  compounds: Compound[] = [];
 
   readonly propertyTypes: { value: PropertyType; en: string; ar: string }[] =
     (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map(key => ({
@@ -71,7 +71,7 @@ export class PropertiesComponent implements OnInit {
 
   constructor(
     private propertyService:  PropertyService,
-    private projectService:   ProjectService,
+    private compoundService:   CompoundService,
     private filterState:      FilterStateService,
     private router:           Router,
     private cdr:              ChangeDetectorRef,
@@ -79,7 +79,7 @@ export class PropertiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.restoreFilters();
-    this.loadProjects();
+    this.loadCompounds();
     this.load();
   }
 
@@ -90,7 +90,7 @@ export class PropertiesComponent implements OnInit {
       statusFilter:  this.statusFilter,
       listingFilter: this.listingFilter,
       agentFilter:   this.agentFilter,
-      projectFilter: this.projectFilter,
+      compoundFilter: this.compoundFilter,
       currentPage:   this.currentPage,
       limit:         this.limit,
     });
@@ -104,14 +104,14 @@ export class PropertiesComponent implements OnInit {
     this.statusFilter  = s.statusFilter  ?? '';
     this.listingFilter = s.listingFilter ?? '';
     this.agentFilter   = s.agentFilter   ?? '';
-    this.projectFilter = s.projectFilter ?? null;
+    this.compoundFilter = s.compoundFilter ?? null;
     this.currentPage   = s.currentPage   ?? 1;
     this.limit         = s.limit         ?? 20;
   }
 
-  loadProjects(): void {
-    this.projectService.getAll().subscribe({
-      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+  loadCompounds(): void {
+    this.compoundService.getAll().subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
@@ -129,7 +129,7 @@ export class PropertiesComponent implements OnInit {
     if (this.statusFilter)        f.status     = this.statusFilter;
     if (this.listingFilter)       f.listing_type = this.listingFilter;
     if (this.agentFilter.trim())  f.agent_name   = this.agentFilter.trim();
-    if (this.projectFilter)       f.project_id   = this.projectFilter;
+    if (this.compoundFilter)       f.compound_id   = this.compoundFilter;
 
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
@@ -198,7 +198,7 @@ export class PropertiesComponent implements OnInit {
     this.statusFilter  = '';
     this.listingFilter = '';
     this.agentFilter   = '';
-    this.projectFilter = null;
+    this.compoundFilter = null;
     this.currentPage   = 1;
     this.filterState.clear('properties');
     this.load();

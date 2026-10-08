@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { CreateDeveloperDto } from '../../../../core/models/developer.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
+import { DeveloperProfileFieldsComponent } from '../../../../shared/components/developer-profile-fields/developer-profile-fields';
 import { TranslationService } from '../../../../core/services/translation.service';
 
 @Component({
   selector: 'app-developer-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, DeveloperProfileFieldsComponent],
   templateUrl: './developer-form.html',
   styleUrl: './developer-form.scss',
 })
@@ -31,6 +32,11 @@ export class DeveloperFormComponent {
     linkedin:  '',
     is_active: true,
     is_verified: false,
+    cover_image: null,
+    founded_year: null,
+    stock_listing: '',
+    delivered_units: null,
+    trust_items: null,
   };
 
   isSubmitting = false;

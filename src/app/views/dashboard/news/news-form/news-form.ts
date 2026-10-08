@@ -26,7 +26,7 @@ export class NewsFormComponent {
     is_active:    true,
     published_at: new Date().toISOString().slice(0, 16),
     published_by: '',
-    project_id:   null,
+    compound_id:   null,
     developer_id: null,
   };
 
@@ -140,7 +140,7 @@ export class NewsFormComponent {
       is_active:    this.form.is_active,
       published_at: this.form.published_at,
       published_by: this.form.published_by,
-      project_id:   this.form.project_id,
+      compound_id:   this.form.compound_id,
       developer_id: this.form.developer_id,
     };
 

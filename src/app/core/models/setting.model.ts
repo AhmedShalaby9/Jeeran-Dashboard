@@ -12,6 +12,8 @@ export interface AppSettings {
   ad_generation_price:  number;
   ad_generation_trials: number;
   in_review: boolean;
+  contact_phone?: string | null;
+  ai_messages_per_hour?: number;
   promo_ai_ads_visible: boolean;
   promo_seller_visible: boolean;
   promo_ai_ads_order: number;

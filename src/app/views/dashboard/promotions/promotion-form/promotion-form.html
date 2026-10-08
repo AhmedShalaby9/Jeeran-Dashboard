@@ -1,0 +1,92 @@
+<div class="page">
+  <div class="page-header">
+    <div class="header-left">
+      <button class="btn-back" (click)="goBack()">‹ Back</button>
+      <div><h1>New launch or offer</h1><p>It appears in the app’s Launches &amp; offers, and followers are notified.</p></div>
+    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <form class="form-card" (ngSubmit)="submit()">
+
+    <div class="form-section">
+      <h2 class="section-title">What and where</h2>
+      <div class="form-group">
+        <label>Compound <span class="required">*</span></label>
+        <select [(ngModel)]="form.compound_id" name="compound_id" (ngModelChange)="prefill($event)">
+          <option [ngValue]="null" disabled>Select a compound…</option>
+          <option *ngFor="let c of compounds" [ngValue]="c.id">
+            {{ c.name_en || c.name_ar }}{{ c.developer ? ' — ' + (c.developer.name_en || c.developer.name_ar) : '' }}
+          </option>
+        </select>
+        <small class="hint" *ngIf="selected?.promotion">
+          This compound already has a live {{ selected?.promotion?.type }} (“{{ selected?.promotion?.title_en || selected?.promotion?.title_ar }}”). Saving replaces it.
+        </small>
+      </div>
+      <div class="seg">
+        <button type="button" [class.on]="form.type === 'launch'" (click)="form.type = 'launch'">New launch</button>
+        <button type="button" [class.on]="form.type === 'offer'" (click)="form.type = 'offer'">Offer</button>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-section">
+      <h2 class="section-title">Card text</h2>
+      <p class="section-desc">{{ form.type === 'launch' ? 'e.g. “Marina Rise, Marassi” · “From 11.9M · Q4 2028”' : 'e.g. “5% down, 10-year plan” · “Hacienda Bay · ends 30 Sep”' }}</p>
+      <div class="form-row">
+        <div class="form-group"><label>Title (English)</label><input type="text" [(ngModel)]="form.title_en" name="title_en" maxlength="255" /></div>
+        <div class="form-group"><label>Title (Arabic)</label><input type="text" [(ngModel)]="form.title_ar" name="title_ar" dir="rtl" maxlength="255" /></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Sub-line (English)</label><input type="text" [(ngModel)]="form.sub_en" name="sub_en" maxlength="255" /></div>
+        <div class="form-group"><label>Sub-line (Arabic)</label><input type="text" [(ngModel)]="form.sub_ar" name="sub_ar" dir="rtl" maxlength="255" /></div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-section">
+      <h2 class="section-title">Media</h2>
+      <div class="form-group">
+        <label>Image <span class="required">*</span> <small>(also the poster for a video)</small></label>
+        <img class="preview" *ngIf="form.image" [src]="form.image" alt="" />
+        <app-media-uploader folder="promotions" [multiple]="false" (uploaded)="onImage($event)"></app-media-uploader>
+        <div class="url-fallback"><span class="or-label">or paste URL</span><input type="text" [(ngModel)]="form.image" name="image" /></div>
+      </div>
+      <div class="form-group">
+        <label>Video <small>(optional, mp4 / mov)</small></label>
+        <app-media-uploader folder="promotions" accept="video/mp4,video/quicktime" [multiple]="false" (uploaded)="onVideo($event)"></app-media-uploader>
+        <div class="url-fallback"><span class="or-label">or paste URL</span><input type="text" [(ngModel)]="form.video_url" name="video_url" /></div>
+      </div>
+      <div class="form-group narrow" *ngIf="form.video_url">
+        <label>Length (seconds)</label><input type="number" min="0" [(ngModel)]="form.video_duration" name="video_duration" />
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-section">
+      <h2 class="section-title">Schedule</h2>
+      <p class="section-desc">
+        {{ form.type === 'launch' ? 'A launch ends by itself after 60 days unless you set an end date.' : 'An offer runs until its end date — leave empty for no end.' }}
+        Leave the start empty to start now.
+      </p>
+      <div class="form-row">
+        <div class="form-group"><label>Starts</label><input type="datetime-local" [(ngModel)]="form.starts_at" name="starts_at" /></div>
+        <div class="form-group"><label>Ends</label><input type="datetime-local" [(ngModel)]="form.ends_at" name="ends_at" /></div>
+        <div class="form-group"><label>Order</label><input type="number" [(ngModel)]="form.sort_order" name="sort_order" /></div>
+      </div>
+    </div>
+
+    <div class="form-divider"></div>
+    <div class="form-actions">
+      <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="isSubmitting">
+        <span *ngIf="!isSubmitting">Publish {{ form.type === 'offer' ? 'offer' : 'launch' }}</span>
+        <span *ngIf="isSubmitting" class="spinner-sm"></span>
+      </button>
+    </div>
+  </form>
+</div>

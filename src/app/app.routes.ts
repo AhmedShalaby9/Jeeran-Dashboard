@@ -13,9 +13,9 @@ import { AdDetailComponent } from './views/dashboard/ads/ad-detail/ad-detail';
 import { BannersComponent } from './views/dashboard/banners/banners';
 import { BannerFormComponent } from './views/dashboard/banners/banner-form/banner-form';
 import { BannerDetailComponent } from './views/dashboard/banners/banner-detail/banner-detail';
-import { ProjectsComponent } from './views/dashboard/projects/projects';
-import { ProjectFormComponent } from './views/dashboard/projects/project-form/project-form';
-import { ProjectDetailComponent } from './views/dashboard/projects/project-detail/project-detail';
+import { CompoundsComponent } from './views/dashboard/compounds/compounds';
+import { CompoundFormComponent } from './views/dashboard/compounds/compound-form/compound-form';
+import { CompoundDetailComponent } from './views/dashboard/compounds/compound-detail/compound-detail';
 import { UsersComponent } from './views/dashboard/users/users';
 import { UserFormComponent } from './views/dashboard/users/user-form/user-form';
 import { UserDetailComponent } from './views/dashboard/users/user-detail/user-detail';
@@ -36,6 +36,9 @@ import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-for
 import { AiAdDetailComponent } from './views/dashboard/ai-ads/ai-ad-detail/ai-ad-detail';
 import { authGuard } from './core/guards/auth.guard';
 import { HomeComponent } from './views/dashboard/home/home';
+import { AreasComponent } from './views/dashboard/areas/areas';
+import { PromotionsComponent } from './views/dashboard/promotions/promotions';
+import { PromotionFormComponent } from './views/dashboard/promotions/promotion-form/promotion-form';
 import { DevelopersComponent } from './views/dashboard/developers/developers';
 import { DeveloperFormComponent } from './views/dashboard/developers/developer-form/developer-form';
 import { DeveloperDetailComponent } from './views/dashboard/developers/developer-detail/developer-detail';
@@ -61,15 +64,20 @@ export const routes: Routes = [
       { path: 'banners/new',       component: BannerFormComponent },
       { path: 'banners/:id',       component: BannerDetailComponent },
 
+      // Areas, launches & offers
+      { path: 'areas',               component: AreasComponent },
+      { path: 'promotions',          component: PromotionsComponent },
+      { path: 'promotions/new',      component: PromotionFormComponent },
+
       // Developers
       { path: 'developers',        component: DevelopersComponent },
       { path: 'developers/new',    component: DeveloperFormComponent },
       { path: 'developers/:id',    component: DeveloperDetailComponent },
 
-      // Projects
-      { path: 'projects',          component: ProjectsComponent },
-      { path: 'projects/new',      component: ProjectFormComponent },
-      { path: 'projects/:id',      component: ProjectDetailComponent },
+      // Compounds
+      { path: 'compounds',          component: CompoundsComponent },
+      { path: 'compounds/new',      component: CompoundFormComponent },
+      { path: 'compounds/:id',      component: CompoundDetailComponent },
 
       // Users
       { path: 'users',             component: UsersComponent },

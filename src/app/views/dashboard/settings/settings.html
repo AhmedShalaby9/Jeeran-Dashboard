@@ -49,6 +49,32 @@
       <hr class="section-divider" />
 
       <div class="settings-section">
+        <p class="section-title">Contact phone</p>
+        <p class="section-desc">Every “Call us” and “Call to book a viewing” button in the app dials this number. Leave it empty to hide those buttons.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Company phone number</label>
+            <input type="tel" [(ngModel)]="form.contact_phone" placeholder="+20 100 000 0000" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="settings-section">
+        <p class="section-title">Jeeran AI limit</p>
+        <p class="section-desc">How many questions one user can ask the AI per hour, across all their chats. Admins are not limited.</p>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Questions per hour</label>
+            <input type="number" min="1" max="1000" step="1" [(ngModel)]="form.ai_messages_per_hour" />
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="settings-section">
         <p class="section-title">Minimum App Versions</p>
         <p class="section-desc">Users on lower versions will be prompted to update.</p>
         <div class="form-row">

@@ -29,7 +29,7 @@ export class BannerFieldsComponent {
 
   get idLabel(): string {
     return ({
-      property: 'Property ID', project: 'Project ID', developer: 'Developer ID', news: 'News article ID',
+      property: 'Property ID', compound: 'Compound ID', developer: 'Developer ID', news: 'News article ID',
     } as Record<string, string>)[this.form.target_type] ?? 'ID';
   }
 

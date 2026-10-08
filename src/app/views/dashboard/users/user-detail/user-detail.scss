@@ -369,3 +369,6 @@ $border:      #e5e7eb;
   &:hover    { background: #b91c1c; }
   &:disabled { opacity: 0.7; cursor: not-allowed; }
 }
+
+.verify-btn { margin-left: 0.75rem; padding: 0.3rem 0.8rem; font-size: 0.8rem; }
+.verify-note { display: block; margin-top: 0.4rem; color: #6b7280; font-size: 0.78rem; line-height: 1.4; }

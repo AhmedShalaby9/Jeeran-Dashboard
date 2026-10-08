@@ -5,6 +5,8 @@ import { NotificationService } from '../../../core/services/notification.service
 import {
   Notification,
   NotificationAudience,
+  NotificationCategory,
+  ReachPreview,
   NotificationType,
   SendNotificationDto,
   NotificationTarget,
@@ -16,6 +18,7 @@ interface ComposeForm {
   body_en:   string;
   body_ar:   string;
   type:      NotificationType;
+  category:  NotificationCategory | '';
   entity_id: number | null;
   audience:  NotificationAudience;
   // registered_between
@@ -54,7 +57,26 @@ export class NotificationsComponent implements OnInit {
     { value: 'general',      label: 'General'      },
     { value: 'subscription', label: 'Subscription' },
     { value: 'property',     label: 'Property'     },
+    { value: 'project',      label: 'Compound / project' },
+    { value: 'news',         label: 'News'         },
+    { value: 'ad',           label: 'Ad'           },
   ];
+
+  /** Automatic = decided from the type. The others override it. */
+  readonly categories: { value: NotificationCategory | ''; label: string }[] = [
+    { value: '',        label: 'Automatic (from the type)' },
+    { value: 'general', label: 'General — always delivered' },
+    { value: 'plan',    label: 'Plan & billing — always delivered' },
+    { value: 'listing', label: 'My listings' },
+    { value: 'saved',   label: 'Saved listings' },
+    { value: 'news',    label: 'Market news — opt-in' },
+    { value: 'ai',      label: 'AI ads' },
+    { value: 'place',   label: 'Followed places' },
+  ];
+
+  reach: ReachPreview | null = null;
+  reachLoading = false;
+  private reachTimer: any = null;
 
   readonly audiences: { value: NotificationAudience; label: string }[] = [
     { value: 'all',                label: 'All Users'           },
@@ -116,12 +138,45 @@ export class NotificationsComponent implements OnInit {
   get rangeStart(): number { return Math.min((this.currentPage - 1) * this.limit + 1, this.total); }
   get rangeEnd():   number { return Math.min(this.currentPage * this.limit, this.total); }
 
+  /** The audience as the API wants it, or null while the form is still incomplete. */
+  private buildTarget(): NotificationTarget | null {
+    const f = this.form;
+    const target: NotificationTarget = { audience: f.audience };
+    if (f.audience === 'registered_between') {
+      if (!f.date_from || !f.date_to) return null;
+      target.date_from = f.date_from;
+      target.date_to   = f.date_to;
+    }
+    if (f.audience === 'user_type') target.user_type = f.user_type;
+    if (f.audience === 'single_user') {
+      if (!f.user_id) return null;
+      target.user_id = f.user_id;
+    }
+    return target;
+  }
+
+  /** Re-counts who would receive this (people who turned the category off are skipped). */
+  onReachInputChange(): void {
+    clearTimeout(this.reachTimer);
+    this.reachTimer = setTimeout(() => {
+      const target = this.buildTarget();
+      if (!target) { this.reach = null; this.cdr.detectChanges(); return; }
+      this.reachLoading = true;
+      this.notificationService.preview(this.form.type, target, this.form.category || undefined).subscribe({
+        next: (res) => { this.reach = res.data; this.reachLoading = false; this.cdr.detectChanges(); },
+        error: () => { this.reach = null; this.reachLoading = false; this.cdr.detectChanges(); },
+      });
+    }, 350);
+  }
+
   // ── Compose panel ─────────────────────────────────────────
   openPanel(): void {
     this.form       = this.blankForm();
     this.sendError  = '';
     this.sendSuccess = '';
+    this.reach = null;
     this.showPanel  = true;
+    this.onReachInputChange();
   }
 
   closePanel(): void {
@@ -136,6 +191,7 @@ export class NotificationsComponent implements OnInit {
       body_en:   '',
       body_ar:   '',
       type:      'general',
+      category:  '',
       entity_id: null,
       audience:  'all',
       date_from: '',
@@ -164,17 +220,7 @@ export class NotificationsComponent implements OnInit {
       return;
     }
 
-    const target: NotificationTarget = { audience: this.form.audience };
-    if (this.form.audience === 'registered_between') {
-      target.date_from = this.form.date_from;
-      target.date_to   = this.form.date_to;
-    }
-    if (this.form.audience === 'user_type') {
-      target.user_type = this.form.user_type;
-    }
-    if (this.form.audience === 'single_user') {
-      target.user_id = this.form.user_id!;
-    }
+    const target = this.buildTarget()!;
 
     const dto: SendNotificationDto = {
       title_en:  this.form.title_en.trim(),
@@ -182,6 +228,7 @@ export class NotificationsComponent implements OnInit {
       body_en:   this.form.body_en.trim(),
       body_ar:   this.form.body_ar.trim(),
       type:      this.form.type,
+      ...(this.form.category && { category: this.form.category }),
       entity_id: this.form.entity_id,
       target,
     };
@@ -189,10 +236,13 @@ export class NotificationsComponent implements OnInit {
     this.isSending  = true;
     this.sendError  = '';
     this.notificationService.send(dto).subscribe({
-      next: () => {
+      next: (res) => {
         this.isSending   = false;
         this.showPanel   = false;
-        this.sendSuccess = 'Notification sent successfully!';
+        const skipped = res.data?.skipped_by_preference ?? 0;
+        this.sendSuccess = skipped > 0
+          ? `Notification sent. ${skipped} ${skipped === 1 ? 'person was' : 'people were'} left out because they turned this kind off.`
+          : 'Notification sent successfully!';
         this.cdr.detectChanges();
         this.load();
         setTimeout(() => { this.sendSuccess = ''; this.cdr.detectChanges(); }, 3500);
@@ -251,6 +301,10 @@ export class NotificationsComponent implements OnInit {
       general:      'type-general',
       subscription: 'type-subscription',
       property:     'type-property',
+      project:      'type-general',
+      developer:    'type-general',
+      news:         'type-general',
+      ad:           'type-general',
     };
     return map[type] || '';
   }

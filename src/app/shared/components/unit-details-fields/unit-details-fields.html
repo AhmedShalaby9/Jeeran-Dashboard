@@ -1,0 +1,33 @@
+<div class="pf">
+  <p class="pf-hint">All optional — anything left empty is simply not shown on the property page.</p>
+
+  <div class="pf-grid">
+    <label class="pf-field">
+      <span>Garden (m²)</span>
+      <input class="pf-input" type="number" min="0" [(ngModel)]="form.garden_size" name="garden_size" placeholder="46" />
+    </label>
+    <label class="pf-field">
+      <span>Level (English)</span>
+      <input class="pf-input" type="text" maxlength="100" [(ngModel)]="form.level_en" name="level_en" placeholder="Ground" />
+    </label>
+    <label class="pf-field">
+      <span>Level (Arabic)</span>
+      <input class="pf-input" type="text" maxlength="100" dir="rtl" [(ngModel)]="form.level_ar" name="level_ar" placeholder="أرضي" />
+    </label>
+    <label class="pf-field">
+      <span>Maintenance (English)</span>
+      <input class="pf-input" type="text" maxlength="255" [(ngModel)]="form.maintenance_en" name="maintenance_en" placeholder="8% on delivery" />
+    </label>
+    <label class="pf-field">
+      <span>Maintenance (Arabic)</span>
+      <input class="pf-input" type="text" maxlength="255" dir="rtl" [(ngModel)]="form.maintenance_ar" name="maintenance_ar" placeholder="٨٪ عند التسليم" />
+    </label>
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">Floor plan</label>
+    <app-media-uploader folder="properties" [multiple]="false" (uploaded)="onPlan($event)"></app-media-uploader>
+    <input class="pf-input" type="text" [(ngModel)]="form.floor_plan" name="floor_plan" placeholder="or paste URL" />
+    <img class="pf-preview" *ngIf="form.floor_plan" [src]="form.floor_plan" alt="floor plan preview" />
+  </div>
+</div>

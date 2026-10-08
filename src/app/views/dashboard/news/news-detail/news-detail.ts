@@ -39,7 +39,7 @@ export class NewsDetailComponent implements OnInit {
     is_active:    true,
     published_at: '',
     published_by: '',
-    project_id:   null,
+    compound_id:   null,
     developer_id: null,
   };
 
@@ -138,7 +138,7 @@ export class NewsDetailComponent implements OnInit {
         ? this.article.published_at.slice(0, 16)
         : '',
       published_by: this.article.published_by,
-      project_id:   this.article.project_id ?? null,
+      compound_id:   this.article.compound_id ?? null,
       developer_id: this.article.developer_id ?? null,
     };
     this.errorMessage = '';
@@ -196,7 +196,7 @@ export class NewsDetailComponent implements OnInit {
       is_active:    this.editForm.is_active,
       published_at: this.editForm.published_at,
       published_by: this.editForm.published_by,
-      project_id:   this.editForm.project_id,
+      compound_id:   this.editForm.compound_id,
       developer_id: this.editForm.developer_id,
     };
 

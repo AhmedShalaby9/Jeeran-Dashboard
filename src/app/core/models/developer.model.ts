@@ -17,9 +17,14 @@ export interface Developer {
   is_verified?: boolean;
   verified_at?: string | null;
   followers_count?: number;
+  cover_image?: string | null;
+  founded_year?: number | null;
+  stock_listing?: string | null;
+  delivered_units?: number | null;
+  trust_items?: Record<string, string>[] | null;
   created_at: string;
   updated_at: string;
-  projects?:  any[];
+  compounds?:  any[];
 }
 
 export interface CreateDeveloperDto {
@@ -38,6 +43,11 @@ export interface CreateDeveloperDto {
   linkedin?:  string | null;
   is_active?: boolean;
   is_verified?: boolean;
+  cover_image?: string | null;
+  founded_year?: number | null;
+  stock_listing?: string | null;
+  delivered_units?: number | null;
+  trust_items?: Record<string, string>[] | null;
 }
 
 export interface DeveloperResponse {

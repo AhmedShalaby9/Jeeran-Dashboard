@@ -135,6 +135,29 @@ export class UserDetailComponent implements OnInit {
     this.errorMessage = '';
   }
 
+  isVerifying = false;
+
+  toggleSellerVerified(): void {
+    if (!this.user || this.isVerifying) return;
+    const verified = !this.user.seller_verified;
+    this.isVerifying = true;
+    this.errorMessage = '';
+    this.userService.setSellerVerified(this.user.id, verified).subscribe({
+      next: (res) => {
+        this.user = { ...this.user!, seller_verified: res.data.seller_verified, seller_verified_at: res.data.seller_verified_at };
+        this.isVerifying = false;
+        this.successMessage = verified ? 'Seller marked as verified.' : 'Verification removed.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: (err) => {
+        this.isVerifying = false;
+        this.errorMessage = err.error?.message || 'Failed to update verification.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
   saveEdit(): void {
     this.isSubmitting = true;
     this.errorMessage = '';

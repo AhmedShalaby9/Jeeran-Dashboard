@@ -1,0 +1,16 @@
+@use '../../form-base';
+
+select {
+  padding: 0.7rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; width: 100%;
+  box-sizing: border-box; background: #fff; font-family: inherit; outline: none;
+  &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+.hint { color: #b45309; font-size: 0.8rem; margin-top: 0.4rem; }
+small { font-weight: 400; color: #6b7280; }
+.narrow { max-width: 220px; }
+.preview { width: 100%; max-width: 360px; max-height: 200px; object-fit: cover; border-radius: 10px; margin-bottom: 0.75rem; display: block; }
+.seg {
+  display: inline-flex; border: 1.5px solid #e5e7eb; border-radius: 9px; overflow: hidden; margin-top: 0.5rem;
+  button { border: none; background: #fff; padding: 0.55rem 1.3rem; font-size: 0.88rem; font-weight: 600; color: #6b7280; cursor: pointer; font-family: inherit;
+    &.on { background: #1e3a6e; color: #fff; } }
+}

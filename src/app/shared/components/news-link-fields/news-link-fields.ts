@@ -2,9 +2,9 @@ import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DeveloperService } from '../../../core/services/developer.service';
-import { ProjectService } from '../../../core/services/project.service';
+import { CompoundService } from '../../../core/services/compound.service';
 import { Developer } from '../../../core/models/developer.model';
-import { Project } from '../../../core/models/project.model';
+import { Compound } from '../../../core/models/compound.model';
 
 /**
  * "About a compound / developer" for a news article.
@@ -20,9 +20,9 @@ import { Project } from '../../../core/models/project.model';
       <div class="form-row">
         <div class="form-group">
           <label>Compound (optional)</label>
-          <select [(ngModel)]="form.project_id" name="project_id">
+          <select [(ngModel)]="form.compound_id" name="compound_id">
             <option [ngValue]="null">— none —</option>
-            <option *ngFor="let p of projects" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
+            <option *ngFor="let p of compounds" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
           </select>
         </div>
         <div class="form-group">
@@ -50,20 +50,20 @@ import { Project } from '../../../core/models/project.model';
   `],
 })
 export class NewsLinkFieldsComponent implements OnInit {
-  @Input({ required: true }) form!: { project_id: number | null; developer_id: number | null };
+  @Input({ required: true }) form!: { compound_id: number | null; developer_id: number | null };
 
-  projects: Project[] = [];
+  compounds: Compound[] = [];
   developers: Developer[] = [];
 
   constructor(
-    private projectService: ProjectService,
+    private compoundService: CompoundService,
     private developerService: DeveloperService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.projectService.getAll(true).subscribe({
-      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+    this.compoundService.getAll(true).subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
       error: () => {},
     });
     this.developerService.getAll(true).subscribe({

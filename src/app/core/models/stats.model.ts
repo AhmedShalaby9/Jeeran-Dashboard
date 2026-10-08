@@ -31,7 +31,7 @@ export interface DashboardStats {
     approved: number;
     rejected: number;
   };
-  projects: {
+  compounds: {
     total: number;
     active: number;
   };
