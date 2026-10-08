@@ -3,10 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
-import { ProjectService } from '../../../../core/services/project.service';
+import { PhaseService } from '../../../../core/services/phase.service';
+import { Phase } from '../../../../core/models/phase.model';
+import { CompoundService } from '../../../../core/services/compound.service';
 import { TranslationService } from '../../../../core/services/translation.service';
+import { UnitDetailsFieldsComponent } from '../../../../shared/components/unit-details-fields/unit-details-fields';
+import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
 import { CreatePropertyDto, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../../core/models/property.model';
-import { Project } from '../../../../core/models/project.model';
+import { Compound } from '../../../../core/models/compound.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 interface StepMeta {
@@ -27,7 +31,7 @@ const DEFAULT_AGENT = {
 @Component({
   selector: 'app-property-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, ListingAttributesFieldsComponent, UnitDetailsFieldsComponent],
   templateUrl: './property-form.html',
   styleUrl: './property-form.scss',
 })
@@ -76,8 +80,8 @@ export class PropertyFormComponent implements OnInit {
     { value: 'egypt', label: 'Egypt' },
   ];
 
-  // ── Projects for dropdown ─────────────────────────────────
-  projects: Project[] = [];
+  // ── Compounds for dropdown ─────────────────────────────────
+  compounds: Compound[] = [];
 
   // ── Default agent ─────────────────────────────────────────
   readonly defaultAgent = DEFAULT_AGENT;
@@ -98,7 +102,20 @@ export class PropertyFormComponent implements OnInit {
     bathrooms:       null,
     country:         'egypt',
     state:           'cairo',
-    project_id:      null,
+    compound_id:      null,
+    phase_id:         null,
+    delivery_date:    null,
+    finishing:        null,
+    payment_options:  null,
+    down_payment_percent: null,
+    installment_years:    null,
+    features:         null,
+    garden_size:      null,
+    level_ar:         '',
+    level_en:         '',
+    floor_plan:       '',
+    maintenance_ar:   '',
+    maintenance_en:   '',
     images:          [],
     video_url:       '',
     is_featured:     false,
@@ -135,19 +152,38 @@ export class PropertyFormComponent implements OnInit {
 
   constructor(
     private propertyService:   PropertyService,
-    private projectService:    ProjectService,
+    private compoundService:    CompoundService,
+    private phaseService:       PhaseService,
     private translationService: TranslationService,
     private router:            Router,
     private cdr:               ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.loadCompounds();
   }
 
-  loadProjects(): void {
-    this.projectService.getAll().subscribe({
-      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+
+  phases: Phase[] = [];
+
+  /** Phases of the chosen compound; a unit can sit in one of them. */
+  loadPhases(compoundId: number | null | undefined, keep = true): void {
+    if (!compoundId) { this.phases = []; return; }
+    this.phaseService.getForCompound(compoundId).subscribe({
+      next: (res) => {
+        this.phases = res.data;
+        if (!keep) this.form.phase_id = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {},
+    });
+  }
+
+  onCompoundChange(): void { this.loadPhases(this.form.compound_id, false); }
+
+  loadCompounds(): void {
+    this.compoundService.getAll().subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
@@ -221,6 +257,10 @@ export class PropertyFormComponent implements OnInit {
       }
       if (!this.form.price || this.form.price <= 0) {
         this.stepErrors[0] = 'A valid price is required.';
+        return false;
+      }
+      if (!this.form.compound_id) {
+        this.stepErrors[0] = 'Choose the compound this property belongs to.';
         return false;
       }
     }
@@ -322,6 +362,12 @@ export class PropertyFormComponent implements OnInit {
       content_en:     this.form.content_en?.trim()     || null,
       content_html:   this.form.content_html?.trim()   || null,
       video_url:      this.form.video_url?.trim()       || null,
+      garden_size:    this.form.garden_size === null || this.form.garden_size === ('' as any) ? null : Number(this.form.garden_size),
+      level_ar:       this.form.level_ar?.trim()        || null,
+      level_en:       this.form.level_en?.trim()        || null,
+      floor_plan:     this.form.floor_plan?.trim()      || null,
+      maintenance_ar: this.form.maintenance_ar?.trim()  || null,
+      maintenance_en: this.form.maintenance_en?.trim()  || null,
       legacy_code:    this.form.legacy_code?.trim()     || null,
       agent_name:     this.form.agent_name?.trim()      || null,
       agent_mobile:   this.form.agent_mobile?.trim()    || null,

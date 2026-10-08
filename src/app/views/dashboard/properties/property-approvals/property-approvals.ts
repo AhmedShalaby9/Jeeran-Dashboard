@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../../core/services/property.service';
-import { ProjectService } from '../../../../core/services/project.service';
+import { CompoundService } from '../../../../core/services/compound.service';
 import { Property, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
-import { Project } from '../../../../core/models/project.model';
+import { Compound } from '../../../../core/models/compound.model';
 
 type ApprovalTab = 'all' | 'pending' | 'approved' | 'rejected';
 
@@ -26,7 +26,7 @@ interface ConfirmModal {
 export class PropertyApprovalsComponent implements OnInit {
 
   properties: Property[] = [];
-  projects:   Project[]  = [];
+  compounds:   Compound[]  = [];
   isLoading   = false;
 
   // Pagination
@@ -62,20 +62,20 @@ export class PropertyApprovalsComponent implements OnInit {
 
   constructor(
     private propertyService: PropertyService,
-    private projectService:  ProjectService,
+    private compoundService:  CompoundService,
     private router:          Router,
     private cdr:             ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.loadCompounds();
     this.loadCounts();
     this.load();
   }
 
-  loadProjects(): void {
-    this.projectService.getAll().subscribe({
-      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+  loadCompounds(): void {
+    this.compoundService.getAll().subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
@@ -221,9 +221,9 @@ export class PropertyApprovalsComponent implements OnInit {
     return prop.title_ar || prop.title_en || prop.title || '—';
   }
 
-  projectName(id: number | null): string {
+  compoundName(id: number | null): string {
     if (!id) return '—';
-    const p = this.projects.find(p => p.id === id);
+    const p = this.compounds.find(p => p.id === id);
     return p ? (p.name_en || p.name_ar) : `#${id}`;
   }
 

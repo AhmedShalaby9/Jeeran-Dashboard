@@ -437,3 +437,13 @@ $panel-w:      560px;
 
 @keyframes spin    { to { transform: rotate(360deg); } }
 @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+
+.reach-note {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: #f4f6fb;
+  color: #374151;
+  font-size: 0.85rem;
+}
+.cat-note { display: block; margin-top: 0.25rem; font-size: 0.7rem; color: #6b7280; text-transform: capitalize; }

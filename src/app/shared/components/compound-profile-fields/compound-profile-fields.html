@@ -1,0 +1,35 @@
+<div class="pf">
+  <h2 class="pf-title">Page content</h2>
+  <p class="pf-desc">Shown on the compound page in the app. The unit types, size range, payment plan and finishing rows are filled in automatically.</p>
+
+  <div class="pf-grid">
+    <label class="pf-field">
+      <span>Delivered since</span>
+      <input class="pf-input" type="number" [(ngModel)]="form.delivered_since" name="delivered_since" placeholder="2015" />
+    </label>
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">Facilities</label>
+    <p class="pf-hint">One per line, e.g. “Clubhouse”, “Swimming pools”, “24/7 security”. The app picks an icon from the wording.</p>
+    <div class="pf-two">
+      <div>
+        <span class="pf-hint">Arabic</span>
+        <app-text-list-editor name="fac_ar" [rtl]="true" placeholder="نادي رياضي"
+          [value]="form.facilities_ar" (valueChange)="form.facilities_ar = $event"></app-text-list-editor>
+      </div>
+      <div>
+        <span class="pf-hint">English</span>
+        <app-text-list-editor name="fac_en" placeholder="Clubhouse"
+          [value]="form.facilities_en" (valueChange)="form.facilities_en = $event"></app-text-list-editor>
+      </div>
+    </div>
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">Extra facts</label>
+    <p class="pf-hint">Label and value rows under About, e.g. “Land area — 120 feddan”.</p>
+    <app-row-list-editor name="facts" [fields]="factFields" addLabel="Add fact"
+      [value]="form.facts" (valueChange)="form.facts = $event"></app-row-list-editor>
+  </div>
+</div>

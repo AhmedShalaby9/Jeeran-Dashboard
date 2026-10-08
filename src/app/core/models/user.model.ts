@@ -6,6 +6,8 @@ export type AuthProvider = 'phone' | 'google' | 'apple';
 
 export interface User {
   id:                  number;
+  seller_verified?:    boolean;
+  seller_verified_at?: string | null;
   name:                string;
   email:               string;
   phone?:              string;

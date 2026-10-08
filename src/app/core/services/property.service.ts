@@ -13,7 +13,7 @@ export interface PropertyFilters {
   type?:         string;
   status?:       string;
   listing_type?: string;
-  project_id?:   number;
+  compound_id?:   number;
   developer_id?: number;
   is_featured?:  boolean;
   is_approved?:  'true' | 'false' | 'null'; // 'null' = pending

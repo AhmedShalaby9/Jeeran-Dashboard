@@ -82,6 +82,22 @@
               <span class="info-value">{{ developer.followers_count ?? 0 }}</span>
             </div>
             <div class="info-item">
+              <span class="info-label">Founded</span>
+              <span class="info-value">{{ developer.founded_year || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Listed on</span>
+              <span class="info-value">{{ developer.stock_listing || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Delivered units</span>
+              <span class="info-value">{{ developer.delivered_units != null ? (developer.delivered_units | number) : '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">“Why we list them”</span>
+              <span class="info-value">{{ developer.trust_items?.length || 0 }} point(s){{ developer.is_verified ? '' : ' · hidden until verified' }}</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Created At</span>
               <span class="info-value">{{ developer.created_at | date:'medium' }}</span>
             </div>
@@ -165,24 +181,24 @@
 
         <div class="detail-divider"></div>
 
-        <!-- Projects -->
+        <!-- Compounds -->
         <div class="detail-section">
           <h2 class="section-title">
-            Projects
-            <span class="projects-count-badge" *ngIf="projects.length > 0">{{ projects.length }}</span>
+            Compounds
+            <span class="compounds-count-badge" *ngIf="compounds.length > 0">{{ compounds.length }}</span>
           </h2>
 
-          <div class="projects-loading" *ngIf="projectsLoading">
+          <div class="compounds-loading" *ngIf="compoundsLoading">
             <div class="spinner-sm"></div>
-            <span>Loading projects...</span>
+            <span>Loading compounds...</span>
           </div>
 
-          <ng-container *ngIf="!projectsLoading">
-            <div class="projects-grid" *ngIf="projects.length > 0">
-              <div class="project-card" *ngFor="let p of projects" (click)="goToProject(p.id)">
-                <div class="project-cover">
-                  <img *ngIf="p.main_image" [src]="p.main_image" [alt]="p.name_en || p.name_ar" class="project-cover-img" />
-                  <div *ngIf="!p.main_image" class="project-cover-placeholder">
+          <ng-container *ngIf="!compoundsLoading">
+            <div class="compounds-grid" *ngIf="compounds.length > 0">
+              <div class="compound-card" *ngFor="let p of compounds" (click)="goToCompound(p.id)">
+                <div class="compound-cover">
+                  <img *ngIf="p.main_image" [src]="p.main_image" [alt]="p.name_en || p.name_ar" class="compound-cover-img" />
+                  <div *ngIf="!p.main_image" class="compound-cover-placeholder">
                     <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
                       stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
                       <polygon points="12 2 2 7 12 12 22 7 12 2"/>
@@ -191,17 +207,17 @@
                     </svg>
                   </div>
                 </div>
-                <div class="project-body">
+                <div class="compound-body">
                   <span class="badge" [class.badge-active]="p.is_active" [class.badge-inactive]="!p.is_active">
                     {{ p.is_active ? 'Active' : 'Inactive' }}
                   </span>
-                  <h3 class="project-name">{{ p.name_en || p.name_ar }}</h3>
-                  <p class="project-name-ar" dir="rtl" *ngIf="p.name_ar && p.name_en">{{ p.name_ar }}</p>
+                  <h3 class="compound-name">{{ p.name_en || p.name_ar }}</h3>
+                  <p class="compound-name-ar" dir="rtl" *ngIf="p.name_ar && p.name_en">{{ p.name_ar }}</p>
                 </div>
               </div>
             </div>
 
-            <p class="no-content" *ngIf="projects.length === 0">No projects linked to this developer.</p>
+            <p class="no-content" *ngIf="compounds.length === 0">No compounds linked to this developer.</p>
           </ng-container>
         </div>
 
@@ -336,6 +352,12 @@
               <span>Verified (shows a green shield in the app — tick only after checking the commercial register and delivery record)</span>
             </label>
           </div>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <app-developer-profile-fields [form]="editForm"></app-developer-profile-fields>
         </div>
 
         <div class="form-divider"></div>

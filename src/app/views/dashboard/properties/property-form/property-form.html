@@ -338,15 +338,33 @@
           </div>
 
           <div class="field-group">
-            <label>Project</label>
-            <select [(ngModel)]="form.project_id" name="project_id">
-              <option [ngValue]="null">— No Project —</option>
-              <option *ngFor="let p of projects" [ngValue]="p.id">
+            <label>Compound <span class="required">*</span></label>
+            <select [(ngModel)]="form.compound_id" name="compound_id" (ngModelChange)="onCompoundChange()">
+              <option [ngValue]="null" disabled>Select a compound…</option>
+              <option *ngFor="let p of compounds" [ngValue]="p.id">
                 {{ p.name_en || p.name_ar }}
               </option>
             </select>
           </div>
 
+          <div class="field-group" *ngIf="phases.length">
+            <label>Phase</label>
+            <select [(ngModel)]="form.phase_id" name="phase_id">
+              <option [ngValue]="null">— none —</option>
+              <option *ngFor="let ph of phases" [ngValue]="ph.id">{{ ph.name_en || ph.name_ar }}</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="field-group full" style="margin: 0.5rem 0 1.25rem">
+          <label>Delivery, finishing &amp; payment</label>
+          <app-listing-attributes-fields [form]="$any(form)" tagsKey="features" [inherit]="true"></app-listing-attributes-fields>
+        </div>
+
+        <div class="field-group full" style="margin: 0.5rem 0 1.25rem">
+          <label>Page extras</label>
+          <app-unit-details-fields [form]="form"></app-unit-details-fields>
         </div>
 
         <div class="field-grid">

@@ -35,6 +35,8 @@ export class SettingsComponent implements OnInit {
     ad_generation_price:  50,
     ad_generation_trials: 5,
     in_review:            false,
+    contact_phone:        '',
+    ai_messages_per_hour: 30,
     promo_ai_ads_visible: true,
     promo_seller_visible: true,
     promo_ai_ads_order:   1,

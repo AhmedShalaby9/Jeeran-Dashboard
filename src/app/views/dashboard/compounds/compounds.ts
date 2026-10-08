@@ -1,35 +1,35 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { ProjectService } from '../../../core/services/project.service';
-import { Project } from '../../../core/models/project.model';
+import { CompoundService } from '../../../core/services/compound.service';
+import { Compound } from '../../../core/models/compound.model';
 
 @Component({
-  selector: 'app-projects',
+  selector: 'app-compounds',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './projects.html',
-  styleUrl: './projects.scss',
+  templateUrl: './compounds.html',
+  styleUrl: './compounds.scss',
 })
-export class ProjectsComponent implements OnInit {
-  projects: Project[] = [];
+export class CompoundsComponent implements OnInit {
+  compounds: Compound[] = [];
   isLoading = false;
 
   constructor(
-    private projectService: ProjectService,
+    private compoundService: CompoundService,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
-    this.loadProjects();
+    this.loadCompounds();
   }
 
-  loadProjects(): void {
+  loadCompounds(): void {
     this.isLoading = true;
-    this.projectService.getAll().subscribe({
+    this.compoundService.getAll().subscribe({
       next: (res) => {
-        this.projects  = res.data;
+        this.compounds  = res.data;
         this.isLoading = false;
         this.cdr.detectChanges();
       },
@@ -41,10 +41,10 @@ export class ProjectsComponent implements OnInit {
   }
 
   goToNew(): void {
-    this.router.navigate(['/dashboard/projects/new']);
+    this.router.navigate(['/dashboard/compounds/new']);
   }
 
   goToDetail(id: number): void {
-    this.router.navigate(['/dashboard/projects', id]);
+    this.router.navigate(['/dashboard/compounds', id]);
   }
 }

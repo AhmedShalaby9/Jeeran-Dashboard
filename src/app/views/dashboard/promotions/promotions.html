@@ -1,0 +1,49 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Launches &amp; offers</h1>
+      <p>What’s running on each compound. Adding one replaces whatever was live there.</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">New launch or offer</button>
+  </div>
+
+  <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+  <div class="tabs">
+    <button [class.on]="view === 'live'" (click)="setView('live')">Live now <span>{{ liveCount }}</span></button>
+    <button [class.on]="view === 'all'" (click)="setView('all')">All &amp; history <span>{{ all.length }}</span></button>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading"><div class="spinner-lg"></div><p>Loading…</p></div>
+
+  <div class="promo-list" *ngIf="!isLoading">
+    <div class="promo-card" *ngFor="let p of rows">
+      <div class="thumb">
+        <img *ngIf="p.image" [src]="p.image" alt="" />
+        <span class="play" *ngIf="p.video_url">▶</span>
+      </div>
+      <div class="body">
+        <div class="top">
+          <span class="type" [class.offer]="p.type === 'offer'">{{ p.type === 'offer' ? 'Offer' : 'Launch' }}</span>
+          <span class="status" [ngClass]="status(p)">{{ status(p) }}</span>
+        </div>
+        <div class="title">{{ p.title_en || p.title_ar }}</div>
+        <div class="sub" *ngIf="p.sub_en || p.sub_ar">{{ p.sub_en || p.sub_ar }}</div>
+        <a class="compound" (click)="openCompound(p)">
+          {{ p.compound?.name_en || p.compound?.name_ar }}
+          <ng-container *ngIf="p.compound?.developer"> · {{ p.compound?.developer?.name_en || p.compound?.developer?.name_ar }}</ng-container>
+        </a>
+        <div class="when">{{ p.starts_at | date:'mediumDate' }} → {{ p.ends_at ? (p.ends_at | date:'mediumDate') : 'no end date' }}</div>
+      </div>
+      <div class="side">
+        <button class="btn-danger sm" *ngIf="status(p) === 'live' || status(p) === 'scheduled'" (click)="end(p)">End now</button>
+      </div>
+    </div>
+    <div class="empty" *ngIf="!rows.length">
+      {{ view === 'live' ? 'Nothing is live right now.' : 'No launches or offers yet.' }}
+      <button class="btn-primary" (click)="goToNew()">Create one</button>
+    </div>
+  </div>
+
+</div>

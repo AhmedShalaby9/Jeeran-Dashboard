@@ -69,6 +69,7 @@
 
           <td>
             <span class="type-badge" [ngClass]="typeClass(n.type)">{{ n.type }}</span>
+            <span class="cat-note" *ngIf="n.category">{{ n.category }}</span>
           </td>
 
           <td>
@@ -181,8 +182,14 @@
       <div class="field-row">
         <div class="field-group">
           <label>Type</label>
-          <select [(ngModel)]="form.type" name="type">
+          <select [(ngModel)]="form.type" name="type" (ngModelChange)="onReachInputChange()">
             <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Category <span class="hint">(what users can switch off)</span></label>
+          <select [(ngModel)]="form.category" name="category" (ngModelChange)="onReachInputChange()">
+            <option *ngFor="let c of categories" [value]="c.value">{{ c.label }}</option>
           </select>
         </div>
         <div class="field-group" *ngIf="form.type !== 'general'">
@@ -202,7 +209,7 @@
           type="button"
           class="audience-tab"
           [class.active]="form.audience === a.value"
-          (click)="form.audience = a.value">
+          (click)="form.audience = a.value; onReachInputChange()">
           {{ a.label }}
         </button>
       </div>
@@ -212,11 +219,11 @@
         <div class="field-row">
           <div class="field-group">
             <label>Registered From <span class="required">*</span></label>
-            <input type="date" [(ngModel)]="form.date_from" name="date_from" />
+            <input type="date" [(ngModel)]="form.date_from" name="date_from" (ngModelChange)="onReachInputChange()" />
           </div>
           <div class="field-group">
             <label>Registered To <span class="required">*</span></label>
-            <input type="date" [(ngModel)]="form.date_to" name="date_to" />
+            <input type="date" [(ngModel)]="form.date_to" name="date_to" (ngModelChange)="onReachInputChange()" />
           </div>
         </div>
       </div>
@@ -225,7 +232,7 @@
       <div class="conditional-fields" *ngIf="form.audience === 'user_type'">
         <div class="field-group half">
           <label>User Type <span class="required">*</span></label>
-          <select [(ngModel)]="form.user_type" name="user_type">
+          <select [(ngModel)]="form.user_type" name="user_type" (ngModelChange)="onReachInputChange()">
             <option *ngFor="let ut of userTypes" [value]="ut">{{ ut | titlecase }}</option>
           </select>
         </div>
@@ -235,12 +242,21 @@
       <div class="conditional-fields" *ngIf="form.audience === 'single_user'">
         <div class="field-group half">
           <label>User ID <span class="required">*</span></label>
-          <input type="number" [(ngModel)]="form.user_id" name="user_id"
+          <input type="number" [(ngModel)]="form.user_id" name="user_id" (ngModelChange)="onReachInputChange()"
             placeholder="e.g. 1" min="1" />
         </div>
       </div>
 
       <!-- all — no extra fields -->
+      <div class="reach-note" *ngIf="reach || reachLoading">
+        <ng-container *ngIf="reach && !reachLoading; else reachWait">
+          Will reach <strong>{{ reach.will_receive }}</strong> of {{ reach.matched }}
+          <span *ngIf="reach.skipped_by_preference > 0"> · {{ reach.skipped_by_preference }} turned this off</span>
+          <span *ngIf="reach.without_push_token > 0"> · {{ reach.without_push_token }} have no push token (inbox only)</span>
+        </ng-container>
+        <ng-template #reachWait>Counting who this reaches…</ng-template>
+      </div>
+
       <div class="all-note" *ngIf="form.audience === 'all'">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

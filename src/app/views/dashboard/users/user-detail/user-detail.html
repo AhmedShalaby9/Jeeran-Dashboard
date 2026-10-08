@@ -132,6 +132,18 @@
                 {{ user.is_active ? 'Active' : 'Inactive' }}
               </span>
             </div>
+            <div class="info-item" *ngIf="user.user_type === 'seller'">
+              <span class="info-label">Verified seller</span>
+              <span class="info-value">
+                <span class="badge" [class.badge-active]="user.seller_verified" [class.badge-inactive]="!user.seller_verified">
+                  {{ user.seller_verified ? 'Verified' : 'Not verified' }}
+                </span>
+                <button class="btn-secondary verify-btn" type="button" (click)="toggleSellerVerified()" [disabled]="isVerifying">
+                  {{ user.seller_verified ? 'Remove verification' : 'Mark as verified' }}
+                </button>
+              </span>
+              <small class="verify-note">Tick this only after checking their identity and ownership documents. It powers “Verified sellers only” in search.</small>
+            </div>
             <div class="info-item" *ngIf="user.referral_code">
               <span class="info-label">Referral Code</span>
               <span class="info-value">{{ user.referral_code }}</span>

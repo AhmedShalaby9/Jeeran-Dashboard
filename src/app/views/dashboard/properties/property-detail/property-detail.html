@@ -150,8 +150,52 @@
                 </span>
               </div>
               <div class="info-item">
-                <span class="info-label">Project ID</span>
-                <span class="info-value">{{ property.project_id || '—' }}</span>
+                <span class="info-label">Compound</span>
+                <span class="info-value">{{ compoundName(property.compound_id) }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Reference</span>
+                <span class="info-value">{{ property.reference_code || '—' }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.garden_size">
+                <span class="info-label">Garden</span>
+                <span class="info-value">{{ property.garden_size }} m²</span>
+              </div>
+              <div class="info-item" *ngIf="property.level_en || property.level_ar">
+                <span class="info-label">Level</span>
+                <span class="info-value">{{ property.level_en || property.level_ar }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.maintenance_en || property.maintenance_ar">
+                <span class="info-label">Maintenance</span>
+                <span class="info-value">{{ property.maintenance_en || property.maintenance_ar }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.floor_plan">
+                <span class="info-label">Floor plan</span>
+                <span class="info-value"><a [href]="property.floor_plan" target="_blank">Open</a></span>
+              </div>
+              <div class="info-item" *ngIf="property.phase">
+                <span class="info-label">Phase</span>
+                <span class="info-value">{{ property.phase.name_en || property.phase.name_ar }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Delivery</span>
+                <span class="info-value">
+                  {{ property.effective?.delivery_date ? (property.effective?.delivery_date | date:'mediumDate') : '—' }}
+                  <small *ngIf="property.effective?.is_ready"> · ready</small>
+                  <small *ngIf="!property.delivery_date && property.effective?.delivery_date"> · from compound</small>
+                </span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Finishing</span>
+                <span class="info-value">{{ finishingLabel(property.effective?.finishing) }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Payment</span>
+                <span class="info-value">{{ paymentLabels(property.effective?.payment_options) }}{{ property.effective?.down_payment_percent ? ' · ' + property.effective?.down_payment_percent + '% down' : '' }}{{ property.effective?.installment_years ? ' · ' + property.effective?.installment_years + ' yrs' : '' }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Features</span>
+                <span class="info-value">{{ tagLabels(property.effective?.amenities) }}</span>
               </div>
               <div class="info-item">
                 <span class="info-label">Country</span>
@@ -350,9 +394,27 @@
               </select>
             </div>
             <div class="form-group">
-              <label>Project ID</label>
-              <input type="number" [(ngModel)]="editForm.project_id" name="project_id" />
+              <label>Compound <span class="required">*</span></label>
+              <select [(ngModel)]="editForm.compound_id" name="compound_id" (ngModelChange)="onCompoundChange()">
+                <option [ngValue]="null" disabled>Select a compound…</option>
+                <option *ngFor="let c of compounds" [ngValue]="c.id">{{ c.name_en || c.name_ar }}</option>
+              </select>
             </div>
+            <div class="form-group" *ngIf="phases.length">
+              <label>Phase</label>
+              <select [(ngModel)]="editForm.phase_id" name="phase_id">
+                <option [ngValue]="null">— none —</option>
+                <option *ngFor="let ph of phases" [ngValue]="ph.id">{{ ph.name_en || ph.name_ar }}</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin: 0.5rem 0 1.25rem">
+            <label>Delivery, finishing &amp; payment</label>
+            <app-listing-attributes-fields [form]="$any(editForm)" tagsKey="features" [inherit]="true"></app-listing-attributes-fields>
+          </div>
+          <div class="form-group" style="margin: 0.5rem 0 1.25rem">
+            <label>Page extras</label>
+            <app-unit-details-fields [form]="editForm"></app-unit-details-fields>
           </div>
           <div class="bilingual-card">
             <div class="bilingual-card__header">

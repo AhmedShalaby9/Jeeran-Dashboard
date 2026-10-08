@@ -10,8 +10,8 @@
         Back
       </button>
       <div>
-        <h1>New Project</h1>
-        <p>Create a new real-estate project</p>
+        <h1>New Compound</h1>
+        <p>Create a new real-estate compound</p>
       </div>
     </div>
   </div>
@@ -29,7 +29,7 @@
 
     <!-- ── Basic Info ── -->
     <div class="form-section">
-      <h2 class="section-title">Project Info</h2>
+      <h2 class="section-title">Compound Info</h2>
 
       <div class="form-row">
         <div class="form-group">
@@ -52,7 +52,7 @@
           <div class="form-group">
             <label>English Name</label>
             <input type="text" [(ngModel)]="form.name_en" name="name_en"
-              placeholder="Selia Project" />
+              placeholder="Selia Compound" />
           </div>
         </div>
         <div class="translate-strip">
@@ -104,7 +104,7 @@
           <div class="form-group">
             <label>Description (English)</label>
             <textarea [(ngModel)]="form.desc_en" name="desc_en"
-              rows="3" placeholder="Project description in English"></textarea>
+              rows="3" placeholder="Compound description in English"></textarea>
           </div>
         </div>
         <div class="translate-strip">
@@ -156,11 +156,27 @@
 
     <div class="form-divider"></div>
 
-    <!-- ── Developer & location ── -->
+    <!-- ── Location & defaults for every unit ── -->
     <div class="form-section">
-      <h2 class="section-title">Developer &amp; Location</h2>
-      <p class="section-desc">Every project belongs to a developer. Flag it as a new launch to feature it on Explore.</p>
-      <app-project-launch-fields [form]="form" [developers]="developers" [showDeveloper]="false"></app-project-launch-fields>
+      <h2 class="section-title">Location &amp; unit defaults</h2>
+      <p class="section-desc">
+        Area, delivery, finishing and payment are set once here and apply to every unit in this compound.
+        A single unit can override them. Launches and offers are added from the compound’s page after saving.
+      </p>
+      <div class="form-group">
+        <label>Area</label>
+        <select [(ngModel)]="form.area_id" name="area_id">
+          <option [ngValue]="null">— not set —</option>
+          <option *ngFor="let a of areas" [ngValue]="a.id">{{ a.name_en || a.name_ar }}</option>
+        </select>
+      </div>
+      <app-listing-attributes-fields [form]="$any(form)" tagsKey="amenities"></app-listing-attributes-fields>
+    </div>
+
+    <div class="form-divider"></div>
+
+    <div class="form-section">
+      <app-compound-profile-fields [form]="form"></app-compound-profile-fields>
     </div>
 
     <div class="form-divider"></div>
@@ -168,10 +184,10 @@
     <!-- ── Main Image ── -->
     <div class="form-section">
       <h2 class="section-title">Main Image</h2>
-      <p class="section-desc">Cover image shown on the project card.</p>
+      <p class="section-desc">Cover image shown on the compound card.</p>
 
       <app-media-uploader
-        folder="projects"
+        folder="compounds"
         [multiple]="false"
         (uploaded)="onMainImageUploaded($event)">
       </app-media-uploader>
@@ -179,7 +195,7 @@
       <div class="url-fallback">
         <span class="or-label">or paste URL</span>
         <input type="text" [(ngModel)]="form.main_image" name="main_image"
-          placeholder="https://example.com/project-cover.jpg" class="url-input" />
+          placeholder="https://example.com/compound-cover.jpg" class="url-input" />
       </div>
 
       <div class="main-image-preview" *ngIf="form.main_image">
@@ -194,7 +210,7 @@
       <h2 class="section-title">Gallery</h2>
 
       <app-media-uploader
-        folder="projects"
+        folder="compounds"
         [multiple]="true"
         (uploaded)="onGalleryUploaded($event)">
       </app-media-uploader>
@@ -236,7 +252,7 @@
       <div class="section-header">
         <div>
           <h2 class="section-title">Features</h2>
-          <p class="section-desc">Add sections describing the project's amenities and services.</p>
+          <p class="section-desc">Add sections describing the compound's amenities and services.</p>
         </div>
         <button type="button" class="btn-add-feature" (click)="openFeatureForm()" *ngIf="!showFeatureForm">
           <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -382,7 +398,7 @@
         <div class="form-group">
           <label>Feature Images</label>
           <app-media-uploader
-            folder="projects"
+            folder="compounds"
             [multiple]="true"
             (uploaded)="onFeatureImagesUploaded($event)">
           </app-media-uploader>
@@ -426,7 +442,7 @@
     <div class="form-actions">
       <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
       <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-        <span *ngIf="!isSubmitting">Create Project</span>
+        <span *ngIf="!isSubmitting">Create Compound</span>
         <span *ngIf="isSubmitting" class="spinner-sm"></span>
       </button>
     </div>

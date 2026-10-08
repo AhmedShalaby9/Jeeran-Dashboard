@@ -6,7 +6,7 @@ export type BannerKind   = 'internal' | 'sponsored';
 export type BannerMedia  = 'image' | 'video';
 export type BannerTarget =
   | 'none' | 'url' | 'phone'
-  | 'property' | 'project' | 'developer' | 'news'
+  | 'property' | 'compound' | 'developer' | 'news'
   | 'ai_ads' | 'seller_signup';
 
 export const BANNER_SLOTS: { value: BannerSlot; label: string; hint: string }[] = [
@@ -19,7 +19,7 @@ export const BANNER_TARGETS: { value: BannerTarget; label: string }[] = [
   { value: 'url',           label: 'Web link' },
   { value: 'phone',         label: 'Phone call' },
   { value: 'property',      label: 'Property' },
-  { value: 'project',       label: 'Project (compound)' },
+  { value: 'compound',       label: 'Compound (compound)' },
   { value: 'developer',     label: 'Developer' },
   { value: 'news',          label: 'News article' },
   { value: 'ai_ads',        label: 'AI ads screen' },
@@ -27,7 +27,7 @@ export const BANNER_TARGETS: { value: BannerTarget; label: string }[] = [
 ];
 
 /** Targets that point at a record and therefore need target_id. */
-export const ID_TARGETS: BannerTarget[] = ['property', 'project', 'developer', 'news'];
+export const ID_TARGETS: BannerTarget[] = ['property', 'compound', 'developer', 'news'];
 
 export interface Banner {
   id: number;

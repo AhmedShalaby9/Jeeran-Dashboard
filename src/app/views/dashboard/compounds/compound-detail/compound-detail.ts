@@ -2,25 +2,32 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProjectService } from '../../../../core/services/project.service';
-import { Project, CreateProjectDto, ProjectFeature } from '../../../../core/models/project.model';
+import { CompoundService } from '../../../../core/services/compound.service';
+import { Compound, CreateCompoundDto, CompoundFeature } from '../../../../core/models/compound.model';
 import { PropertyService } from '../../../../core/services/property.service';
 import { Property } from '../../../../core/models/property.model';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer } from '../../../../core/models/developer.model';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { PROJECT_STATES } from '../../../../core/models/project.model';
-import { ProjectLaunchFieldsComponent } from '../../../../shared/components/project-launch-fields/project-launch-fields';
+import { AMENITIES, FINISHINGS, PAYMENT_OPTIONS } from '../../../../core/models/listing-options';
+import { AreaService } from '../../../../core/services/area.service';
+import { Area } from '../../../../core/models/area.model';
+import { promotionStatus } from '../../../../core/models/promotion.model';
+import { PromotionService } from '../../../../core/services/promotion.service';
+import { Promotion } from '../../../../core/models/promotion.model';
+import { CompoundProfileFieldsComponent } from '../../../../shared/components/compound-profile-fields/compound-profile-fields';
+import { PhasesManagerComponent } from '../../../../shared/components/phases-manager/phases-manager';
+import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
 
 @Component({
-  selector: 'app-project-detail',
+  selector: 'app-compound-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProjectLaunchFieldsComponent],
-  templateUrl: './project-detail.html',
-  styleUrl: './project-detail.scss',
+  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent, PhasesManagerComponent],
+  templateUrl: './compound-detail.html',
+  styleUrl: './compound-detail.scss',
 })
-export class ProjectDetailComponent implements OnInit {
-  project: Project | null = null;
+export class CompoundDetailComponent implements OnInit {
+  compound: Compound | null = null;
   isLoading       = false;
   isEditMode      = false;
   isSubmitting    = false;
@@ -41,12 +48,44 @@ export class ProjectDetailComponent implements OnInit {
 
   developers: Developer[] = [];
 
-  stateLabel(v: string | null): string {
-    return PROJECT_STATES.find((s) => s.value === v)?.label ?? '—';
+  areas: Area[] = [];
+  promotions: Promotion[] = [];   // this compound's launches & offers, newest first
+
+  readonly promotionStatus = promotionStatus;
+
+  finishingLabel(v: string | null): string {
+    return FINISHINGS.find((f) => f.value === v)?.label ?? '—';
+  }
+  paymentLabels(v: string[] | null): string {
+    return v?.length ? v.map((x) => PAYMENT_OPTIONS.find((p) => p.value === x)?.label ?? x).join(', ') : '—';
+  }
+  amenityLabels(v: string[] | null): string {
+    return v?.length ? v.map((x) => AMENITIES.find((a) => a.value === x)?.label ?? x).join(', ') : '—';
   }
 
-  editForm: CreateProjectDto = {
-    developer_id: null, is_new_launch: false, launched_at: null, state: null, area_ar: '', area_en: '',
+  endPromotion(p: Promotion): void {
+    this.promotionService.end(p.id).subscribe({
+      next: () => { this.loadPromotions(); },
+      error: (err) => { this.errorMessage = err.error?.message || 'Failed to end the promotion.'; this.cdr.detectChanges(); },
+    });
+  }
+
+  private loadPromotions(): void {
+    if (!this.compound) return;
+    this.promotionService.getAll({ all: true, compoundId: this.compound.id }).subscribe({
+      next: (res) => { this.promotions = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
+  }
+
+  addPromotion(): void {
+    this.router.navigate(['/dashboard/promotions/new'], { queryParams: { compound: this.compound!.id } });
+  }
+
+  editForm: CreateCompoundDto = {
+    developer_id: null, area_id: null, delivery_date: null, finishing: null, payment_options: null,
+    down_payment_percent: null, installment_years: null, amenities: null,
+    facilities_ar: null, facilities_en: null, facts: null, delivered_since: null,
     name_ar: '', name_en: '', desc_ar: '', desc_en: '',
     main_image: null, gallery: [], features: [], is_active: true,
   };
@@ -54,7 +93,7 @@ export class ProjectDetailComponent implements OnInit {
   galleryInput = '';
 
   // Feature builder — shared between "add new" and "edit existing"
-  newFeature: ProjectFeature = this.emptyFeature();
+  newFeature: CompoundFeature = this.emptyFeature();
   featureImageInput    = '';
   showFeatureForm      = false;
   editingFeatureIndex: number | null = null;
@@ -76,19 +115,21 @@ export class ProjectDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private projectService: ProjectService,
+    private compoundService: CompoundService,
     private propertyService: PropertyService,
     private developerService: DeveloperService,
+    private areaService: AreaService,
+    private promotionService: PromotionService,
     private translationService: TranslationService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.loadProject(id);
+    this.loadCompound(id);
   }
 
-  private emptyFeature(): ProjectFeature {
+  private emptyFeature(): CompoundFeature {
     return { title_ar: '', title_en: '', subtitle_ar: '', subtitle_en: '', images: [] };
   }
 
@@ -96,28 +137,29 @@ export class ProjectDetailComponent implements OnInit {
     Object.keys(this.translateErrors).forEach(k => (this.translateErrors as any)[k] = false);
   }
 
-  loadProject(id: number): void {
+  loadCompound(id: number): void {
     this.isLoading = true;
-    this.projectService.getById(id).subscribe({
+    this.compoundService.getById(id).subscribe({
       next: (res) => {
-        this.project   = res.data;
+        this.compound   = res.data;
         this.isLoading = false;
         this.cdr.detectChanges();
         this.loadProperties(id);
+        this.loadPromotions();
       },
       error: () => {
         this.isLoading = false;
         this.cdr.detectChanges();
-        this.router.navigate(['/dashboard/projects']);
+        this.router.navigate(['/dashboard/compounds']);
       },
     });
   }
 
   // ── Properties ─────────────────────────────────────────────
-  loadProperties(projectId: number): void {
+  loadProperties(compoundId: number): void {
     this.propsLoading = true;
     this.propertyService.getAll({
-      project_id: projectId,
+      compound_id: compoundId,
       page:       this.propsPage,
       limit:      this.propsLimit,
     }).subscribe({
@@ -155,12 +197,12 @@ export class ProjectDetailComponent implements OnInit {
   propsGoToPage(page: number): void {
     if (page < 1 || page > this.propsTotalPages || page === this.propsPage) return;
     this.propsPage = page;
-    this.loadProperties(this.project!.id);
+    this.loadProperties(this.compound!.id);
   }
 
   propsOnPageSizeChange(): void {
     this.propsPage = 1;
-    this.loadProperties(this.project!.id);
+    this.loadProperties(this.compound!.id);
   }
 
   get propsRangeStart(): number { return Math.min((this.propsPage - 1) * this.propsLimit + 1, this.propsTotal); }
@@ -191,29 +233,39 @@ export class ProjectDetailComponent implements OnInit {
   }
 
   goToDeveloper(): void {
-    if (this.project?.developer_id) {
-      this.router.navigate(['/dashboard/developers', this.project.developer_id]);
+    if (this.compound?.developer_id) {
+      this.router.navigate(['/dashboard/developers', this.compound.developer_id]);
     }
   }
 
   enableEdit(): void {
-    if (!this.project) return;
+    if (!this.compound) return;
     this.loadDevelopers();
+    this.areaService.getAll().subscribe({
+      next: (res) => { this.areas = res.data.filter((a) => a.is_active); this.cdr.detectChanges(); },
+      error: () => {},
+    });
     this.editForm = {
-      developer_id:  this.project.developer_id,
-      is_new_launch: this.project.is_new_launch,
-      launched_at:   this.project.launched_at,
-      state:         this.project.state,
-      area_ar:       this.project.area_ar ?? '',
-      area_en:       this.project.area_en ?? '',
-      name_ar:    this.project.name_ar,
-      name_en:    this.project.name_en,
-      desc_ar:    this.project.desc_ar ?? '',
-      desc_en:    this.project.desc_en ?? '',
-      main_image: this.project.main_image,
-      gallery:    [...this.project.gallery],
-      features:   this.project.features.map(f => ({ ...f, images: [...f.images] })),
-      is_active:  this.project.is_active,
+      developer_id:  this.compound.developer_id,
+      area_id:       this.compound.area_id,
+      delivery_date: this.compound.delivery_date,
+      finishing:     this.compound.finishing,
+      payment_options: this.compound.payment_options,
+      down_payment_percent: this.compound.down_payment_percent == null ? null : Number(this.compound.down_payment_percent),
+      installment_years:    this.compound.installment_years,
+      amenities:     this.compound.amenities,
+      facilities_ar: this.compound.facilities_ar ?? null,
+      facilities_en: this.compound.facilities_en ?? null,
+      facts:         this.compound.facts ?? null,
+      delivered_since: this.compound.delivered_since ?? null,
+      name_ar:    this.compound.name_ar,
+      name_en:    this.compound.name_en,
+      desc_ar:    this.compound.desc_ar ?? '',
+      desc_en:    this.compound.desc_en ?? '',
+      main_image: this.compound.main_image,
+      gallery:    [...this.compound.gallery],
+      features:   this.compound.features.map(f => ({ ...f, images: [...f.images] })),
+      is_active:  this.compound.is_active,
     };
     this.errorMessage        = '';
     this.showFeatureForm     = false;
@@ -382,27 +434,24 @@ export class ProjectDetailComponent implements OnInit {
       return;
     }
     if (!this.editForm.developer_id) {
-      this.errorMessage = 'Pick the developer this project belongs to.';
+      this.errorMessage = 'Pick the developer this compound belongs to.';
       return;
     }
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.projectService.update(this.project!.id, {
-      ...this.editForm,
-      launched_at: this.editForm.is_new_launch ? (this.editForm.launched_at || null) : null,
-    }).subscribe({
+    this.compoundService.update(this.compound!.id, this.editForm).subscribe({
       next: (res) => {
-        this.project        = res.data;
+        this.compound        = res.data;
         this.isSubmitting   = false;
         this.isEditMode     = false;
-        this.successMessage = 'Project updated successfully!';
+        this.successMessage = 'Compound updated successfully!';
         this.cdr.detectChanges();
         setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
       },
       error: (err) => {
         this.isSubmitting = false;
-        this.errorMessage = err.error?.message || 'Failed to update project.';
+        this.errorMessage = err.error?.message || 'Failed to update compound.';
         this.cdr.detectChanges();
       },
     });
@@ -412,12 +461,12 @@ export class ProjectDetailComponent implements OnInit {
   confirmDelete(): void  { this.showDeleteModal = true; }
   cancelDelete(): void   { this.showDeleteModal = false; }
 
-  deleteProject(): void {
+  deleteCompound(): void {
     this.isDeleting = true;
-    this.projectService.remove(this.project!.id).subscribe({
+    this.compoundService.remove(this.compound!.id).subscribe({
       next: () => {
         this.isDeleting = false;
-        this.router.navigate(['/dashboard/projects']);
+        this.router.navigate(['/dashboard/compounds']);
       },
       error: () => {
         this.isDeleting      = false;
@@ -427,5 +476,5 @@ export class ProjectDetailComponent implements OnInit {
     });
   }
 
-  goBack(): void { this.router.navigate(['/dashboard/projects']); }
+  goBack(): void { this.router.navigate(['/dashboard/compounds']); }
 }

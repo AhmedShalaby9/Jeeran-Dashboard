@@ -11,11 +11,11 @@
         Back
       </button>
       <div>
-        <h1>{{ project?.name_en || project?.name_ar || 'Project' }}</h1>
-        <p dir="rtl" *ngIf="project?.name_ar">{{ project?.name_ar }}</p>
+        <h1>{{ compound?.name_en || compound?.name_ar || 'Compound' }}</h1>
+        <p dir="rtl" *ngIf="compound?.name_ar">{{ compound?.name_ar }}</p>
       </div>
     </div>
-    <div class="header-actions" *ngIf="project && !isEditMode">
+    <div class="header-actions" *ngIf="compound && !isEditMode">
       <button class="btn-secondary" (click)="enableEdit()">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -38,10 +38,10 @@
   <!-- Loading -->
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner-lg"></div>
-    <p>Loading project...</p>
+    <p>Loading compound...</p>
   </div>
 
-  <ng-container *ngIf="!isLoading && project">
+  <ng-container *ngIf="!isLoading && compound">
 
     <div class="toast-success" *ngIf="successMessage">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
@@ -58,44 +58,80 @@
 
         <!-- Info -->
         <div class="detail-section">
-          <h2 class="section-title">Project Info</h2>
+          <div class="promo-head">
+            <h2 class="section-title">Launches &amp; offers</h2>
+            <button class="btn-secondary" type="button" (click)="addPromotion()">Add launch or offer</button>
+          </div>
+          <p class="promo-note">Adding one ends whatever is running on this compound. Followers are notified.</p>
+          <div class="promo-row" *ngFor="let p of promotions">
+            <span class="promo-type" [class.offer]="p.type === 'offer'">{{ p.type === 'offer' ? 'Offer' : 'Launch' }}</span>
+            <span class="promo-title">{{ p.title_en || p.title_ar }}</span>
+            <span class="promo-when">{{ p.starts_at | date:'mediumDate' }} → {{ p.ends_at ? (p.ends_at | date:'mediumDate') : 'open' }}</span>
+            <span class="promo-status" [ngClass]="promotionStatus(p)">{{ promotionStatus(p) }}</span>
+            <button class="link-btn" type="button" *ngIf="promotionStatus(p) === 'live'" (click)="endPromotion(p)">End now</button>
+          </div>
+          <p class="promo-empty" *ngIf="!promotions.length">Nothing yet.</p>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <app-phases-manager [compoundId]="compound.id"></app-phases-manager>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <div class="detail-section">
+          <h2 class="section-title">Compound Info</h2>
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">Name (English)</span>
-              <span class="info-value">{{ project.name_en || '—' }}</span>
+              <span class="info-value">{{ compound.name_en || '—' }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Name (Arabic)</span>
-              <span class="info-value" dir="rtl">{{ project.name_ar }}</span>
+              <span class="info-value" dir="rtl">{{ compound.name_ar }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Developer</span>
-              <span class="info-value info-link" *ngIf="project.developer" (click)="goToDeveloper()">
-                {{ project.developer.name_en || project.developer.name_ar }}
+              <span class="info-value info-link" *ngIf="compound.developer" (click)="goToDeveloper()">
+                {{ compound.developer.name_en || compound.developer.name_ar }}
               </span>
-              <span class="info-value" *ngIf="!project.developer">—</span>
+              <span class="info-value" *ngIf="!compound.developer">—</span>
             </div>
             <div class="info-item">
               <span class="info-label">Status</span>
-              <span class="badge" [class.badge-active]="project.is_active" [class.badge-inactive]="!project.is_active">
-                {{ project.is_active ? 'Active' : 'Inactive' }}
+              <span class="badge" [class.badge-active]="compound.is_active" [class.badge-inactive]="!compound.is_active">
+                {{ compound.is_active ? 'Active' : 'Inactive' }}
               </span>
             </div>
             <div class="info-item">
-              <span class="info-label">Location</span>
-              <span class="info-value">{{ project.area_en || project.area_ar || stateLabel(project.state) }}</span>
+              <span class="info-label">Area</span>
+              <span class="info-value">{{ compound.area?.name_en || compound.area?.name_ar || '—' }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">New launch</span>
-              <span class="info-value">{{ project.is_new_launch ? 'Yes' + (project.launched_at ? ' · ' + (project.launched_at | date:'mediumDate') : '') : 'No' }}</span>
+              <span class="info-label">Delivery</span>
+              <span class="info-value">{{ compound.delivery_date ? (compound.delivery_date | date:'mediumDate') : '—' }}</span>
             </div>
-            <div class="info-item" *ngIf="project.units_count !== undefined">
+            <div class="info-item">
+              <span class="info-label">Finishing</span>
+              <span class="info-value">{{ finishingLabel(compound.finishing) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Payment</span>
+              <span class="info-value">{{ paymentLabels(compound.payment_options) }}{{ compound.down_payment_percent ? ' · ' + (+compound.down_payment_percent) + '% down' : '' }}{{ compound.installment_years ? ' · ' + compound.installment_years + ' yrs' : '' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Amenities</span>
+              <span class="info-value">{{ amenityLabels(compound.amenities) }}</span>
+            </div>
+            <div class="info-item" *ngIf="compound.units_count !== undefined">
               <span class="info-label">Listings</span>
-              <span class="info-value">{{ project.units_count }}</span>
+              <span class="info-value">{{ compound.units_count }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Created At</span>
-              <span class="info-value">{{ project.created_at | date:'medium' }}</span>
+              <span class="info-value">{{ compound.created_at | date:'medium' }}</span>
             </div>
           </div>
         </div>
@@ -103,34 +139,34 @@
         <div class="detail-divider"></div>
 
         <!-- Main Image -->
-        <div class="detail-section" *ngIf="project.main_image">
+        <div class="detail-section" *ngIf="compound.main_image">
           <h2 class="section-title">Main Image</h2>
           <div class="main-image-view">
-            <img [src]="project.main_image" [alt]="project.name_en" />
+            <img [src]="compound.main_image" [alt]="compound.name_en" />
           </div>
         </div>
 
-        <div class="detail-divider" *ngIf="project.main_image"></div>
+        <div class="detail-divider" *ngIf="compound.main_image"></div>
 
         <!-- Gallery -->
         <div class="detail-section">
-          <h2 class="section-title">Gallery ({{ project.gallery?.length || 0 }} images)</h2>
-          <div class="gallery-grid" *ngIf="project.gallery && project.gallery.length > 0">
-            <div class="gallery-thumb" *ngFor="let url of project.gallery; let i = index">
+          <h2 class="section-title">Gallery ({{ compound.gallery?.length || 0 }} images)</h2>
+          <div class="gallery-grid" *ngIf="compound.gallery && compound.gallery.length > 0">
+            <div class="gallery-thumb" *ngFor="let url of compound.gallery; let i = index">
               <img [src]="url" [alt]="'gallery-' + i" class="gallery-img" />
             </div>
           </div>
-          <p class="no-content" *ngIf="!project.gallery || project.gallery.length === 0">No gallery images.</p>
+          <p class="no-content" *ngIf="!compound.gallery || compound.gallery.length === 0">No gallery images.</p>
         </div>
 
         <div class="detail-divider"></div>
 
         <!-- Features -->
         <div class="detail-section">
-          <h2 class="section-title">Features ({{ project.features?.length || 0 }})</h2>
+          <h2 class="section-title">Features ({{ compound.features?.length || 0 }})</h2>
 
-          <div class="features-view" *ngIf="project.features && project.features.length > 0">
-            <div class="feature-view-card" *ngFor="let f of project.features; let i = index">
+          <div class="features-view" *ngIf="compound.features && compound.features.length > 0">
+            <div class="feature-view-card" *ngFor="let f of compound.features; let i = index">
 
               <div class="fvc-header">
                 <div class="fvc-titles">
@@ -152,7 +188,7 @@
 
             </div>
           </div>
-          <p class="no-content" *ngIf="!project.features || project.features.length === 0">No features defined.</p>
+          <p class="no-content" *ngIf="!compound.features || compound.features.length === 0">No features defined.</p>
         </div>
 
         <div class="detail-divider"></div>
@@ -220,7 +256,7 @@
               </div>
             </div>
 
-            <p class="no-content" *ngIf="properties.length === 0">No properties linked to this project.</p>
+            <p class="no-content" *ngIf="properties.length === 0">No properties linked to this compound.</p>
 
             <!-- Pagination -->
             <div class="pagination-bar" *ngIf="propsTotal > 0">
@@ -276,7 +312,7 @@
 
         <!-- Basic Info -->
         <div class="form-section">
-          <h2 class="section-title">Project Info</h2>
+          <h2 class="section-title">Compound Info</h2>
 
           <div class="form-row">
             <div class="form-group">
@@ -400,8 +436,21 @@
 
         <!-- Main Image -->
         <div class="form-section">
-          <h2 class="section-title">Developer &amp; Location</h2>
-          <app-project-launch-fields [form]="editForm" [developers]="developers" [showDeveloper]="false"></app-project-launch-fields>
+          <h2 class="section-title">Location &amp; unit defaults</h2>
+          <div class="form-group">
+            <label>Area</label>
+            <select [(ngModel)]="editForm.area_id" name="area_id">
+              <option [ngValue]="null">— not set —</option>
+              <option *ngFor="let a of areas" [ngValue]="a.id">{{ a.name_en || a.name_ar }}</option>
+            </select>
+          </div>
+          <app-listing-attributes-fields [form]="$any(editForm)" tagsKey="amenities"></app-listing-attributes-fields>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <app-compound-profile-fields [form]="editForm"></app-compound-profile-fields>
         </div>
 
         <div class="form-divider"></div>
@@ -410,7 +459,7 @@
           <h2 class="section-title">Main Image</h2>
           <div class="form-group">
             <input type="text" [(ngModel)]="editForm.main_image" name="main_image"
-              placeholder="https://example.com/project-cover.jpg" />
+              placeholder="https://example.com/compound-cover.jpg" />
           </div>
           <div class="main-image-view" *ngIf="editForm.main_image">
             <img [src]="editForm.main_image" alt="main image preview" />
@@ -799,11 +848,11 @@
           <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
         </svg>
       </div>
-      <h3>Delete Project</h3>
-      <p>Are you sure you want to delete <strong>{{ project?.name_en || project?.name_ar }}</strong>? This action cannot be undone.</p>
+      <h3>Delete Compound</h3>
+      <p>Are you sure you want to delete <strong>{{ compound?.name_en || compound?.name_ar }}</strong>? This action cannot be undone.</p>
       <div class="modal-btns">
         <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
-        <button class="btn-danger-solid" (click)="deleteProject()" [disabled]="isDeleting">
+        <button class="btn-danger-solid" (click)="deleteCompound()" [disabled]="isDeleting">
           <span *ngIf="!isDeleting">Yes, Delete</span>
           <span *ngIf="isDeleting" class="spinner-sm"></span>
         </button>
