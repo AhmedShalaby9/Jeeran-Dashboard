@@ -1,0 +1,13 @@
+.voice-row { cursor: default; }
+.audio-cell audio { width: 220px; height: 34px; }
+.said-cell {
+  max-width: 340px;
+  .said { display: block; font-size: 0.9rem; line-height: 1.45; margin-bottom: 0.25rem; }
+  .said.none { color: #9ca3af; font-style: italic; }
+  .chat-link { display: inline-block; margin-left: 0.5rem; font-size: 0.78rem; color: #1e3a6e; cursor: pointer; }
+}
+.del-btn {
+  border: 1px solid #e5e7eb; background: #fff; color: #b91c1c; border-radius: 8px;
+  padding: 0.3rem 0.7rem; font-size: 0.78rem; cursor: pointer;
+  &:hover { background: #fef2f2; }
+}

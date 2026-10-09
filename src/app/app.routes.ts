@@ -26,6 +26,7 @@ import { PropertyApprovalsComponent } from './views/dashboard/properties/propert
 import { SellerRequestsComponent } from './views/dashboard/seller-requests/seller-requests';
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
 import { ChatComponent } from './views/dashboard/chat/chat';
+import { VoiceComponent } from './views/dashboard/voice/voice';
 import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
 import { NotificationsComponent } from './views/dashboard/notifications/notifications';
 import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscriptions';
@@ -102,6 +103,7 @@ export const routes: Routes = [
       // Chat
       { path: 'chat',              component: ChatComponent },
       { path: 'chat/:id',          component: ChatDetailComponent },
+      { path: 'voice',             component: VoiceComponent },
 
       // Notifications
       { path: 'notifications',     component: NotificationsComponent },

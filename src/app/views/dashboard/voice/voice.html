@@ -1,0 +1,96 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Voice</h1>
+      <p>What clients said to the voice assistant — listen, read the transcript, see what they finally sent</p>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Search</label>
+      <input type="text" [(ngModel)]="q" name="q" class="filter-input" placeholder="Words in the message"
+        (keyup.enter)="applyFilters()" />
+    </div>
+    <div class="filter-group">
+      <label>From</label>
+      <input type="date" [(ngModel)]="from" name="from" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>To</label>
+      <input type="date" [(ngModel)]="to" name="to" class="filter-input" />
+    </div>
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="status" name="status" class="filter-select">
+        <option value="">All</option>
+        <option value="transcribed">Understood</option>
+        <option value="failed">Not understood</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilters()">Apply</button>
+      <button class="btn-clear" (click)="clearFilters()" *ngIf="hasActiveFilters">Clear</button>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading recordings...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+    <div class="sessions-table-wrap">
+      <table class="sessions-table" *ngIf="rows.length > 0">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Audio</th>
+            <th>What they said</th>
+            <th>Length</th>
+            <th>Date</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let r of rows" class="voice-row">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">{{ initials(r.user?.name) }}</div>
+                <div>
+                  <p class="user-name">{{ r.user?.name || '—' }}</p>
+                  <p class="user-email">{{ r.user?.phone || '—' }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="audio-cell"><audio controls preload="none" [src]="r.audio_url"></audio></td>
+            <td class="said-cell">
+              <span class="said" dir="auto" *ngIf="said(r)">{{ said(r) }}</span>
+              <span class="said none" *ngIf="!said(r)">Not understood</span>
+              <span class="sub-badge sub-none" *ngIf="edited(r)" title="Heard: {{ r.transcript }}">edited by user</span>
+              <a class="chat-link" *ngIf="r.chat_session_id" (click)="openChat(r)">Open chat ›</a>
+            </td>
+            <td class="date-cell">{{ duration(r.duration_seconds) }}</td>
+            <td class="date-cell">{{ r.created_at | date:'medium' }}</td>
+            <td class="arrow-cell"><button class="del-btn" (click)="remove(r)" title="Delete">Delete</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="rows.length === 0">
+        <p>No voice recordings{{ hasActiveFilters ? ' match these filters' : ' yet' }}.</p>
+      </div>
+    </div>
+
+    <div class="pagination-row" *ngIf="pagination && pagination.pages > 1">
+      <span class="pagination-info">{{ (page - 1) * limit + 1 }}–{{ rangeEnd }} of {{ pagination.total }}</span>
+      <div class="pagination-btns">
+        <button class="page-btn" [disabled]="page === 1" (click)="goToPage(page - 1)">‹</button>
+        <button class="page-btn active">{{ page }}</button>
+        <button class="page-btn" [disabled]="page === pagination.pages" (click)="goToPage(page + 1)">›</button>
+      </div>
+    </div>
+  </ng-container>
+
+</div>
