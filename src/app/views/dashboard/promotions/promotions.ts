@@ -41,6 +41,7 @@ export class PromotionsComponent implements OnInit {
   setView(v: 'live' | 'all'): void { this.view = v; }
 
   goToNew(): void { this.router.navigate(['/dashboard/promotions/new']); }
+  edit(p: Promotion): void { this.router.navigate(['/dashboard/promotions', p.id, 'edit']); }
   openCompound(p: Promotion): void { this.router.navigate(['/dashboard/compounds', p.compound_id]); }
 
   end(p: Promotion): void {

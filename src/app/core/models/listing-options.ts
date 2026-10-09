@@ -5,7 +5,7 @@ export type Finishing = 'fully_finished' | 'semi_finished' | 'core_shell' | 'fur
 export type PaymentOption = 'cash' | 'installments' | 'mortgage';
 export type Amenity =
   | 'sea_view' | 'pool_view' | 'private_garden' | 'roof'
-  | 'golf_view' | 'beach_access' | 'corner_unit' | 'parking';
+  | 'golf_view' | 'beach_access' | 'corner_unit' | 'parking' | 'lagoon_view';
 
 export const FINISHINGS: { value: Finishing; label: string }[] = [
   { value: 'fully_finished', label: 'Fully finished' },
@@ -22,6 +22,7 @@ export const PAYMENT_OPTIONS: { value: PaymentOption; label: string }[] = [
 
 export const AMENITIES: { value: Amenity; label: string }[] = [
   { value: 'sea_view',       label: 'Sea view' },
+  { value: 'lagoon_view',    label: 'Lagoon view' },
   { value: 'pool_view',      label: 'Pool view' },
   { value: 'private_garden', label: 'Private garden' },
   { value: 'roof',           label: 'Roof' },

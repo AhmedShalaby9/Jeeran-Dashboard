@@ -34,9 +34,11 @@
           {{ p.compound?.name_en || p.compound?.name_ar }}
           <ng-container *ngIf="p.compound?.developer"> · {{ p.compound?.developer?.name_en || p.compound?.developer?.name_ar }}</ng-container>
         </a>
+        <div class="units" *ngIf="(p.properties_count ?? 0) > 0">{{ p.properties_count }} primary unit{{ p.properties_count === 1 ? '' : 's' }} linked</div>
         <div class="when">{{ p.starts_at | date:'mediumDate' }} → {{ p.ends_at ? (p.ends_at | date:'mediumDate') : 'no end date' }}</div>
       </div>
       <div class="side">
+        <button class="btn-secondary sm" (click)="edit(p)">Edit</button>
         <button class="btn-danger sm" *ngIf="status(p) === 'live' || status(p) === 'scheduled'" (click)="end(p)">End now</button>
       </div>
     </div>

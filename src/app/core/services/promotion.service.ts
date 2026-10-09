@@ -25,6 +25,11 @@ export class PromotionService {
     return this.http.get<PromotionResponse>(this.url, { headers: this.headers(), params });
   }
 
+  /** One promotion with the ids (and a short summary) of the primary units it points at. */
+  getById(id: number): Observable<{ success: boolean; data: Promotion }> {
+    return this.http.get<{ success: boolean; data: Promotion }>(`${this.url}/${id}`, { headers: this.headers() });
+  }
+
   create(payload: Record<string, unknown>): Observable<{ success: boolean; data: Promotion }> {
     return this.http.post<{ success: boolean; data: Promotion }>(this.url, payload, { headers: this.headers() });
   }

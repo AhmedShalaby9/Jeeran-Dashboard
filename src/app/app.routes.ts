@@ -69,6 +69,7 @@ export const routes: Routes = [
       { path: 'areas',               component: AreasComponent },
       { path: 'promotions',          component: PromotionsComponent },
       { path: 'promotions/new',      component: PromotionFormComponent },
+      { path: 'promotions/:id/edit',  component: PromotionFormComponent },
 
       // Developers
       { path: 'developers',        component: DevelopersComponent },

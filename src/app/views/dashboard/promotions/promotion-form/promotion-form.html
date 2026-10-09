@@ -2,7 +2,10 @@
   <div class="page-header">
     <div class="header-left">
       <button class="btn-back" (click)="goBack()">‹ Back</button>
-      <div><h1>New launch or offer</h1><p>It appears in the app’s Launches &amp; offers, and followers are notified.</p></div>
+      <div>
+        <h1>{{ editId ? 'Edit launch or offer' : 'New launch or offer' }}</h1>
+        <p>It appears in the app’s Launches &amp; offers{{ editId ? '.' : ', and followers are notified.' }}</p>
+      </div>
     </div>
   </div>
 
@@ -14,7 +17,7 @@
       <h2 class="section-title">What and where</h2>
       <div class="form-group">
         <label>Compound <span class="required">*</span></label>
-        <select [(ngModel)]="form.compound_id" name="compound_id" (ngModelChange)="prefill($event)">
+        <select [(ngModel)]="form.compound_id" name="compound_id" (ngModelChange)="onCompound($event)" [disabled]="!!editId">
           <option [ngValue]="null" disabled>Select a compound…</option>
           <option *ngFor="let c of compounds" [ngValue]="c.id">
             {{ c.name_en || c.name_ar }}{{ c.developer ? ' — ' + (c.developer.name_en || c.developer.name_ar) : '' }}
@@ -31,6 +34,60 @@
     </div>
 
     <div class="form-divider"></div>
+
+    <div class="form-section" *ngIf="form.compound_id">
+      <h2 class="section-title">Units in this {{ form.type === 'offer' ? 'offer' : 'launch' }}</h2>
+      <p class="section-desc">
+        Pick the <b>primary</b> units it is about, or create a new one. Tapping the card in the app then shows exactly these units.
+        Leave all unticked and it points at the whole compound.
+      </p>
+
+      <div class="units-bar">
+        <input type="text" class="units-search" [(ngModel)]="unitQuery" name="unitQuery" placeholder="Search this compound’s primary units" />
+        <button type="button" class="btn-secondary sm" (click)="selectAllShown()" *ngIf="shownUnits.length">Select all</button>
+        <button type="button" class="btn-secondary sm" (click)="clearUnits()" *ngIf="selectedIds.size">Clear</button>
+        <button type="button" class="btn-primary sm" (click)="showNew = !showNew">{{ showNew ? 'Close' : '+ New primary unit' }}</button>
+      </div>
+
+      <div class="new-unit" *ngIf="showNew">
+        <div class="error-msg" *ngIf="newUnitError">{{ newUnitError }}</div>
+        <div class="form-row">
+          <div class="form-group wide"><label>Title <span class="required">*</span></label><input type="text" [(ngModel)]="newUnit.title" name="nu_title" maxlength="255" placeholder="e.g. 3-bed chalet, lagoon side" /></div>
+          <div class="form-group"><label>Type</label>
+            <select [(ngModel)]="newUnit.property_type" name="nu_type"><option *ngFor="let t of unitTypes" [value]="t">{{ t.replace('_', ' ') }}</option></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>Price (EGP) <span class="required">*</span></label><input type="number" min="0" [(ngModel)]="newUnit.price" name="nu_price" /></div>
+          <div class="form-group"><label>Size (m²) <span class="required">*</span></label><input type="number" min="0" [(ngModel)]="newUnit.size" name="nu_size" /></div>
+          <div class="form-group"><label>Bedrooms</label><input type="number" min="0" [(ngModel)]="newUnit.bedrooms" name="nu_beds" /></div>
+          <div class="form-group"><label>Bathrooms</label><input type="number" min="0" [(ngModel)]="newUnit.bathrooms" name="nu_baths" /></div>
+        </div>
+        <small class="hint-muted">It is created live as a primary unit of this compound. Add photos and details later in Properties.</small>
+        <div class="form-actions">
+          <button type="button" class="btn-primary" [disabled]="creatingUnit" (click)="createUnit()">
+            <span *ngIf="!creatingUnit">Create and tick</span><span *ngIf="creatingUnit" class="spinner-sm"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="loading-state" *ngIf="loadingUnits"><div class="spinner-lg"></div></div>
+      <div class="unit-list" *ngIf="!loadingUnits">
+        <label class="unit-row" *ngFor="let u of shownUnits" [class.on]="selectedIds.has(u.id)">
+          <input type="checkbox" [checked]="selectedIds.has(u.id)" (change)="toggleUnit(u.id)" />
+          <span class="u-main">
+            <span class="u-title">{{ u.title_en || u.title_ar }}</span>
+            <span class="u-meta">{{ u.property_type }}<ng-container *ngIf="u.bedrooms"> · {{ u.bedrooms }} bed</ng-container><ng-container *ngIf="u.size"> · {{ u.size }} m²</ng-container></span>
+          </span>
+          <span class="u-price">{{ u.price | number:'1.0-0' }}</span>
+          <span class="u-flag" *ngIf="u.is_approved !== true">not live</span>
+        </label>
+        <div class="empty-units" *ngIf="!shownUnits.length">No primary units in this compound yet — create the first one above.</div>
+      </div>
+      <small class="hint-muted" *ngIf="selectedIds.size">{{ selectedIds.size }} unit{{ selectedIds.size === 1 ? '' : 's' }} selected</small>
+    </div>
+
+    <div class="form-divider" *ngIf="form.compound_id"></div>
 
     <div class="form-section">
       <h2 class="section-title">Card text</h2>
@@ -84,7 +141,7 @@
     <div class="form-actions">
       <button type="button" class="btn-secondary" (click)="goBack()">Cancel</button>
       <button type="submit" class="btn-primary" [disabled]="isSubmitting">
-        <span *ngIf="!isSubmitting">Publish {{ form.type === 'offer' ? 'offer' : 'launch' }}</span>
+        <span *ngIf="!isSubmitting">{{ editId ? 'Save changes' : 'Publish ' + (form.type === 'offer' ? 'offer' : 'launch') }}</span>
         <span *ngIf="isSubmitting" class="spinner-sm"></span>
       </button>
     </div>

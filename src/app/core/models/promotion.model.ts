@@ -20,6 +20,9 @@ export interface Promotion {
   is_active:      boolean;
   sort_order:     number;
   compound?:      Compound;
+  /** Primary units this launch/offer points at (0 = the whole compound). */
+  properties_count?: number;
+  property_ids?:  number[];
   created_at:     string;
   updated_at:     string;
 }
