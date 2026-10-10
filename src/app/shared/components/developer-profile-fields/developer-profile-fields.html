@@ -3,7 +3,7 @@
   <p class="pf-desc">Shown on the developer page in the app.</p>
 
   <div class="pf-block">
-    <label class="pf-label">Cover image</label>
+    <label class="pf-label">Cover image <small>(optional)</small></label>
     <app-media-uploader folder="developers" [multiple]="false" (uploaded)="onCover($event)"></app-media-uploader>
     <input class="pf-input" type="text" [(ngModel)]="form.cover_image" name="cover_image" placeholder="or paste URL" />
     <img class="pf-preview" *ngIf="form.cover_image" [src]="form.cover_image" alt="cover preview" />

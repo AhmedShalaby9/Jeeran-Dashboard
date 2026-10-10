@@ -122,14 +122,17 @@
         <div class="detail-divider" *ngIf="developer.desc_en || developer.desc_ar"></div>
 
         <!-- Logo -->
-        <div class="detail-section" *ngIf="developer.logo">
-          <h2 class="section-title">Logo</h2>
-          <div class="logo-view">
+        <div class="detail-section" *ngIf="developer.logo || developer.cover_image">
+          <h2 class="section-title">Logo &amp; cover</h2>
+          <div class="logo-view" *ngIf="developer.logo">
             <img [src]="developer.logo" [alt]="developer.name_en || developer.name_ar" />
+          </div>
+          <div class="cover-view" *ngIf="developer.cover_image">
+            <img [src]="developer.cover_image" alt="cover" />
           </div>
         </div>
 
-        <div class="detail-divider" *ngIf="developer.logo"></div>
+        <div class="detail-divider" *ngIf="developer.logo || developer.cover_image"></div>
 
         <!-- Contact Info -->
         <div class="detail-section">
