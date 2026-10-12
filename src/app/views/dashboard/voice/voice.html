@@ -1,0 +1,107 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Voice Messages</h1>
+      <p>Recorded questions sent to the AI assistant, with what Gemini heard and detected</p>
+    </div>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <label>Status</label>
+      <select [(ngModel)]="status" name="status" class="filter-select">
+        <option value="">All</option>
+        <option value="done">Done</option>
+        <option value="pending">Pending</option>
+        <option value="failed">Failed</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn-apply" (click)="applyFilters()">Apply</button>
+      <button class="btn-clear" (click)="clearFilters()" *ngIf="hasActiveFilters">Clear</button>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading voice messages...</p>
+  </div>
+
+  <ng-container *ngIf="!isLoading">
+
+    <div class="sessions-table-wrap">
+      <table class="sessions-table" *ngIf="messages.length > 0">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Transcript</th>
+            <th>UI locale</th>
+            <th>Spoken</th>
+            <th>Duration</th>
+            <th>Audio</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of messages" class="session-row">
+            <td>
+              <div class="user-cell">
+                <div class="user-avatar">{{ initials(m.user?.name) }}</div>
+                <div>
+                  <p class="user-name">{{ m.user?.name || '—' }}</p>
+                  <p class="user-email">{{ m.user?.phone || '—' }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="title-cell" [title]="m.transcript || ''">{{ m.transcript || '—' }}</td>
+            <td>{{ languageLabel(m.requested_language) }}</td>
+            <td>
+              <span [class.mismatch]="languageMismatch(m)">{{ languageLabel(m.detected_language) }}</span>
+              <span class="mismatch-flag" *ngIf="languageMismatch(m)" title="Spoken language differs from the app's UI locale — the AI reply would be read aloud in the wrong voice on the client">⚠</span>
+            </td>
+            <td class="phone-cell">{{ formatDuration(m.duration_seconds) }}</td>
+            <td>
+              <audio *ngIf="m.audio_url" [src]="m.audio_url" controls preload="none"></audio>
+              <span *ngIf="!m.audio_url">—</span>
+            </td>
+            <td>
+              <span class="sub-badge sub-active" *ngIf="m.status === 'done'">Done</span>
+              <span class="sub-badge sub-none" *ngIf="m.status === 'pending'">Pending</span>
+              <span class="sub-badge sub-failed" *ngIf="m.status === 'failed'" [title]="m.error_message || ''">Failed</span>
+            </td>
+            <td class="date-cell">{{ m.created_at | date:'mediumDate' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="empty-state" *ngIf="messages.length === 0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+        </svg>
+        <p>No voice messages yet.</p>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-row" *ngIf="pagination && pagination.pages > 1">
+      <span class="pagination-info">
+        {{ (page - 1) * limit + 1 }}–{{ rangeEnd }} of {{ pagination.total }}
+      </span>
+      <div class="pagination-btns">
+        <button class="page-btn" [disabled]="page === 1" (click)="goToPage(page - 1)">‹</button>
+        <ng-container *ngFor="let p of pageNumbers">
+          <button class="page-btn" [class.active]="p === page" (click)="goToPage(p)">{{ p }}</button>
+        </ng-container>
+        <button class="page-btn" [disabled]="page === pagination.pages" (click)="goToPage(page + 1)">›</button>
+      </div>
+    </div>
+
+  </ng-container>
+
+</div>
