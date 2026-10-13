@@ -1,9 +1,9 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './views/auth/login/login';
 import { DashboardComponent } from './views/dashboard/dashboard';
-import { PackagesComponent } from './views/dashboard/packages/packages';
-import { PackageFormComponent } from './views/dashboard/packages/package-form/package-form';
-import { PackageDetailComponent } from './views/dashboard/packages/package-detail/package-detail';
+// PACKAGES DISABLED: import { PackagesComponent } from './views/dashboard/packages/packages';
+// PACKAGES DISABLED: import { PackageFormComponent } from './views/dashboard/packages/package-form/package-form';
+// PACKAGES DISABLED: import { PackageDetailComponent } from './views/dashboard/packages/package-detail/package-detail';
 import { NewsComponent } from './views/dashboard/news/news';
 import { NewsFormComponent } from './views/dashboard/news/news-form/news-form';
 import { NewsDetailComponent } from './views/dashboard/news/news-detail/news-detail';
@@ -29,8 +29,8 @@ import { ChatComponent } from './views/dashboard/chat/chat';
 import { VoiceComponent } from './views/dashboard/voice/voice';
 import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
 import { NotificationsComponent } from './views/dashboard/notifications/notifications';
-import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscriptions';
-import { SubscriptionDetailComponent } from './views/dashboard/subscriptions/subscription-detail/subscription-detail';
+// PACKAGES DISABLED: import { SubscriptionsComponent } from './views/dashboard/subscriptions/subscriptions';
+// PACKAGES DISABLED: import { SubscriptionDetailComponent } from './views/dashboard/subscriptions/subscription-detail/subscription-detail';
 import { SettingsComponent } from './views/dashboard/settings/settings';
 import { AiAdsComponent } from './views/dashboard/ai-ads/ai-ads';
 import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-form';
@@ -53,9 +53,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       { path: 'home',              component: HomeComponent },
-      { path: 'packages',          component: PackagesComponent },
-      { path: 'packages/new',      component: PackageFormComponent },
-      { path: 'packages/:id',      component: PackageDetailComponent },
+      // PACKAGES DISABLED:
+      // { path: 'packages',          component: PackagesComponent },
+      // { path: 'packages/new',      component: PackageFormComponent },
+      // { path: 'packages/:id',      component: PackageDetailComponent },
       { path: 'news',              component: NewsComponent },
       { path: 'news/new',          component: NewsFormComponent },
       { path: 'news/:id',          component: NewsDetailComponent },
@@ -110,8 +111,9 @@ export const routes: Routes = [
       { path: 'notifications',     component: NotificationsComponent },
 
       // Subscriptions
-      { path: 'subscriptions',     component: SubscriptionsComponent },
-      { path: 'subscriptions/:id', component: SubscriptionDetailComponent },
+      // PACKAGES DISABLED:
+      // { path: 'subscriptions',     component: SubscriptionsComponent },
+      // { path: 'subscriptions/:id', component: SubscriptionDetailComponent },
 
       // AI Ads
       { path: 'ai-ads',     component: AiAdsComponent },

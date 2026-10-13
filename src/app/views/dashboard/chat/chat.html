@@ -43,7 +43,7 @@
           <tr>
             <th>User</th>
             <th>Session Title</th>
-            <th>Subscription</th>
+            <!-- PACKAGES DISABLED: <th>Subscription</th> -->
             <th>Phone</th>
             <th>Date</th>
             <th></th>
@@ -61,10 +61,12 @@
               </div>
             </td>
             <td class="title-cell">{{ s.title }}</td>
+            <!-- PACKAGES DISABLED:
             <td>
               <span class="sub-badge sub-active"   *ngIf="hasSubscription(s)">Active</span>
               <span class="sub-badge sub-none"     *ngIf="!hasSubscription(s)">—</span>
             </td>
+            -->
             <td class="phone-cell">{{ s.user?.phone || '—' }}</td>
             <td class="date-cell">{{ s.created_at | date:'mediumDate' }}</td>
             <td class="arrow-cell">
