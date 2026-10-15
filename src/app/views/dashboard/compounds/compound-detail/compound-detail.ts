@@ -16,13 +16,14 @@ import { promotionStatus } from '../../../../core/models/promotion.model';
 import { PromotionService } from '../../../../core/services/promotion.service';
 import { Promotion } from '../../../../core/models/promotion.model';
 import { CompoundProfileFieldsComponent } from '../../../../shared/components/compound-profile-fields/compound-profile-fields';
+import { CompoundReferenceFieldsComponent } from '../../../../shared/components/compound-reference-fields/compound-reference-fields';
 import { PhasesManagerComponent } from '../../../../shared/components/phases-manager/phases-manager';
 import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
 
 @Component({
   selector: 'app-compound-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent, PhasesManagerComponent],
+  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent, CompoundReferenceFieldsComponent, PhasesManagerComponent],
   templateUrl: './compound-detail.html',
   styleUrl: './compound-detail.scss',
 })
@@ -86,6 +87,7 @@ export class CompoundDetailComponent implements OnInit {
     developer_id: null, area_id: null, delivery_date: null, finishing: null, payment_options: null,
     down_payment_percent: null, installment_years: null, amenities: null,
     facilities_ar: null, facilities_en: null, facts: null, delivered_since: null,
+    latitude: null, longitude: null, master_plan: null, brochure_url: null, faqs: null, aliases: null,
     name_ar: '', name_en: '', desc_ar: '', desc_en: '',
     main_image: null, gallery: [], features: [], is_active: true,
   };
@@ -208,6 +210,14 @@ export class CompoundDetailComponent implements OnInit {
   get propsRangeStart(): number { return Math.min((this.propsPage - 1) * this.propsLimit + 1, this.propsTotal); }
   get propsRangeEnd():   number { return Math.min(this.propsPage * this.propsLimit, this.propsTotal); }
 
+  /** Number of points in the imported area outline (a GeoJSON polygon). */
+  boundaryPoints(): number {
+    const c: any = this.compound?.boundary?.coordinates;
+    return Array.isArray(c) ? c.flat(2).filter((p: unknown) => Array.isArray(p)).length || c.flat(1).length : 0;
+  }
+
+  isArabic(s: string): boolean { return /[؀-ۿ]/.test(s); }
+
   goToProperty(id: number): void { this.router.navigate(['/dashboard/properties', id]); }
 
   formatPrice(price: number): string {
@@ -258,6 +268,12 @@ export class CompoundDetailComponent implements OnInit {
       facilities_en: this.compound.facilities_en ?? null,
       facts:         this.compound.facts ?? null,
       delivered_since: this.compound.delivered_since ?? null,
+      latitude:     this.compound.latitude == null ? null : Number(this.compound.latitude),
+      longitude:    this.compound.longitude == null ? null : Number(this.compound.longitude),
+      master_plan:  this.compound.master_plan ?? null,
+      brochure_url: this.compound.brochure_url ?? null,
+      faqs:         this.compound.faqs ? this.compound.faqs.map(f => ({ ...f })) : null,
+      aliases:      this.compound.aliases ? [...this.compound.aliases] : null,
       name_ar:    this.compound.name_ar,
       name_en:    this.compound.name_en,
       desc_ar:    this.compound.desc_ar ?? '',

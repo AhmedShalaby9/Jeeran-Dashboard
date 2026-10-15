@@ -16,6 +16,10 @@ export interface Developer {
   is_active:  boolean;
   is_verified?: boolean;
   verified_at?: string | null;
+  /** Shown first in the app's developer lists. */
+  is_top?: boolean;
+  /** Reference id from the source the developer was imported from. */
+  nawy_id?: number | null;
   followers_count?: number;
   cover_image?: string | null;
   founded_year?: number | null;
@@ -43,6 +47,7 @@ export interface CreateDeveloperDto {
   linkedin?:  string | null;
   is_active?: boolean;
   is_verified?: boolean;
+  is_top?: boolean;
   cover_image?: string | null;
   founded_year?: number | null;
   stock_listing?: string | null;

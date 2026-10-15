@@ -32,6 +32,7 @@ export class DeveloperFormComponent {
     linkedin:  '',
     is_active: true,
     is_verified: false,
+    is_top: false,
     cover_image: null,
     founded_year: null,
     stock_listing: '',

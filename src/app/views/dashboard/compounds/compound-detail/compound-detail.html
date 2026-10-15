@@ -138,6 +138,120 @@
 
         <div class="detail-divider"></div>
 
+        <!-- Description -->
+        <div class="detail-section" *ngIf="compound.desc_en || compound.desc_ar">
+          <h2 class="section-title">Description</h2>
+          <div class="desc-pair">
+            <div *ngIf="compound.desc_en">
+              <span class="info-label">English</span>
+              <p class="desc-text">{{ compound.desc_en }}</p>
+            </div>
+            <div *ngIf="compound.desc_ar">
+              <span class="info-label">Arabic</span>
+              <p class="desc-text" dir="rtl">{{ compound.desc_ar }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider" *ngIf="compound.desc_en || compound.desc_ar"></div>
+
+        <!-- Reference & location -->
+        <div class="detail-section">
+          <h2 class="section-title">Reference &amp; location</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Reference #</span>
+              <span class="info-value">{{ compound.nawy_id ? '#' + compound.nawy_id : 'Added by hand' }}</span>
+            </div>
+            <div class="info-item" *ngIf="compound.additional_info?.source?.url">
+              <span class="info-label">Source</span>
+              <a class="info-value info-link" [href]="compound.additional_info!.source!.url" target="_blank" rel="noopener">
+                Open source page{{ compound.additional_info!.source!.scraped_at ? ' (scraped ' + compound.additional_info!.source!.scraped_at + ')' : '' }}
+              </a>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Area</span>
+              <span class="info-value">
+                {{ compound.area?.name_en || '—' }}{{ compound.additional_info?.location?.parent_area_en ? ' · ' + compound.additional_info!.location!.parent_area_en : '' }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Coordinates</span>
+              <span class="info-value" *ngIf="compound.latitude && compound.longitude">{{ +compound.latitude | number:'1.4-6' }}, {{ +compound.longitude | number:'1.4-6' }}</span>
+              <span class="info-value" *ngIf="!compound.latitude || !compound.longitude">—</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Area outline</span>
+              <span class="info-value">{{ boundaryPoints() ? boundaryPoints() + ' points' : '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Brochure</span>
+              <a class="info-value info-link" *ngIf="compound.brochure_url" [href]="compound.brochure_url" target="_blank" rel="noopener">Open brochure</a>
+              <span class="info-value" *ngIf="!compound.brochure_url">—</span>
+            </div>
+          </div>
+
+          <div class="ref-block" *ngIf="compound.aliases?.length">
+            <span class="info-label">Also known as</span>
+            <div class="chip-row">
+              <span class="alias-chip" *ngFor="let a of compound.aliases" [attr.dir]="isArabic(a) ? 'rtl' : 'ltr'">{{ a }}</span>
+            </div>
+          </div>
+
+          <div class="ref-block" *ngIf="compound.master_plan">
+            <span class="info-label">Master plan</span>
+            <div class="main-image-view"><img [src]="compound.master_plan" alt="master plan" /></div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
+        <!-- Market snapshot -->
+        <div class="detail-section" *ngIf="compound.additional_info?.market || compound.additional_info?.property_types?.length">
+          <h2 class="section-title">Market snapshot</h2>
+          <p class="promo-note" *ngIf="compound.additional_info?.market">
+            From the source on {{ compound.additional_info!.market!.as_of || '—' }}. Reference only — not a live price. Live prices come from the listings.
+          </p>
+          <div class="info-grid" *ngIf="compound.additional_info?.market">
+            <div class="info-item" *ngIf="compound.additional_info!.market!.resale_starting_price">
+              <span class="info-label">Resale from</span>
+              <span class="info-value">{{ compound.additional_info!.market!.resale_starting_price | number }} {{ compound.additional_info!.market!.currency }}</span>
+            </div>
+            <div class="info-item" *ngIf="compound.additional_info!.market!.developer_starting_price">
+              <span class="info-label">Developer from</span>
+              <span class="info-value">{{ compound.additional_info!.market!.developer_starting_price | number }} {{ compound.additional_info!.market!.currency }}</span>
+            </div>
+          </div>
+          <div class="ref-block" *ngIf="compound.additional_info?.property_types?.length">
+            <span class="info-label">Unit types on the source</span>
+            <div class="chip-row">
+              <span class="alias-chip" *ngFor="let t of compound.additional_info!.property_types">{{ t.type }} · {{ t.count }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider" *ngIf="compound.additional_info?.market || compound.additional_info?.property_types?.length"></div>
+
+        <!-- FAQs -->
+        <div class="detail-section">
+          <h2 class="section-title">FAQs ({{ compound.faqs?.length || 0 }})</h2>
+          <p class="promo-empty" *ngIf="!compound.faqs?.length">No questions yet. Add some in Edit — the assistant answers from them.</p>
+          <div class="faq-card" *ngFor="let f of compound.faqs">
+            <div class="faq-pair">
+              <div>
+                <p class="faq-q">{{ f.question_en }}</p>
+                <p class="faq-a">{{ f.answer_en }}</p>
+              </div>
+              <div dir="rtl">
+                <p class="faq-q">{{ f.question_ar || '—' }}</p>
+                <p class="faq-a">{{ f.answer_ar || '—' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="detail-divider"></div>
+
         <!-- Main Image -->
         <div class="detail-section" *ngIf="compound.main_image">
           <h2 class="section-title">Main Image</h2>
@@ -451,6 +565,12 @@
 
         <div class="form-section">
           <app-compound-profile-fields [form]="editForm"></app-compound-profile-fields>
+        </div>
+
+        <div class="form-divider"></div>
+
+        <div class="form-section">
+          <app-compound-reference-fields [form]="editForm"></app-compound-reference-fields>
         </div>
 
         <div class="form-divider"></div>

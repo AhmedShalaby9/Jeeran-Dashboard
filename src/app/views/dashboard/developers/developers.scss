@@ -126,3 +126,21 @@ $border:    #e5e7eb;
 }
 
 .badge.badge-verified { background: #e0f2ec; color: #137a55; margin-left: 0.35rem; }
+
+// ── search + filters + pages ──
+.list-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin: 0 0 1.2rem; }
+.search-box {
+  flex: 1 1 280px; min-width: 220px; padding: 0.6rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 0.88rem; font-family: inherit; background: #fff; outline: none;
+  &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip { border: 1.5px solid #e5e7eb; background: #fff; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; color: #4b5563; cursor: pointer; font-family: inherit;
+  &.on { background: #1e3a6e; border-color: #1e3a6e; color: #fff; }
+  &:disabled { opacity: 0.45; cursor: default; }
+  .chip-n { opacity: 0.65; margin-left: 0.25rem; font-weight: 500; }
+}
+.result-count { font-size: 0.8rem; color: #6b7280; margin-left: auto; }
+.badge-top { background: #fef3c7; color: #92400e; }
+.badge-ref { background: #eef1f9; color: #1e3a6e; }
+.pager { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1.4rem 0; }
+.pager-info { font-size: 0.85rem; color: #6b7280; }

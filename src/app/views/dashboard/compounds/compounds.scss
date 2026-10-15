@@ -146,3 +146,27 @@ $border:    #e5e7eb;
 .follow-count { margin-left: 0.5rem; font-size: 0.72rem; color: #6b7280; }
 
 .launch-chip.offer { background: #e0e7ff; color: #3730a3; }
+
+// ── search + filters ──
+.list-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 0.7rem; margin: 0 0 1.2rem; }
+.search-box, .area-select {
+  padding: 0.6rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 10px; font-size: 0.88rem; font-family: inherit; background: #fff; outline: none;
+  &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
+}
+.search-box { flex: 1 1 280px; min-width: 220px; }
+.filter-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.chip { border: 1.5px solid #e5e7eb; background: #fff; border-radius: 999px; padding: 0.3rem 0.8rem; font-size: 0.78rem; font-weight: 600; color: #4b5563; cursor: pointer; font-family: inherit;
+  &.on { background: #1e3a6e; border-color: #1e3a6e; color: #fff; }
+  .chip-n { opacity: 0.65; margin-left: 0.25rem; font-weight: 500; }
+}
+.result-count { font-size: 0.8rem; color: #6b7280; margin-left: auto; }
+.badge-ref { background: #eef1f9; color: #1e3a6e; }
+.card-area { margin: 0.2rem 0 0.5rem; font-size: 0.8rem; color: #6b7280; }
+.card-flags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.4rem 0 0.6rem; }
+.flag { font-size: 0.68rem; font-weight: 700; padding: 0.12rem 0.45rem; border-radius: 6px; background: #dcfce7; color: #166534; &.off { background: #f3f4f6; color: #9ca3af; } }
+
+.pager { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1rem; margin: 1.4rem 0; }
+.pager-info { font-size: 0.85rem; color: #6b7280; }
+.pager .chip:disabled { opacity: 0.45; cursor: default; }
+.per-page { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
+.link-btn { border: 0; background: none; color: #1e3a6e; font-weight: 600; font-size: 0.8rem; cursor: pointer; margin-left: 0.4rem; padding: 0; font-family: inherit; text-decoration: underline; }

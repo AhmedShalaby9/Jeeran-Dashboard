@@ -19,9 +19,20 @@
     <p>Loading developers...</p>
   </div>
 
+  <div class="list-tools" *ngIf="!isLoading && developers.length">
+    <input class="search-box" type="search" [(ngModel)]="search" (ngModelChange)="reset()" name="search"
+      placeholder="Search by name, email or website…" />
+    <div class="filter-chips">
+      <button type="button" class="chip" *ngFor="let f of filters" [class.on]="filter === f.id" (click)="filter = f.id; reset()">
+        {{ f.label }} <span class="chip-n">{{ count(f.id) }}</span>
+      </button>
+    </div>
+    <span class="result-count">{{ filtered.length }} of {{ developers.length }}</span>
+  </div>
+
   <div class="developers-grid" *ngIf="!isLoading">
 
-    <div class="developer-card" *ngFor="let item of developers" (click)="goToDetail(item.id)">
+    <div class="developer-card" *ngFor="let item of pageItems" (click)="goToDetail(item.id)">
 
       <div class="card-cover">
         <img *ngIf="item.logo" [src]="item.logo" [alt]="item.name_en || item.name_ar" class="cover-logo" />
@@ -40,6 +51,8 @@
             {{ item.is_active ? 'Active' : 'Inactive' }}
           </span>
           <span class="badge badge-verified" *ngIf="item.is_verified">Verified</span>
+          <span class="badge badge-top" *ngIf="item.is_top">Top</span>
+          <span class="badge badge-ref" *ngIf="item.nawy_id" title="Imported — reference id">Ref #{{ item.nawy_id }}</span>
           <span class="card-date">{{ item.created_at | date:'mediumDate' }}</span>
         </div>
 
@@ -69,6 +82,11 @@
 
     </div>
 
+    <div class="empty-state" *ngIf="developers.length > 0 && filtered.length === 0">
+      <p>No developer matches.</p>
+      <button class="btn-primary" (click)="search = ''; filter = 'all'; reset()">Clear search</button>
+    </div>
+
     <div class="empty-state" *ngIf="developers.length === 0">
       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
@@ -79,6 +97,12 @@
       <button class="btn-primary" (click)="goToNew()">Create First Developer</button>
     </div>
 
+  </div>
+
+  <div class="pager" *ngIf="!isLoading && totalPages > 1">
+    <button type="button" class="chip" [disabled]="page <= 1" (click)="go(page - 1)">‹ Previous</button>
+    <span class="pager-info">Page {{ page }} of {{ totalPages }}</span>
+    <button type="button" class="chip" [disabled]="page >= totalPages" (click)="go(page + 1)">Next ›</button>
   </div>
 
 </div>

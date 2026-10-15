@@ -14,7 +14,11 @@ export type PropertyType =
   | 'townhouse'
   | 'duplex'
   | 'studio'
-  | 'land';
+  | 'land'
+  | 'penthouse'
+  | 'loft'
+  | 'cabin'
+  | 'family_house';
 
 export type PropertyStatus =
   | 'for_sale'
@@ -41,6 +45,10 @@ export const PROPERTY_TYPE_LABELS: Record<PropertyType, { en: string; ar: string
   duplex:           { en: 'Duplex',           ar: 'دوبلكس'        },
   studio:           { en: 'Studio',           ar: 'استوديو'       },
   land:             { en: 'Land',             ar: 'أرض'           },
+  penthouse:        { en: 'Penthouse',        ar: 'بنتهاوس'       },
+  loft:             { en: 'Loft',             ar: 'لوفت'          },
+  cabin:            { en: 'Cabin',            ar: 'كابينة'        },
+  family_house:     { en: 'Family House',     ar: 'بيت عائلي'     },
 };
 
 export const PROPERTY_STATUS_LABELS: Record<PropertyStatus, { en: string; ar: string }> = {

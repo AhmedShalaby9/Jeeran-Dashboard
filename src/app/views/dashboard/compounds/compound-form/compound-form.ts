@@ -9,6 +9,7 @@ import { Developer } from '../../../../core/models/developer.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 import { TranslationService } from '../../../../core/services/translation.service';
 import { CompoundProfileFieldsComponent } from '../../../../shared/components/compound-profile-fields/compound-profile-fields';
+import { CompoundReferenceFieldsComponent } from '../../../../shared/components/compound-reference-fields/compound-reference-fields';
 import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
 import { AreaService } from '../../../../core/services/area.service';
 import { Area } from '../../../../core/models/area.model';
@@ -16,7 +17,7 @@ import { Area } from '../../../../core/models/area.model';
 @Component({
   selector: 'app-compound-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, ListingAttributesFieldsComponent, CompoundProfileFieldsComponent, CompoundReferenceFieldsComponent],
   templateUrl: './compound-form.html',
   styleUrl: './compound-form.scss',
 })
@@ -37,6 +38,12 @@ export class CompoundFormComponent {
     facilities_en: null,
     facts: null,
     delivered_since: null,
+    latitude: null,
+    longitude: null,
+    master_plan: null,
+    brochure_url: null,
+    faqs: null,
+    aliases: null,
     name_ar:    '',
     name_en:    '',
     desc_ar:    '',

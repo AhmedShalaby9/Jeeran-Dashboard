@@ -12,6 +12,23 @@ export interface CompoundFeature {
   images:      string[];
 }
 
+/** A question and answer, in both languages (the assistant and the app read these). */
+export interface CompoundFaq {
+  question_en: string;
+  answer_en:   string;
+  question_ar: string | null;
+  answer_ar:   string | null;
+}
+
+/** What the importer keeps in additional_info (all optional: hand-made compounds have none of it). */
+export interface CompoundAdditionalInfo {
+  source?:         { name?: string; id?: number; url?: string; scraped_at?: string };
+  location?:       { area_en?: string; parent_area_en?: string | null };
+  market?:         { as_of?: string; currency?: string; developer_starting_price?: number | null; resale_starting_price?: number | null; note?: string };
+  property_types?: { type: string; count: number }[];
+  [key: string]:   unknown;
+}
+
 export interface CompoundDeveloper {
   id:       number;
   name_ar:  string;
@@ -35,6 +52,18 @@ export interface Compound extends ListingAttributes {
   facilities_en?: string[] | null;
   facts?: Record<string, string>[] | null;
   delivered_since?: number | null;
+  /** Reference id from the source the compound was imported from; unique. */
+  nawy_id?:      number | null;
+  latitude?:     number | string | null;
+  longitude?:    number | string | null;
+  /** GeoJSON polygon of the compound's boundary (kept for a later map). */
+  boundary?:     { type: string; coordinates: unknown } | null;
+  master_plan?:  string | null;
+  brochure_url?: string | null;
+  faqs?:         CompoundFaq[] | null;
+  /** Other spellings of the name, typed or spoken. */
+  aliases?:      string[] | null;
+  additional_info?: CompoundAdditionalInfo | null;
   name_ar:     string;
   name_en:     string;
   desc_ar:     string | null;
@@ -63,6 +92,12 @@ export interface CreateCompoundDto extends ListingAttributes {
   facilities_en?: string[] | null;
   facts?: Record<string, string>[] | null;
   delivered_since?: number | null;
+  latitude?:     number | null;
+  longitude?:    number | null;
+  master_plan?:  string | null;
+  brochure_url?: string | null;
+  faqs?:         CompoundFaq[] | null;
+  aliases?:      string[] | null;
 }
 
 export interface CompoundResponse {

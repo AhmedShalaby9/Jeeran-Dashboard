@@ -74,6 +74,14 @@
               </span>
             </div>
             <div class="info-item">
+              <span class="info-label">Top developer</span>
+              <span class="info-value">{{ developer.is_top ? 'Yes — listed first in the app' : 'No' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Reference #</span>
+              <span class="info-value">{{ developer.nawy_id ? '#' + developer.nawy_id : 'Added by hand' }}</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Verified</span>
               <span class="info-value">{{ developer.is_verified ? 'Yes' + (developer.verified_at ? ' · ' + (developer.verified_at | date:'mediumDate') : '') : 'No' }}</span>
             </div>
@@ -353,6 +361,12 @@
             <label class="checkbox-label">
               <input type="checkbox" [(ngModel)]="editForm.is_verified" name="is_verified" />
               <span>Verified (shows a green shield in the app — tick only after checking the commercial register and delivery record)</span>
+            </label>
+          </div>
+          <div class="form-group check-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="editForm.is_top" name="is_top" />
+              <span>Top developer (listed first in the app's developer lists)</span>
             </label>
           </div>
         </div>

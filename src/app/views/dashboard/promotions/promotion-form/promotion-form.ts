@@ -44,7 +44,7 @@ export class PromotionFormComponent implements OnInit {
   creatingUnit = false;
   newUnitError = '';
   newUnit = { title: '', property_type: 'chalet', bedrooms: null as number | null, bathrooms: null as number | null, size: null as number | null, price: null as number | null };
-  readonly unitTypes = ['chalet', 'villa', 'apartment', 'townhouse', 'twinhouse', 'duplex', 'studio', 'marina_apartment', 'shop', 'office', 'clinic', 'land'];
+  readonly unitTypes = ['chalet', 'villa', 'apartment', 'townhouse', 'twinhouse', 'duplex', 'studio', 'marina_apartment', 'shop', 'office', 'clinic', 'land', 'penthouse', 'loft', 'cabin', 'family_house'];
 
   constructor(
     private route: ActivatedRoute,
