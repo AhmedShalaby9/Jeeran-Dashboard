@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Compound, CreateCompoundDto, CompoundResponse } from '../models/compound.model';
+import { Compound, CreateCompoundDto, CompoundResponse, CompoundPage, CompoundListQuery, CompoundListMeta } from '../models/compound.model';
 import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
@@ -22,6 +22,21 @@ export class CompoundService {
     if (active !== undefined) params = params.set('active', String(active));
     if (developerId !== undefined) params = params.set('developer_id', String(developerId));
     return this.http.get<CompoundResponse>(this.url, { headers: this.headers(), params });
+  }
+
+  /** One page of compounds, searched / filtered / sorted by the server. */
+  getPage(query: CompoundListQuery): Observable<CompoundPage> {
+    let params = new HttpParams().set('page', String(query.page)).set('limit', String(query.limit));
+    if (query.q?.trim()) params = params.set('q', query.q.trim());
+    if (query.sort) params = params.set('sort', query.sort);
+    if (query.filter && query.filter !== 'all') params = params.set('filter', query.filter);
+    if (query.developerId !== undefined && query.developerId !== '') params = params.set('developer_id', String(query.developerId));
+    if (query.areaId !== undefined && query.areaId !== '') params = params.set('area_id', String(query.areaId));
+    return this.http.get<CompoundPage>(`${this.url}/admin/list`, { headers: this.headers(), params });
+  }
+
+  getListMeta(): Observable<{ success: boolean; data: CompoundListMeta }> {
+    return this.http.get<{ success: boolean; data: CompoundListMeta }>(`${this.url}/admin/meta`, { headers: this.headers() });
   }
 
   getById(id: number): Observable<{ success: boolean; data: Compound }> {

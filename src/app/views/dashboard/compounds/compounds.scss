@@ -170,3 +170,14 @@ $border:    #e5e7eb;
 .pager .chip:disabled { opacity: 0.45; cursor: default; }
 .per-page { padding: 0.3rem 0.7rem; font-size: 0.8rem; }
 .link-btn { border: 0; background: none; color: #1e3a6e; font-weight: 600; font-size: 0.8rem; cursor: pointer; margin-left: 0.4rem; padding: 0; font-family: inherit; text-decoration: underline; }
+
+.compounds-grid.refreshing { opacity: 0.55; pointer-events: none; transition: opacity 0.15s; }
+.load-failed { text-align: center; padding: 2.5rem 1rem; color: #6b7280; p { margin-bottom: 0.8rem; } }
+.compound-card.skeleton { cursor: default; pointer-events: none; }
+.sk-block, .sk-line {
+  background: linear-gradient(90deg, #eef1f6 25%, #f7f9fc 50%, #eef1f6 75%); background-size: 200% 100%; animation: sk-shine 1.2s infinite linear;
+}
+.sk-block { min-height: 150px; }
+.sk-line { height: 12px; border-radius: 6px; margin: 0.55rem 0;
+  &.w40 { width: 40%; } &.w60 { width: 60%; } &.w70 { width: 70%; } &.w80 { width: 80%; } }
+@keyframes sk-shine { to { background-position: -200% 0; } }

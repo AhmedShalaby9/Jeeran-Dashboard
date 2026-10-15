@@ -14,13 +14,8 @@
     </button>
   </div>
 
-  <div class="loading-state" *ngIf="isLoading">
-    <div class="spinner-lg"></div>
-    <p>Loading compounds...</p>
-  </div>
-
-  <div class="list-tools" *ngIf="!isLoading && compounds.length">
-    <input class="search-box" type="search" [(ngModel)]="search" (ngModelChange)="reset()" name="search"
+  <div class="list-tools" *ngIf="!isLoading || meta">
+    <input class="search-box" type="search" [(ngModel)]="search" (ngModelChange)="onSearchInput()" name="search"
       placeholder="Search by name, developer, area, other name or ref #…" />
     <select class="area-select" [(ngModel)]="developerId" (ngModelChange)="reset()" name="developer">
       <option value="">All developers</option>
@@ -39,14 +34,29 @@
       </button>
     </div>
     <span class="result-count">
-      {{ filtered.length }} of {{ compounds.length }}
+      {{ from }}–{{ to }} of {{ total }}
       <button type="button" class="link-btn" *ngIf="hasFilters" (click)="clearFilters()">Clear</button>
     </span>
   </div>
 
-  <div class="compounds-grid" *ngIf="!isLoading">
+  <div class="load-failed" *ngIf="failed && !isLoading">
+    <p>Couldn't load compounds.</p>
+    <button class="btn-primary" (click)="retry()">Try again</button>
+  </div>
 
-    <div class="compound-card" *ngFor="let item of pageItems" (click)="goToDetail(item.id)">
+  <!-- first load: the page's shape while the first 20 arrive -->
+  <div class="compounds-grid" *ngIf="isLoading" aria-busy="true">
+    <div class="compound-card skeleton" *ngFor="let _ of placeholders">
+      <div class="card-cover sk-block"></div>
+      <div class="card-body">
+        <div class="sk-line w40"></div><div class="sk-line w80"></div><div class="sk-line w60"></div><div class="sk-line w70"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="compounds-grid" *ngIf="!isLoading && !failed" [class.refreshing]="isRefreshing">
+
+    <div class="compound-card" *ngFor="let item of compounds" (click)="goToDetail(item.id)">
 
       <!-- Cover image: main_image → gallery[0] → placeholder -->
       <div class="card-cover">
@@ -116,12 +126,12 @@
 
     </div>
 
-    <div class="empty-state" *ngIf="compounds.length > 0 && filtered.length === 0">
+    <div class="empty-state" *ngIf="total === 0 && hasFilters">
       <p>No compound matches.</p>
       <button class="btn-primary" (click)="clearFilters()">Clear filters</button>
     </div>
 
-    <div class="empty-state" *ngIf="compounds.length === 0">
+    <div class="empty-state" *ngIf="total === 0 && !hasFilters">
       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
         stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
@@ -133,7 +143,7 @@
 
   </div>
 
-  <div class="pager" *ngIf="!isLoading && filtered.length > 0">
+  <div class="pager" *ngIf="!isLoading && !failed && total > 0">
     <button type="button" class="chip" [disabled]="page <= 1" (click)="go(page - 1)">‹ Previous</button>
     <span class="pager-info">Page {{ page }} of {{ totalPages }}</span>
     <button type="button" class="chip" [disabled]="page >= totalPages" (click)="go(page + 1)">Next ›</button>

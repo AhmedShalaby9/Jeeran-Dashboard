@@ -104,3 +104,31 @@ export interface CompoundResponse {
   success: boolean;
   data: Compound[];
 }
+
+/** One page of the dashboard list (the server searches, filters, sorts and pages). */
+export interface CompoundPage extends CompoundResponse {
+  total: number;
+  page:  number;
+  limit: number;
+  pages: number;
+}
+
+export type CompoundFilter = 'all' | 'active' | 'inactive' | 'imported' | 'launch' | 'offer' | 'with-units' | 'no-units' | 'no-image' | 'no-arabic' | 'no-pin';
+export type CompoundSort = 'newest' | 'oldest' | 'name-az' | 'name-za' | 'units' | 'followers' | 'price-low' | 'price-high';
+
+export interface CompoundListQuery {
+  page:         number;
+  limit:        number;
+  q?:           string;
+  sort?:        CompoundSort;
+  filter?:      CompoundFilter;
+  developerId?: number | '';
+  areaId?:      number | '';
+}
+
+/** What the list's chips and dropdowns need (counts over all compounds, areas and developers that have one). */
+export interface CompoundListMeta {
+  counts:     Record<CompoundFilter, number>;
+  areas:      { id: number; name: string }[];
+  developers: { id: number; name: string }[];
+}
