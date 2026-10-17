@@ -1,6 +1,7 @@
 // MODEL — defines the shape of user data
 
-export type UserType = 'buyer' | 'seller' | 'admin' | 'super_admin';
+/** A customer browses, buys and lists (there are no separate buyers and sellers); admins run the platform. */
+export type UserType = 'customer' | 'admin' | 'super_admin';
 
 export type AuthProvider = 'phone' | 'google' | 'apple';
 

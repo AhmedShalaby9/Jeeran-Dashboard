@@ -23,7 +23,7 @@ export const BANNER_TARGETS: { value: BannerTarget; label: string }[] = [
   { value: 'developer',     label: 'Developer' },
   { value: 'news',          label: 'News article' },
   { value: 'ai_ads',        label: 'AI ads screen' },
-  { value: 'seller_signup', label: 'Seller sign-up' },
+  { value: 'seller_signup', label: 'Add a property' },
 ];
 
 /** Targets that point at a record and therefore need target_id. */

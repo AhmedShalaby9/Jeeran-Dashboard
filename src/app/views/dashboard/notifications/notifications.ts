@@ -85,7 +85,7 @@ export class NotificationsComponent implements OnInit {
     { value: 'single_user',        label: 'Single User'         },
   ];
 
-  readonly userTypes = ['buyer', 'seller', 'admin'];
+  readonly userTypes = ['customer', 'admin'];
 
   form: ComposeForm = this.blankForm();
 

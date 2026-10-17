@@ -132,8 +132,8 @@
                 {{ user.is_active ? 'Active' : 'Inactive' }}
               </span>
             </div>
-            <div class="info-item" *ngIf="user.user_type === 'seller'">
-              <span class="info-label">Verified seller</span>
+            <div class="info-item" *ngIf="user.user_type === 'customer'">
+              <span class="info-label">Verified lister</span>
               <span class="info-value">
                 <span class="badge" [class.badge-active]="user.seller_verified" [class.badge-inactive]="!user.seller_verified">
                   {{ user.seller_verified ? 'Verified' : 'Not verified' }}
