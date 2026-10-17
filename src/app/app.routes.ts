@@ -23,6 +23,7 @@ import { PropertiesComponent } from './views/dashboard/properties/properties';
 import { PropertyFormComponent } from './views/dashboard/properties/property-form/property-form';
 import { PropertyDetailComponent } from './views/dashboard/properties/property-detail/property-detail';
 import { PropertyApprovalsComponent } from './views/dashboard/properties/property-approvals/property-approvals';
+import { CallRequestsComponent } from './views/dashboard/call-requests/call-requests';
 import { SellerRequestsComponent } from './views/dashboard/seller-requests/seller-requests';
 import { SellerRequestDetailComponent } from './views/dashboard/seller-requests/seller-request-detail/seller-request-detail';
 import { ChatComponent } from './views/dashboard/chat/chat';
@@ -94,6 +95,7 @@ export const routes: Routes = [
       { path: 'properties/:id',          component: PropertyDetailComponent },
 
       // Seller Requests
+      { path: 'call-requests',       component: CallRequestsComponent },
       { path: 'seller-requests',     component: SellerRequestsComponent },
       { path: 'seller-requests/:id', component: SellerRequestDetailComponent },
 
