@@ -2,9 +2,33 @@
   <p class="pf-hint">All optional — anything left empty is simply not shown on the property page.</p>
 
   <div class="pf-grid">
-    <label class="pf-field">
+    <label class="pf-field" *ngIf="asksLand">
+      <span>Land area (m²)</span>
+      <input class="pf-input" type="number" min="0" [(ngModel)]="form.land_size" name="land_size" placeholder="400" />
+    </label>
+    <label class="pf-field" *ngIf="asksGardenChoice">
+      <span>Ground floor with a garden?</span>
+      <select class="pf-input" [(ngModel)]="form.has_garden" (ngModelChange)="onGardenChoice()" name="has_garden">
+        <option [ngValue]="null">Not said</option>
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </label>
+    <label class="pf-field" *ngIf="showGardenSize">
       <span>Garden (m²)</span>
       <input class="pf-input" type="number" min="0" [(ngModel)]="form.garden_size" name="garden_size" placeholder="46" />
+    </label>
+    <label class="pf-field" *ngIf="asksOutdoor">
+      <span>Outdoor area?</span>
+      <select class="pf-input" [(ngModel)]="form.has_outdoor" (ngModelChange)="onOutdoorChoice()" name="has_outdoor">
+        <option [ngValue]="null">Not said</option>
+        <option [ngValue]="true">Yes</option>
+        <option [ngValue]="false">No</option>
+      </select>
+    </label>
+    <label class="pf-field" *ngIf="asksOutdoor && form.has_outdoor === true">
+      <span>Outdoor area (m²)</span>
+      <input class="pf-input" type="number" min="0" [(ngModel)]="form.outdoor_size" name="outdoor_size" placeholder="30" />
     </label>
     <label class="pf-field">
       <span>Level (English)</span>

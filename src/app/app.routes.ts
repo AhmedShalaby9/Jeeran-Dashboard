@@ -24,6 +24,7 @@ import { PropertyFormComponent } from './views/dashboard/properties/property-for
 import { PropertyDetailComponent } from './views/dashboard/properties/property-detail/property-detail';
 import { PropertyApprovalsComponent } from './views/dashboard/properties/property-approvals/property-approvals';
 import { CallRequestsComponent } from './views/dashboard/call-requests/call-requests';
+import { SavedRequestsComponent } from './views/dashboard/saved-requests/saved-requests';
 import { ChatComponent } from './views/dashboard/chat/chat';
 import { VoiceComponent } from './views/dashboard/voice/voice';
 import { ChatDetailComponent } from './views/dashboard/chat/chat-detail/chat-detail';
@@ -93,6 +94,7 @@ export const routes: Routes = [
       { path: 'properties/:id',          component: PropertyDetailComponent },
 
       { path: 'call-requests',       component: CallRequestsComponent },
+      { path: 'saved-requests',      component: SavedRequestsComponent },
 
       // Ads
       { path: 'ads',               component: AdsComponent },

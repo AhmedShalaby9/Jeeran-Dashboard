@@ -157,6 +157,18 @@
                 <span class="info-label">Reference</span>
                 <span class="info-value">{{ property.reference_code || '—' }}</span>
               </div>
+              <div class="info-item" *ngIf="property.land_size">
+                <span class="info-label">Land area</span>
+                <span class="info-value">{{ property.land_size }} m²</span>
+              </div>
+              <div class="info-item" *ngIf="property.has_garden !== null && property.has_garden !== undefined">
+                <span class="info-label">Ground floor with garden</span>
+                <span class="info-value">{{ property.has_garden ? 'Yes' : 'No' }}</span>
+              </div>
+              <div class="info-item" *ngIf="property.has_outdoor !== null && property.has_outdoor !== undefined">
+                <span class="info-label">Outdoor area</span>
+                <span class="info-value">{{ property.has_outdoor ? 'Yes' : 'No' }}<ng-container *ngIf="property.outdoor_size"> · {{ property.outdoor_size }} m²</ng-container></span>
+              </div>
               <div class="info-item" *ngIf="property.garden_size">
                 <span class="info-label">Garden</span>
                 <span class="info-value">{{ property.garden_size }} m²</span>

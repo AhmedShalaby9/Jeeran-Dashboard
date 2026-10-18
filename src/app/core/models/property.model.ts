@@ -100,6 +100,10 @@ export interface Property {
   features?:             Amenity[] | null;
   effective?:            EffectiveAttributes;
   garden_size?:     number | null;
+  has_garden?:      boolean | null;
+  land_size?:       number | null;
+  has_outdoor?:     boolean | null;
+  outdoor_size?:    number | null;
   level_ar?:        string | null;
   level_en?:        string | null;
   floor_plan?:      string | null;
@@ -155,6 +159,10 @@ export interface CreatePropertyDto {
   features?:             Amenity[] | null;
   images:           string[];
   garden_size?:     number | null;
+  has_garden?:      boolean | null;
+  land_size?:       number | null;
+  has_outdoor?:     boolean | null;
+  outdoor_size?:    number | null;
   level_ar?:        string | null;
   level_en?:        string | null;
   floor_plan?:      string | null;
