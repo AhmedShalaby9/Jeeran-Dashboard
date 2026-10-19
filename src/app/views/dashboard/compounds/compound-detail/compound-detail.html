@@ -202,6 +202,24 @@
             <span class="info-label">Master plan</span>
             <div class="main-image-view"><img [src]="compound.master_plan" alt="master plan" /></div>
           </div>
+
+          <div class="ref-block" data-test="plan-overlay">
+            <span class="info-label">Plan on the map</span>
+            <p class="promo-note">Drawn over the satellite map in the app. Pick the three files of the georeferenced plan together: <b>.tif</b>, <b>.tfw</b> and <b>.prj</b>. The plan is placed from them automatically.</p>
+            <div class="main-image-view" *ngIf="compound.plan_overlay_url"><img [src]="compound.plan_overlay_url" alt="plan on the map" /></div>
+            <p class="promo-note" *ngIf="compound.plan_bounds">Placed at {{ compound.plan_bounds[1] | number:'1.4-4' }}, {{ compound.plan_bounds[0] | number:'1.4-4' }} → {{ compound.plan_bounds[3] | number:'1.4-4' }}, {{ compound.plan_bounds[2] | number:'1.4-4' }}</p>
+            <div class="chip-row">
+              <span class="alias-chip">.tif: {{ planFiles.tif?.name || '—' }}</span>
+              <span class="alias-chip">.tfw: {{ planFiles.tfw?.name || '—' }}</span>
+              <span class="alias-chip">.prj: {{ planFiles.prj?.name || '—' }}</span>
+            </div>
+            <div class="chip-row">
+              <label class="btn-add">Choose files<input type="file" multiple accept=".tif,.tiff,.tfw,.prj" hidden (change)="pickPlanFiles($event)" /></label>
+              <button type="button" class="btn-add" [disabled]="!planReady || planBusy" (click)="uploadPlan()">{{ planBusy ? 'Uploading…' : (compound.plan_overlay_url ? 'Replace plan' : 'Upload plan') }}</button>
+              <button type="button" class="btn-add" *ngIf="compound.plan_overlay_url" [disabled]="planBusy" (click)="removePlan()">Remove plan</button>
+            </div>
+            <p class="promo-note" *ngIf="planError" style="color:#c0392b">{{ planError }}</p>
+          </div>
         </div>
 
         <div class="detail-divider"></div>

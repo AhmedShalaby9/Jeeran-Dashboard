@@ -59,6 +59,9 @@ export interface Compound extends ListingAttributes {
   /** GeoJSON polygon of the compound's boundary (kept for a later map). */
   boundary?:     { type: string; coordinates: unknown } | null;
   master_plan?:  string | null;
+  /** Georeferenced plan drawn on the app's map: web image + [west, south, east, north]. */
+  plan_overlay_url?: string | null;
+  plan_bounds?:  [number, number, number, number] | null;
   brochure_url?: string | null;
   faqs?:         CompoundFaq[] | null;
   /** Other spellings of the name, typed or spoken. */

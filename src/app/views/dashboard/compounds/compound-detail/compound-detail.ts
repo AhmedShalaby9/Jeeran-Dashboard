@@ -216,6 +216,50 @@ export class CompoundDetailComponent implements OnInit {
     return Array.isArray(c) ? c.flat(2).filter((p: unknown) => Array.isArray(p)).length || c.flat(1).length : 0;
   }
 
+  // ── Plan on the map (georeferenced .tif + .tfw + .prj) ──────────
+  planFiles: { tif: File | null; tfw: File | null; prj: File | null } = { tif: null, tfw: null, prj: null };
+  planBusy = false;
+  planError = '';
+
+  pickPlanFiles(ev: Event): void {
+    const input = ev.target as HTMLInputElement;
+    for (const f of Array.from(input.files ?? [])) {
+      const ext = f.name.split('.').pop()?.toLowerCase();
+      if (ext === 'tif' || ext === 'tiff') this.planFiles.tif = f;
+      else if (ext === 'tfw') this.planFiles.tfw = f;
+      else if (ext === 'prj') this.planFiles.prj = f;
+    }
+    input.value = '';
+    this.planError = '';
+  }
+
+  get planReady(): boolean { return !!(this.planFiles.tif && this.planFiles.tfw && this.planFiles.prj); }
+
+  uploadPlan(): void {
+    if (!this.compound || !this.planReady || this.planBusy) return;
+    this.planBusy = true;
+    this.planError = '';
+    const { tif, tfw, prj } = this.planFiles;
+    this.compoundService.uploadPlanOverlay(this.compound.id, tif!, tfw!, prj!).subscribe({
+      next: (res) => {
+        this.compound = { ...this.compound!, plan_overlay_url: res.data.plan_overlay_url, plan_bounds: res.data.plan_bounds };
+        this.planFiles = { tif: null, tfw: null, prj: null };
+        this.planBusy = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => { this.planBusy = false; this.planError = err.error?.message || 'Upload failed.'; this.cdr.detectChanges(); },
+    });
+  }
+
+  removePlan(): void {
+    if (!this.compound || this.planBusy) return;
+    this.planBusy = true;
+    this.compoundService.removePlanOverlay(this.compound.id).subscribe({
+      next: () => { this.compound = { ...this.compound!, plan_overlay_url: null, plan_bounds: null }; this.planBusy = false; this.cdr.detectChanges(); },
+      error: (err) => { this.planBusy = false; this.planError = err.error?.message || 'Could not remove it.'; this.cdr.detectChanges(); },
+    });
+  }
+
   isArabic(s: string): boolean { return /[؀-ۿ]/.test(s); }
 
   goToProperty(id: number): void { this.router.navigate(['/dashboard/properties', id]); }

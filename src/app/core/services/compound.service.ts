@@ -57,6 +57,19 @@ export class CompoundService {
     });
   }
 
+  /** The plan's three files (.tif + .tfw + .prj); the server converts them and works out where it sits. */
+  uploadPlanOverlay(id: number, tif: File, tfw: File, prj: File): Observable<{ success: boolean; data: { plan_overlay_url: string; plan_bounds: [number, number, number, number] } }> {
+    const body = new FormData();
+    body.append('tif', tif);
+    body.append('tfw', tfw);
+    body.append('prj', prj);
+    return this.http.put<any>(`${this.url}/${id}/plan-overlay`, body, { headers: this.headers() });
+  }
+
+  removePlanOverlay(id: number): Observable<{ success: boolean }> {
+    return this.http.delete<{ success: boolean }>(`${this.url}/${id}/plan-overlay`, { headers: this.headers() });
+  }
+
   remove(id: number): Observable<{ success: boolean; message: string }> {
     return this.http.delete<{ success: boolean; message: string }>(`${this.url}/${id}`, {
       headers: this.headers(),
