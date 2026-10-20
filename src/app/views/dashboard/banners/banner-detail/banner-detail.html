@@ -71,6 +71,17 @@
           <div class="detail-section">
             <h2 class="section-title">AI studio ad</h2>
 
+            <div class="facts" *ngIf="banner.cta_en || banner.cta_ar || banner.ai_image">
+              <div class="fact-row" *ngIf="banner.cta_en || banner.cta_ar">
+                <span class="tick">▸</span><span class="fact-label">Button</span>
+                <span class="fact-detail">{{ banner.cta_en }}<span *ngIf="banner.cta_en && banner.cta_ar"> · </span><span dir="rtl">{{ banner.cta_ar }}</span></span>
+              </div>
+              <div class="fact-row" *ngIf="banner.ai_image">
+                <span class="tick">✦</span><span class="fact-label">AI image</span>
+                <span class="fact-detail">Made from the uploaded photos. Buyers see an “AI image” mark.</span>
+              </div>
+            </div>
+
             <div class="paused-box" *ngIf="status === 'paused' && banner.ad_pause">
               <strong>Paused: a number this ad quotes has changed.</strong>
               <p>The ad is hidden from Explore until you approve the new number. Approving updates the matching text and puts it back on.</p>

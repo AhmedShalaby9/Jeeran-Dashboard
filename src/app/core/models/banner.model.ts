@@ -44,6 +44,11 @@ export interface Banner {
   caption_ar: string | null;
   sub_en: string | null;
   sub_ar: string | null;
+  /** The button on the banner ("See units"), written by the Ad studio. */
+  cta_en?: string | null;
+  cta_ar?: string | null;
+  /** The photo was made by the Ad studio's image model: buyers see an "AI image" mark. */
+  ai_image?: boolean;
   target_type: BannerTarget;
   target_id: number | null;
   sponsor_name: string | null;
