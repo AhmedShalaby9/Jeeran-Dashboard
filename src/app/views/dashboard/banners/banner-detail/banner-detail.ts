@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BannerService } from '../../../../core/services/banner.service';
-import { Banner, CreateBannerDto, BANNER_SLOTS, BANNER_TARGETS, bannerPayload, bannerToForm, emptyBannerForm } from '../../../../core/models/banner.model';
+import { AdStudioService } from '../../../../core/services/ad-studio.service';
+import { Banner, CreateBannerDto, BANNER_SLOTS, BANNER_STATUS_LABEL, BANNER_TARGETS, bannerPayload, bannerStatus, bannerToForm, emptyBannerForm, isStudioAd } from '../../../../core/models/banner.model';
 import { DeveloperService } from '../../../../core/services/developer.service';
 import { Developer } from '../../../../core/models/developer.model';
 import { BannerFieldsComponent } from '../../../../shared/components/banner-fields/banner-fields';
@@ -32,6 +33,7 @@ export class BannerDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private bannerService: BannerService,
+    private adStudio: AdStudioService,
     private developerService: DeveloperService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -42,6 +44,35 @@ export class BannerDetailComponent implements OnInit {
     this.developerService.getAll(true).subscribe({
       next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
       error: () => {},
+    });
+  }
+
+  isApproving = false;
+  staleWarning = false;
+
+  get status(): string { return this.banner ? bannerStatus(this.banner) : ''; }
+  get statusLabel(): string { return this.banner ? BANNER_STATUS_LABEL[bannerStatus(this.banner)] : ''; }
+  get isStudio(): boolean { return !!this.banner && isStudioAd(this.banner); }
+
+  /** Approves the new numbers of a paused ad: the matching text is updated and the ad runs again. */
+  approveNumbers(): void {
+    if (!this.banner || this.isApproving) return;
+    this.isApproving = true;
+    this.errorMessage = '';
+    this.adStudio.approve(this.banner.id).subscribe({
+      next: (res) => {
+        this.banner = res.data.banner;
+        this.staleWarning = res.data.stale;
+        this.isApproving = false;
+        this.successMessage = res.data.stale ? 'Approved, but the text still has an old number. Edit it.' : 'Approved. The ad is live again.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 4000);
+      },
+      error: (err) => {
+        this.isApproving = false;
+        this.errorMessage = err.error?.message || 'Could not approve the new numbers.';
+        this.cdr.detectChanges();
+      },
     });
   }
 

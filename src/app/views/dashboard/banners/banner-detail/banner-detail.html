@@ -12,7 +12,7 @@
       </button>
       <div>
         <h1>Banner #{{ banner?.id || '...' }}</h1>
-        <p>{{ banner?.is_active ? 'Active' : 'Inactive' }}</p>
+        <p>{{ banner ? statusLabel : '' }}<span *ngIf="isStudio"> · AI studio ad</span></p>
       </div>
     </div>
     <div class="header-actions" *ngIf="banner && !isEditMode">
@@ -65,6 +65,37 @@
           </div>
         </div>
 
+        <!-- Ad studio: what the ad quotes, and a changed number waiting for approval -->
+        <ng-container *ngIf="isStudio">
+          <div class="detail-divider"></div>
+          <div class="detail-section">
+            <h2 class="section-title">AI studio ad</h2>
+
+            <div class="paused-box" *ngIf="status === 'paused' && banner.ad_pause">
+              <strong>Paused: a number this ad quotes has changed.</strong>
+              <p>The ad is hidden from Explore until you approve the new number. Approving updates the matching text and puts it back on.</p>
+              <div class="change" *ngFor="let c of banner.ad_pause.changes">
+                <span class="was">{{ c.was }}</span>
+                <span class="arrow">→</span>
+                <span class="now">{{ c.now || 'no longer available' }}</span>
+              </div>
+              <button class="btn-primary" (click)="approveNumbers()" [disabled]="isApproving">{{ isApproving ? 'Approving…' : 'Approve new numbers' }}</button>
+            </div>
+
+            <div class="stale-box" *ngIf="staleWarning">The text still contains a number from before. Use Edit to fix it before relying on this ad.</div>
+
+            <p class="promo-note" *ngIf="!banner.ad_facts?.length">This ad quotes no data, only the words it was written with.</p>
+            <div class="facts" *ngIf="banner.ad_facts?.length">
+              <span class="info-label">Facts this ad quotes (checked against live data every 30 minutes)</span>
+              <div class="fact-row" *ngFor="let f of banner.ad_facts">
+                <span class="tick">✓</span>
+                <span class="fact-label">{{ f.label_en }}</span>
+                <span class="fact-detail">{{ f.detail_en }}<span *ngIf="f.source"> · {{ f.source }}</span></span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
         <div class="detail-divider"></div>
 
         <!-- Info -->
@@ -73,9 +104,7 @@
           <div class="info-grid">
             <div class="info-item">
               <span class="info-label">Status</span>
-              <span class="badge" [class.badge-active]="banner.is_active" [class.badge-inactive]="!banner.is_active">
-                {{ banner.is_active ? 'Active' : 'Inactive' }}
-              </span>
+              <span class="badge" [ngClass]="'badge-' + status">{{ statusLabel }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">Slot</span>

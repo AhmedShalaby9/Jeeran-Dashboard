@@ -14,14 +14,24 @@
     </button>
   </div>
 
+  <div class="notice" *ngIf="notice">{{ notice }}</div>
+
+  <div class="tabs">
+    <button class="tab" [class.tab-on]="tab === 'all'" (click)="setTab('all')">All <span>{{ banners.length }}</span></button>
+    <button class="tab" [class.tab-on]="tab === 'studio'" (click)="setTab('studio')">AI studio <span>{{ studioCount }}</span></button>
+    <button class="tab" [class.tab-on]="tab === 'paused'" (click)="setTab('paused')">Paused <span [class.tab-warn]="pausedCount > 0">{{ pausedCount }}</span></button>
+    <button class="tab" [class.tab-on]="tab === 'drafts'" (click)="setTab('drafts')">AI drafts <span>{{ drafts.length }}</span></button>
+    <button class="btn-check" (click)="checkPrices()" [disabled]="checking" title="Re-read the numbers every AI-studio ad quotes">{{ checking ? 'Checking…' : 'Check prices now' }}</button>
+  </div>
+
   <div class="loading-state" *ngIf="isLoading">
     <div class="spinner-lg"></div>
     <p>Loading banners...</p>
   </div>
 
-  <div class="banners-grid" *ngIf="!isLoading">
+  <div class="banners-grid" *ngIf="!isLoading && tab !== 'drafts'">
 
-    <div class="banner-card" *ngFor="let item of banners" (click)="goToDetail(item.id)">
+    <div class="banner-card" *ngFor="let item of shown" (click)="goToDetail(item.id)">
 
       <!-- Image Preview -->
       <div class="banner-preview">
@@ -38,9 +48,8 @@
       <!-- Card Body -->
       <div class="banner-body">
         <div class="banner-top">
-          <span class="badge" [class.badge-active]="item.is_active" [class.badge-inactive]="!item.is_active">
-            {{ item.is_active ? 'Active' : 'Inactive' }}
-          </span>
+          <span class="badge" [ngClass]="'badge-' + status(item)">{{ statusLabel(item) }}</span>
+          <span class="chip chip-ai" *ngIf="isStudio(item)">AI studio</span>
           <span class="chip">{{ item.slot === 'explore_top' ? 'Top rail' : 'In-feed' }}</span>
           <span class="chip chip-gold" *ngIf="item.kind === 'sponsored'">Sponsored</span>
           <span class="chip" *ngIf="item.media_type === 'video'">Video</span>
@@ -66,10 +75,15 @@
           <div class="meta-row" *ngIf="item.caption_en || item.caption_ar">
             <span class="meta-text" [title]="item.caption_en || item.caption_ar">{{ item.caption_en || item.caption_ar }}</span>
           </div>
+          <div class="meta-row paused-row" *ngIf="status(item) === 'paused'">A quoted number changed. Open it to review.</div>
           <p class="no-meta" *ngIf="!item.link && !item.phone && !item.caption_en && !item.caption_ar">No caption, link or phone</p>
         </div>
       </div>
 
+    </div>
+
+    <div class="empty-state" *ngIf="banners.length > 0 && shown.length === 0">
+      <p>{{ tab === 'paused' ? 'No ads are paused.' : 'No AI-studio ads yet. Make one in the app: Admin → Ad studio.' }}</p>
     </div>
 
     <div class="empty-state" *ngIf="banners.length === 0">
@@ -84,4 +98,36 @@
 
   </div>
 
+
+  <!-- AI drafts: three variations waiting for an admin to pick one in the app -->
+  <div class="drafts" *ngIf="!isLoading && tab === 'drafts'">
+    <div class="empty-state" *ngIf="drafts.length === 0">
+      <p>No AI drafts. Make one in the app: Admin → Ad studio → New ad.</p>
+    </div>
+    <div class="draft-card" *ngFor="let d of drafts">
+      <div class="draft-head">
+        <div>
+          <h3>{{ d.title }}</h3>
+          <p>{{ d.created_at | date:'medium' }} · {{ d.brief?.slot === 'explore_feed' ? 'In-feed' : 'Top rail' }}<span *ngIf="d.brief?.sponsor"> · Ad · {{ d.brief?.sponsor?.name }}</span></p>
+        </div>
+        <button class="btn-link" (click)="discardDraft(d, $event)">Discard</button>
+      </div>
+      <p class="draft-summary" *ngIf="d.brief?.summary">“{{ d.brief?.summary }}”</p>
+      <div class="variations">
+        <div class="variation" *ngFor="let v of d.variations; let i = index">
+          <div class="v-img" [style.background-image]="v.image_url ? 'url(' + v.image_url + ')' : null"></div>
+          <div class="v-body">
+            <div class="v-tone">Variation {{ i + 1 }} · {{ v.tone }}<span class="chip" *ngIf="v.fallback">plain copy</span></div>
+            <div class="v-head">{{ v.head_en || v.head_ar }}</div>
+            <div class="v-sub" *ngIf="v.sub_en">{{ v.sub_en }}</div>
+            <div class="v-head v-ar" dir="rtl" *ngIf="v.head_ar && v.head_en">{{ v.head_ar }}</div>
+            <div class="v-facts">
+              <span class="fact" *ngFor="let f of v.facts" [title]="f.detail_en || ''">✓ {{ f.label_en }}</span>
+              <span class="fact fact-none" *ngIf="v.facts.length === 0">no data quoted</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
