@@ -44,11 +44,6 @@ export interface Banner {
   caption_ar: string | null;
   sub_en: string | null;
   sub_ar: string | null;
-  /** The button on the banner ("See units"), written by the Ad studio. */
-  cta_en?: string | null;
-  cta_ar?: string | null;
-  /** The photo was made by the Ad studio's image model: buyers see an "AI image" mark. */
-  ai_image?: boolean;
   target_type: BannerTarget;
   target_id: number | null;
   sponsor_name: string | null;
@@ -56,71 +51,8 @@ export interface Banner {
   sort_order: number;
   starts_at: string | null;
   ends_at: string | null;
-  /** Ad studio: the facts the ad quotes, where they come from, and the pause state. */
-  ad_facts?: AdFact[] | null;
-  ad_scope?: { compound_id: number | null; developer_id: number | null } | null;
-  ad_paused_at?: string | null;
-  ad_pause?: { at: string; changes: AdChange[] } | null;
   created_at: string;
   updated_at: string;
-}
-
-/** A fact an Ad-studio ad quotes: computed from live data, with its source. */
-export interface AdFact {
-  key: string;
-  label_en: string;
-  label_ar?: string;
-  detail_en?: string;
-  source?: string;
-}
-
-/** A quoted number that changed while the ad was running. */
-export interface AdChange {
-  key: string;
-  was: string;
-  now: string | null;
-}
-
-export type BannerStatus = 'live' | 'scheduled' | 'ended' | 'off' | 'paused';
-
-/** What an admin sees: running, waiting for its start date, past its end date, switched off, or paused for a changed number. */
-export function bannerStatus(b: Banner, now = new Date()): BannerStatus {
-  if (!b.is_active) return 'off';
-  if (b.ad_paused_at) return 'paused';
-  if (b.starts_at && new Date(b.starts_at) > now) return 'scheduled';
-  if (b.ends_at && new Date(b.ends_at) < now) return 'ended';
-  return 'live';
-}
-
-export const BANNER_STATUS_LABEL: Record<BannerStatus, string> = {
-  live: 'Live', scheduled: 'Scheduled', ended: 'Ended', off: 'Off', paused: 'Paused',
-};
-
-/** Made in the Ad studio (it quotes facts). */
-export function isStudioAd(b: Banner): boolean {
-  return Array.isArray(b.ad_facts) && b.ad_facts.length > 0 || !!b.ad_scope;
-}
-
-/** An AI draft: three variations waiting for an admin to pick one in the app. */
-export interface AdVariation {
-  id: string;
-  tone: string;
-  head_en: string;
-  sub_en: string;
-  head_ar: string;
-  sub_ar: string;
-  image_url: string | null;
-  facts: AdFact[];
-  fallback?: boolean;
-}
-
-export interface AdDraft {
-  id: number;
-  title: string;
-  status: string;
-  brief: { summary?: string; slot?: string; tone?: string; language?: string; sponsor?: { id: number; name: string } | null };
-  variations: AdVariation[];
-  created_at: string;
 }
 
 /** Editable fields. Dates are `datetime-local` strings in the form, ISO on the wire. */

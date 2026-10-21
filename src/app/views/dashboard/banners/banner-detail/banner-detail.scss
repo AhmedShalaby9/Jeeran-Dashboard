@@ -205,30 +205,3 @@ $border:      #e5e7eb;
   &:hover    { background: #b91c1c; }
   &:disabled { opacity: 0.7; cursor: not-allowed; }
 }
-
-// ── Ad studio ────────────────────────────────────────────
-.badge {
-  &.badge-live      { background: #dcfce7; color: #16a34a; }
-  &.badge-scheduled { background: #fef3c7; color: #b45309; }
-  &.badge-ended     { background: #e5e7eb; color: #4b5563; }
-  &.badge-off       { background: #fee2e2; color: #dc2626; }
-  &.badge-paused    { background: #ffe4d6; color: #c2410c; }
-}
-.paused-box {
-  background: #fff7ed; border: 1px solid #fdba74; border-radius: 12px; padding: 1rem 1.1rem; margin-bottom: 1.1rem;
-  strong { color: #c2410c; }
-  p { margin: 0.35rem 0 0.8rem; font-size: 0.85rem; color: #7c2d12; }
-  .change { display: flex; align-items: center; gap: 0.6rem; padding: 0.5rem 0.7rem; background: #fff; border-radius: 8px; margin-bottom: 0.4rem; font-size: 0.9rem;
-    .was { color: #6b7280; text-decoration: line-through; }
-    .arrow { color: #9ca3af; }
-    .now { font-weight: 700; color: #1a1f2e; }
-  }
-  button { margin-top: 0.5rem; }
-}
-.stale-box { background: #fef2f2; border: 1px solid #fecaca; color: #b91c1c; border-radius: 10px; padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.85rem; }
-.facts { display: flex; flex-direction: column; gap: 0.5rem;
-  .fact-row { display: flex; align-items: baseline; gap: 0.6rem; padding: 0.55rem 0.8rem; background: #f0fdf4; border-radius: 8px; }
-  .tick { color: #16a34a; font-weight: 800; }
-  .fact-label { font-weight: 700; color: #1a1f2e; }
-  .fact-detail { margin-left: auto; font-size: 0.8rem; color: #6b7280; text-align: right; }
-}
