@@ -11,6 +11,7 @@ import { AdsComponent } from './views/dashboard/ads/ads';
 import { AdFormComponent } from './views/dashboard/ads/ad-form/ad-form';
 import { AdDetailComponent } from './views/dashboard/ads/ad-detail/ad-detail';
 import { BannersComponent } from './views/dashboard/banners/banners';
+import { AdminAiAdsComponent } from './views/dashboard/admin-ai-ads/admin-ai-ads';
 import { BannerFormComponent } from './views/dashboard/banners/banner-form/banner-form';
 import { BannerDetailComponent } from './views/dashboard/banners/banner-detail/banner-detail';
 import { CompoundsComponent } from './views/dashboard/compounds/compounds';
@@ -63,6 +64,7 @@ export const routes: Routes = [
 
       // Banners
       { path: 'banners',           component: BannersComponent },
+      { path: 'admin-ai-ads',      component: AdminAiAdsComponent },
       { path: 'banners/new',       component: BannerFormComponent },
       { path: 'banners/:id',       component: BannerDetailComponent },
 

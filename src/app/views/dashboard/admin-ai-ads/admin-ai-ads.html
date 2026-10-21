@@ -1,0 +1,42 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1>AI ads</h1>
+      <p>Images admins create with AI in the app. They are downloaded there and used anywhere: they are not listings and do not appear in the app.</p>
+    </div>
+  </div>
+
+  <div class="loading-state" *ngIf="isLoading"><div class="spinner-lg"></div><p>Loading AI ads...</p></div>
+  <div class="empty-state" *ngIf="failed"><p>Could not load the AI ads.</p><button class="btn-link" (click)="load()">Try again</button></div>
+  <div class="empty-state" *ngIf="!isLoading && !failed && ads.length === 0"><p>No AI ads yet. Create one in the app: Admin → AI ads.</p></div>
+
+  <div class="ads" *ngIf="!isLoading">
+    <div class="ad-card" *ngFor="let a of ads">
+      <div class="ad-head">
+        <div>
+          <h3>{{ a.title }}</h3>
+          <p>{{ a.created_at | date:'medium' }}<span *ngIf="size(a)"> · {{ size(a) }}</span><span *ngIf="a.brief?.language"> · {{ a.brief?.language }}</span></p>
+        </div>
+        <button class="btn-link" (click)="remove(a)">Delete</button>
+      </div>
+      <p class="summary" *ngIf="a.brief?.summary">“{{ a.brief?.summary }}”</p>
+      <div class="variations">
+        <div class="variation" *ngFor="let v of a.variations; let i = index">
+          <div class="v-img" [style.background-image]="v.image_url ? 'url(' + v.image_url + ')' : null"></div>
+          <div class="v-body">
+            <div class="v-tone">Variation {{ i + 1 }} · {{ v.tone }}<span class="chip" *ngIf="v.fallback">plain copy</span><span class="chip" *ngIf="v.ai_image">AI image</span></div>
+            <div class="v-head">{{ v.head_en || v.head_ar }}</div>
+            <div class="v-sub" *ngIf="v.sub_en">{{ v.sub_en }}</div>
+            <div class="v-cta" *ngIf="v.cta_en">Button: {{ v.cta_en }}</div>
+            <div class="v-head v-ar" dir="rtl" *ngIf="v.head_ar && v.head_en">{{ v.head_ar }}</div>
+            <div class="v-facts">
+              <span class="fact" *ngFor="let f of v.facts" [title]="f.detail_en || ''">✓ {{ f.label_en }}</span>
+              <span class="fact fact-none" *ngIf="v.facts.length === 0">no data quoted</span>
+            </div>
+            <a class="open" *ngIf="v.image_url" [href]="v.image_url" target="_blank" rel="noopener">Open the picture</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
