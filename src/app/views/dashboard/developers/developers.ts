@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { DeveloperService } from '../../../core/services/developer.service';
 import { Developer } from '../../../core/models/developer.model';
 
-type DeveloperFilter = 'all' | 'top' | 'with-compounds' | 'no-logo' | 'verified' | 'inactive' | 'imported';
+type DeveloperFilter = 'all' | 'top' | 'with-compounds' | 'no-logo' | 'verified' | 'inactive' | 'imported' | 'no-about';
 
 @Component({
   selector: 'app-developers',
@@ -26,8 +26,13 @@ export class DevelopersComponent implements OnInit {
   readonly filters: { id: DeveloperFilter; label: string }[] = [
     { id: 'all', label: 'All' }, { id: 'top', label: 'Top' }, { id: 'with-compounds', label: 'With compounds' },
     { id: 'no-logo', label: 'No logo' }, { id: 'verified', label: 'Verified' }, { id: 'inactive', label: 'Inactive' },
-    { id: 'imported', label: 'Imported' },
+    { id: 'imported', label: 'Imported' }, { id: 'no-about', label: 'No about info' },
   ];
+
+  /** No description and none of the other About-tab fields (founded year, stock listing, delivered units, trust items) filled in. */
+  private hasAboutInfo(d: Developer): boolean {
+    return !!(d.desc_ar || d.desc_en || d.founded_year || d.stock_listing || d.delivered_units || d.trust_items?.length);
+  }
 
   private matches(d: Developer, f: DeveloperFilter): boolean {
     switch (f) {
@@ -37,6 +42,7 @@ export class DevelopersComponent implements OnInit {
       case 'verified': return !!d.is_verified;
       case 'inactive': return !d.is_active;
       case 'imported': return !!d.nawy_id;
+      case 'no-about': return !this.hasAboutInfo(d);
       default: return true;
     }
   }
