@@ -1,45 +1,51 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BannerService } from '../../../../core/services/banner.service';
-import { CreateBannerDto } from '../../../../core/models/banner.model';
-import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
+import { DeveloperService } from '../../../../core/services/developer.service';
+import { Developer } from '../../../../core/models/developer.model';
+import { CreateBannerDto, bannerPayload, emptyBannerForm } from '../../../../core/models/banner.model';
+import { BannerFieldsComponent } from '../../../../shared/components/banner-fields/banner-fields';
 
 @Component({
   selector: 'app-banner-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, BannerFieldsComponent],
   templateUrl: './banner-form.html',
   styleUrl: './banner-form.scss',
 })
-export class BannerFormComponent {
-  form: CreateBannerDto = {
-    image_url: '',
-    link:      '',
-    phone:     '',
-    is_active: true,
-  };
+export class BannerFormComponent implements OnInit {
+  form: CreateBannerDto = emptyBannerForm();
+  developers: Developer[] = [];
 
   isSubmitting = false;
   errorMessage = '';
 
   constructor(
     private bannerService: BannerService,
+    private developerService: DeveloperService,
     private router: Router,
     private cdr: ChangeDetectorRef,
   ) {}
 
+  ngOnInit(): void {
+    this.developerService.getAll(true).subscribe({
+      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
+  }
+
   onSubmit(): void {
     if (!this.form.image_url.trim()) {
-      this.errorMessage = 'Desktop image URL is required.';
+      this.errorMessage = 'An image is required (it is also the poster for video banners).';
       return;
     }
 
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.bannerService.create(this.form).subscribe({
+    this.bannerService.create(bannerPayload(this.form)).subscribe({
       next: () => {
         this.isSubmitting = false;
         this.router.navigate(['/dashboard/banners']);
@@ -50,10 +56,6 @@ export class BannerFormComponent {
         this.cdr.detectChanges();
       },
     });
-  }
-
-  onImageUploaded(urls: string[]): void {
-    if (urls.length) this.form.image_url = urls[0];
   }
 
   goBack(): void {

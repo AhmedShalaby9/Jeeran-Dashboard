@@ -31,9 +31,13 @@
       <option value="">All Statuses</option>
       <option *ngFor="let s of propertyStatuses" [value]="s.value">{{ s.en }}</option>
     </select>
-    <select [(ngModel)]="projectFilter" (change)="applyFilters()">
-      <option [ngValue]="null">All Projects</option>
-      <option *ngFor="let p of projects" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
+    <select [(ngModel)]="listingFilter" (change)="applyFilters()">
+      <option value="">All Listings</option>
+      <option *ngFor="let lt of listingTypes" [value]="lt.value">{{ lt.en }}</option>
+    </select>
+    <select [(ngModel)]="compoundFilter" (change)="applyFilters()">
+      <option [ngValue]="null">All Compounds</option>
+      <option *ngFor="let p of compounds" [ngValue]="p.id">{{ p.name_en || p.name_ar }}</option>
     </select>
     <div class="filter-search">
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
@@ -44,7 +48,7 @@
       <input type="text" [(ngModel)]="agentFilter" placeholder="Filter by agent..." (keydown.enter)="applyFilters()" />
     </div>
     <button class="btn-filter" (click)="applyFilters()">Apply</button>
-    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || agentFilter || projectFilter">
+    <button class="btn-clear" (click)="clearFilters()" *ngIf="searchQ || typeFilter || statusFilter || listingFilter || agentFilter || compoundFilter">
       Clear
     </button>
   </div>

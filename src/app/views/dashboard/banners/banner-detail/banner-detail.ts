@@ -3,12 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BannerService } from '../../../../core/services/banner.service';
-import { Banner, CreateBannerDto } from '../../../../core/models/banner.model';
+import { Banner, CreateBannerDto, BANNER_SLOTS, BANNER_TARGETS, bannerPayload, bannerToForm, emptyBannerForm } from '../../../../core/models/banner.model';
+import { DeveloperService } from '../../../../core/services/developer.service';
+import { Developer } from '../../../../core/models/developer.model';
+import { BannerFieldsComponent } from '../../../../shared/components/banner-fields/banner-fields';
 
 @Component({
   selector: 'app-banner-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BannerFieldsComponent],
   templateUrl: './banner-detail.html',
   styleUrl: './banner-detail.scss',
 })
@@ -22,24 +25,28 @@ export class BannerDetailComponent implements OnInit {
   errorMessage    = '';
   successMessage  = '';
 
-  editForm: CreateBannerDto = {
-    image_url: '',
-    link:      '',
-    phone:     '',
-    is_active: true,
-  };
+  editForm: CreateBannerDto = emptyBannerForm();
+  developers: Developer[] = [];
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private bannerService: BannerService,
+    private developerService: DeveloperService,
     private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadBanner(id);
+    this.developerService.getAll(true).subscribe({
+      next: (res) => { this.developers = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
   }
+
+  slotLabel(v: string): string { return BANNER_SLOTS.find((s) => s.value === v)?.label ?? v; }
+  targetLabel(v: string): string { return BANNER_TARGETS.find((t) => t.value === v)?.label ?? v; }
 
   loadBanner(id: number): void {
     this.isLoading = true;
@@ -59,12 +66,7 @@ export class BannerDetailComponent implements OnInit {
 
   enableEdit(): void {
     if (!this.banner) return;
-    this.editForm = {
-      image_url: this.banner.image_url,
-      link:      this.banner.link  || '',
-      phone:     this.banner.phone || '',
-      is_active: this.banner.is_active,
-    };
+    this.editForm = bannerToForm(this.banner);
     this.errorMessage = '';
     this.isEditMode   = true;
     this.cdr.detectChanges();
@@ -77,13 +79,13 @@ export class BannerDetailComponent implements OnInit {
 
   saveEdit(): void {
     if (!this.editForm.image_url.trim()) {
-      this.errorMessage = 'Desktop image URL is required.';
+      this.errorMessage = 'An image is required (it is also the poster for video banners).';
       return;
     }
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.bannerService.update(this.banner!.id, this.editForm).subscribe({
+    this.bannerService.update(this.banner!.id, bannerPayload(this.editForm)).subscribe({
       next: (res) => {
         this.banner         = res.data;
         this.isSubmitting   = false;

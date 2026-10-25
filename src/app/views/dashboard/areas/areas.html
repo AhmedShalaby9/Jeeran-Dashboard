@@ -1,0 +1,88 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Areas</h1>
+      <p>The places people search by. Each compound sits in one area; its units inherit it.</p>
+    </div>
+    <button class="btn-primary" (click)="openNew()">New Area</button>
+  </div>
+
+  <div class="error-msg" *ngIf="pageError">{{ pageError }}</div>
+
+  <div class="loading-state" *ngIf="isLoading"><div class="spinner-lg"></div><p>Loading areas...</p></div>
+
+  <div class="table-card" *ngIf="!isLoading">
+    <table class="area-table">
+      <thead>
+        <tr><th></th><th>Name</th><th>Region</th><th class="num">Compounds</th><th class="num">Listings</th><th class="num">Order</th><th>Status</th><th></th></tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let a of areas">
+          <td class="thumb"><img *ngIf="a.image" [src]="a.image" alt="" /><span *ngIf="!a.image">{{ (a.name_en || a.name_ar).charAt(0) }}</span></td>
+          <td>
+            <div class="name">{{ a.name_en || a.name_ar }}</div>
+            <div class="name-ar" *ngIf="a.name_en" dir="rtl">{{ a.name_ar }}</div>
+          </td>
+          <td>{{ stateLabel(a.state) }}</td>
+          <td class="num">{{ a.compounds_count || 0 }}</td>
+          <td class="num">{{ a.listing_count || 0 }}</td>
+          <td class="num">{{ a.sort_order }}</td>
+          <td><span class="badge" [class.badge-active]="a.is_active" [class.badge-inactive]="!a.is_active">{{ a.is_active ? 'Active' : 'Inactive' }}</span></td>
+          <td class="actions">
+            <button class="btn-secondary sm" (click)="openEdit(a)">Edit</button>
+            <button class="btn-danger sm" (click)="confirmDelete(a)">Delete</button>
+          </td>
+        </tr>
+        <tr *ngIf="!areas.length"><td colspan="8" class="empty">No areas yet. Add the first one — compounds need an area to show up in “Browse by area”.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- create / edit -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-confirm area-modal">
+      <h3>{{ editing ? 'Edit area' : 'New area' }}</h3>
+      <div class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</div>
+      <form (ngSubmit)="save()">
+        <div class="form-group"><label>Name (Arabic) <span class="required">*</span></label>
+          <input type="text" [(ngModel)]="form.name_ar" name="name_ar" dir="rtl" /></div>
+        <div class="form-group"><label>Name (English)</label>
+          <input type="text" [(ngModel)]="form.name_en" name="name_en" /></div>
+        <div class="form-row">
+          <div class="form-group"><label>Region</label>
+            <select [(ngModel)]="form.state" name="state">
+              <option [ngValue]="null">— none —</option>
+              <option *ngFor="let s of states" [ngValue]="s.value">{{ s.label }}</option>
+            </select></div>
+          <div class="form-group"><label>Order</label>
+            <input type="number" [(ngModel)]="form.sort_order" name="sort_order" /></div>
+        </div>
+        <div class="form-group"><label>Photo</label>
+          <img class="preview" *ngIf="form.image" [src]="form.image" alt="" />
+          <app-media-uploader folder="areas" [multiple]="false" (uploaded)="onImageUploaded($event)"></app-media-uploader>
+          <div class="url-fallback"><span class="or-label">or paste URL</span>
+            <input type="text" [(ngModel)]="form.image" name="image" placeholder="https://…" /></div>
+        </div>
+        <label class="checkbox-label"><input type="checkbox" [(ngModel)]="form.is_active" name="is_active" /><span>Active</span></label>
+        <div class="modal-btns">
+          <button type="button" class="btn-secondary" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary" [disabled]="isSubmitting">{{ editing ? 'Save' : 'Create' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- delete -->
+  <div class="modal-overlay" *ngIf="deleting">
+    <div class="modal-confirm">
+      <h3>Delete “{{ deleting.name_en || deleting.name_ar }}”?</h3>
+      <p>An area that still has compounds can’t be deleted — move them first.</p>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="cancelDelete()">Cancel</button>
+        <button class="btn-danger" (click)="doDelete()" [disabled]="isDeleting">Delete</button>
+      </div>
+    </div>
+  </div>
+
+</div>

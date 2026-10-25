@@ -8,20 +8,22 @@ import { Property, CreatePropertyDto, PropertyListResponse, PropertyResponse } f
 import { AuthService } from './auth.service';
 
 export interface PropertyFilters {
-  page?:        number;
-  limit?:       number;
-  type?:        string;
-  status?:      string;
-  project_id?:  number;
-  is_featured?: boolean;
-  is_approved?: 'true' | 'false' | 'null'; // 'null' = pending
-  min_price?:   number;
-  max_price?:   number;
-  bedrooms?:    number;
-  agent_name?:  string;
-  q?:           string;
-  sort?:        string;
-  order?:       'ASC' | 'DESC';
+  page?:         number;
+  limit?:        number;
+  type?:         string;
+  status?:       string;
+  listing_type?: string;
+  compound_id?:   number;
+  developer_id?: number;
+  is_featured?:  boolean;
+  is_approved?:  'true' | 'false' | 'null'; // 'null' = pending
+  min_price?:    number;
+  max_price?:    number;
+  bedrooms?:     number;
+  agent_name?:   string;
+  q?:            string;
+  sort?:         string;
+  order?:        'ASC' | 'DESC';
 }
 
 @Injectable({ providedIn: 'root' })
@@ -64,6 +66,11 @@ export class PropertyService {
 
   getSimilar(id: number): Observable<PropertyListResponse> {
     return this.http.get<PropertyListResponse>(`${this.url}/${id}/similar`, { headers: this.headers() });
+  }
+
+  /** Mark a listing sold (or reopen it). Savers are notified when it sells. */
+  markSold(id: number, sold = true): Observable<PropertyResponse> {
+    return this.http.patch<PropertyResponse>(`${this.url}/${id}/sold`, { sold }, { headers: this.headers() });
   }
 
   approve(id: number): Observable<PropertyResponse> {

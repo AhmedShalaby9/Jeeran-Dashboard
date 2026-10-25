@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PropertyService, PropertyFilters } from '../../../core/services/property.service';
-import { Property, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../core/models/property.model';
-import { ProjectService } from '../../../core/services/project.service';
-import { Project } from '../../../core/models/project.model';
+import { Property, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../core/models/property.model';
+import { CompoundService } from '../../../core/services/compound.service';
+import { Compound } from '../../../core/models/compound.model';
 import { FilterStateService } from '../../../core/services/filter-state.service';
 
 @Component({
@@ -29,14 +29,15 @@ export class PropertiesComponent implements OnInit {
   readonly pageSizes = [10, 20, 50, 100];
 
   // Filters
-  searchQ       = '';
-  typeFilter    = '';
-  statusFilter  = '';
-  agentFilter   = '';
-  projectFilter: number | null = null;
+  searchQ         = '';
+  typeFilter      = '';
+  statusFilter    = '';
+  listingFilter   = '';
+  agentFilter     = '';
+  compoundFilter: number | null = null;
 
-  // Projects for dropdown
-  projects: Project[] = [];
+  // Compounds for dropdown
+  compounds: Compound[] = [];
 
   readonly propertyTypes: { value: PropertyType; en: string; ar: string }[] =
     (Object.keys(PROPERTY_TYPE_LABELS) as PropertyType[]).map(key => ({
@@ -50,6 +51,16 @@ export class PropertiesComponent implements OnInit {
       ...PROPERTY_STATUS_LABELS[key],
     }));
 
+  readonly listingTypes: { value: ListingType; en: string; ar: string }[] =
+    (Object.keys(LISTING_TYPE_LABELS) as ListingType[]).map(key => ({
+      value: key,
+      ...LISTING_TYPE_LABELS[key],
+    }));
+
+  listingLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return LISTING_TYPE_LABELS[type as ListingType]?.[lang] ?? type;
+  }
+
   typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
     return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
   }
@@ -60,7 +71,7 @@ export class PropertiesComponent implements OnInit {
 
   constructor(
     private propertyService:  PropertyService,
-    private projectService:   ProjectService,
+    private compoundService:   CompoundService,
     private filterState:      FilterStateService,
     private router:           Router,
     private cdr:              ChangeDetectorRef,
@@ -68,7 +79,7 @@ export class PropertiesComponent implements OnInit {
 
   ngOnInit(): void {
     this.restoreFilters();
-    this.loadProjects();
+    this.loadCompounds();
     this.load();
   }
 
@@ -77,8 +88,9 @@ export class PropertiesComponent implements OnInit {
       searchQ:       this.searchQ,
       typeFilter:    this.typeFilter,
       statusFilter:  this.statusFilter,
+      listingFilter: this.listingFilter,
       agentFilter:   this.agentFilter,
-      projectFilter: this.projectFilter,
+      compoundFilter: this.compoundFilter,
       currentPage:   this.currentPage,
       limit:         this.limit,
     });
@@ -90,15 +102,16 @@ export class PropertiesComponent implements OnInit {
     this.searchQ       = s.searchQ       ?? '';
     this.typeFilter    = s.typeFilter    ?? '';
     this.statusFilter  = s.statusFilter  ?? '';
+    this.listingFilter = s.listingFilter ?? '';
     this.agentFilter   = s.agentFilter   ?? '';
-    this.projectFilter = s.projectFilter ?? null;
+    this.compoundFilter = s.compoundFilter ?? null;
     this.currentPage   = s.currentPage   ?? 1;
     this.limit         = s.limit         ?? 20;
   }
 
-  loadProjects(): void {
-    this.projectService.getAll().subscribe({
-      next: (res) => { this.projects = res.data; this.cdr.detectChanges(); },
+  loadCompounds(): void {
+    this.compoundService.getAll().subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
       error: () => {},
     });
   }
@@ -114,8 +127,9 @@ export class PropertiesComponent implements OnInit {
     if (this.searchQ.trim())      f.q          = this.searchQ.trim();
     if (this.typeFilter)          f.type       = this.typeFilter;
     if (this.statusFilter)        f.status     = this.statusFilter;
-    if (this.agentFilter.trim())  f.agent_name = this.agentFilter.trim();
-    if (this.projectFilter)       f.project_id = this.projectFilter;
+    if (this.listingFilter)       f.listing_type = this.listingFilter;
+    if (this.agentFilter.trim())  f.agent_name   = this.agentFilter.trim();
+    if (this.compoundFilter)       f.compound_id   = this.compoundFilter;
 
     this.propertyService.getAll(f).subscribe({
       next: (res) => {
@@ -182,8 +196,9 @@ export class PropertiesComponent implements OnInit {
     this.searchQ       = '';
     this.typeFilter    = '';
     this.statusFilter  = '';
+    this.listingFilter = '';
     this.agentFilter   = '';
-    this.projectFilter = null;
+    this.compoundFilter = null;
     this.currentPage   = 1;
     this.filterState.clear('properties');
     this.load();

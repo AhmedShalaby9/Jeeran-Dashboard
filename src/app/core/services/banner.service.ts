@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Banner, CreateBannerDto, BannerResponse } from '../models/banner.model';
+import { Banner, BannerResponse } from '../models/banner.model';
 import { AuthService } from './auth.service';
 
 @Injectable({ providedIn: 'root' })
@@ -29,13 +29,13 @@ export class BannerService {
     });
   }
 
-  create(payload: CreateBannerDto): Observable<{ success: boolean; data: Banner }> {
+  create(payload: Record<string, unknown>): Observable<{ success: boolean; data: Banner }> {
     return this.http.post<{ success: boolean; data: Banner }>(this.url, payload, {
       headers: this.headers(),
     });
   }
 
-  update(id: number, payload: Partial<CreateBannerDto>): Observable<{ success: boolean; data: Banner }> {
+  update(id: number, payload: Record<string, unknown>): Observable<{ success: boolean; data: Banner }> {
     return this.http.put<{ success: boolean; data: Banner }>(`${this.url}/${id}`, payload, {
       headers: this.headers(),
     });

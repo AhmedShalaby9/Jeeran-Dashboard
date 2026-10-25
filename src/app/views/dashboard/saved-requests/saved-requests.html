@@ -1,0 +1,177 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Saved Requests</h1>
+      <p>Searches the AI could not answer, where the person asked to be told when something fits</p>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><strong>{{ counts.active }}</strong><span>Active</span></div>
+    <div class="stat"><strong>{{ counts.unhandled }}</strong><span>Not followed up</span></div>
+    <div class="stat"><strong>{{ counts.matched }}</strong><span>Got a match</span></div>
+    <div class="stat"><strong>{{ counts.new_7d }}</strong><span>New this week</span></div>
+    <div class="stat warn" *ngIf="insights"><strong>{{ insights.without_stock }}</strong><span>Active with nothing in stock</span></div>
+  </div>
+
+  <div class="insights" *ngIf="insights && insights.top.length">
+    <h2>What people ask for</h2>
+    <div class="insight-grid">
+      <div class="insight" *ngFor="let g of insights.top">
+        <div class="insight-main">
+          {{ label(g.property_type) || 'Any type' }}<ng-container *ngIf="g.property_status"> · {{ g.property_status === 'for_rent' ? 'rent' : 'sale' }}</ng-container>
+          · {{ g.place === 'anywhere' ? 'Anywhere' : label(g.place) }}
+        </div>
+        <small>Budget {{ g.budget }}</small>
+        <div class="insight-n"><b>{{ g.requests }}</b> request{{ g.requests === 1 ? '' : 's' }}
+          <span class="gap" *ngIf="g.no_stock">· {{ g.no_stock }} with no stock</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button *ngFor="let t of tabs" [class.on]="state === t.key" (click)="state = t.key; reset()">
+      {{ t.label }}<em>{{ countOf(t.key) }}</em>
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <input class="search" type="search" placeholder="Search request text, name, phone or email" [(ngModel)]="search" (ngModelChange)="onSearch()" name="search" />
+    <select [(ngModel)]="propertyType" (change)="reset()" name="ptype">
+      <option value="">Any type</option>
+      <option *ngFor="let t of types" [value]="t">{{ label(t) }}</option>
+    </select>
+    <select [(ngModel)]="propertyStatus" (change)="reset()" name="pstatus">
+      <option value="">Sale or rent</option>
+      <option value="for_sale">For sale</option>
+      <option value="for_rent">For rent</option>
+    </select>
+    <select [(ngModel)]="matched" (change)="reset()" name="matched">
+      <option value="">Matches: any</option>
+      <option value="true">Got a match</option>
+      <option value="false">No match yet</option>
+    </select>
+    <select [(ngModel)]="handled" (change)="reset()" name="handled">
+      <option value="">Follow up: any</option>
+      <option value="false">Not followed up</option>
+      <option value="true">Followed up</option>
+    </select>
+    <input type="date" [(ngModel)]="from" (change)="reset()" name="from" title="From" />
+    <input type="date" [(ngModel)]="to" (change)="reset()" name="to" title="To" />
+  </div>
+
+  <div class="error-bar" *ngIf="errorMsg">{{ errorMsg }} <button (click)="errorMsg = ''">×</button></div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading requests...</p>
+  </div>
+
+  <div class="loading-state" *ngIf="!isLoading && failed">
+    <p>Couldn't load the requests.</p>
+    <button class="btn-view" (click)="retry()">Try again</button>
+  </div>
+
+  <div class="table-card" *ngIf="!isLoading && !failed" [style.opacity]="isRefreshing ? 0.55 : 1">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Person</th>
+          <th>Looking for</th>
+          <th>Status</th>
+          <th>Matches</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let r of requests">
+          <tr>
+            <td class="td-id">{{ r.id }}</td>
+            <td>
+              <div class="person">
+                <span class="td-name">{{ r.user?.name || '—' }}</span>
+                <a *ngIf="telHref(r.user?.phone) as href; else noPhone" [href]="href">{{ r.user?.phone }}</a>
+                <ng-template #noPhone><small>No phone</small></ng-template>
+                <span class="phone-flag" *ngIf="r.user?.phone && r.user?.phone_verified === false">Not verified</span>
+              </div>
+            </td>
+            <td>
+              <div class="ask">
+                <span class="said" *ngIf="r.original_text">{{ r.original_text }}</span>
+                <div class="chips"><span *ngFor="let c of chips(r)">{{ c }}</span></div>
+              </div>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="'badge-' + r.state">{{ label(r.state) }}</span>
+              <span class="handled-tag" *ngIf="r.handled_at">Followed up</span>
+            </td>
+            <td class="td-muted">
+              {{ r.matches_count || 0 }}<small *ngIf="r.last_notified_at"> · told {{ r.last_notified_at | date:'MMM d' }}</small>
+            </td>
+            <td class="td-muted">{{ r.created_at | date:'medium' }}</td>
+            <td><button class="btn-view" (click)="toggle(r)">{{ openId === r.id ? 'Close' : 'Details' }}</button></td>
+          </tr>
+          <tr class="detail-row" *ngIf="openId === r.id">
+            <td colspan="7">
+              <div class="loading-state small" *ngIf="detailLoading"><div class="spinner-lg"></div></div>
+              <div class="detail" *ngIf="detail && detail.id === r.id">
+                <div class="col">
+                  <h3>Units that fit right now ({{ detail.available_now?.length || 0 }})</h3>
+                  <p class="td-muted" *ngIf="!detail.available_now?.length">Nothing in stock fits this request.</p>
+                  <ul class="units">
+                    <li *ngFor="let u of detail.available_now">
+                      <a [routerLink]="['/dashboard/properties', u.id]">{{ u.title_en || u.title_ar || ('Unit #' + u.id) }}</a>
+                      <small>{{ u.reference_code }}<ng-container *ngIf="u.price"> · EGP {{ money(u.price) }}</ng-container></small>
+                    </li>
+                  </ul>
+                  <h3>Units that matched since ({{ detail.matches?.length || 0 }})</h3>
+                  <ul class="units">
+                    <li *ngFor="let m of detail.matches">
+                      <a *ngIf="m.property" [routerLink]="['/dashboard/properties', m.property.id]">{{ m.property.title_en || m.property.title_ar || ('Unit #' + m.property.id) }}</a>
+                      <small>{{ m.created_at | date:'medium' }} · {{ m.notified ? 'person was notified' : 'held back (one notification a day)' }}</small>
+                    </li>
+                  </ul>
+                </div>
+                <div class="col">
+                  <h3>Follow up</h3>
+                  <small class="td-muted">Expires {{ r.expires_at | date:'mediumDate' }}</small>
+                  <textarea placeholder="Note (visible to admins only)" [(ngModel)]="draftNote[r.id]" [name]="'nt' + r.id"></textarea>
+                  <div class="btns">
+                    <button class="save" [disabled]="!noteDirty(r) || saving.has(r.id)" (click)="saveNote(r)">Save note</button>
+                    <button class="ghost" [disabled]="saving.has(r.id)" (click)="toggleHandled(r)">{{ r.handled_at ? 'Mark not followed up' : 'Mark followed up' }}</button>
+                    <button class="ghost danger" *ngIf="r.state === 'active'" [disabled]="saving.has(r.id)" (click)="cancel(r)">Cancel request</button>
+                  </div>
+                  <span class="handled" *ngIf="r.handled_at">Followed up {{ r.handled_at | date:'short' }}</span>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        <tr *ngIf="requests.length === 0">
+          <td colspan="7" class="empty-row">No requests here.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-bar" *ngIf="!isLoading && !failed && total > 0">
+    <div class="pagination-info">
+      Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ total }}</strong> requests
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+      <span class="page-gap">{{ currentPage }} / {{ totalPages }}</span>
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+    </div>
+    <div class="pagination-size">
+      <label>Per page</label>
+      <select [(ngModel)]="limit" (change)="reset()">
+        <option *ngFor="let s of pageSizes" [ngValue]="s">{{ s }}</option>
+      </select>
+    </div>
+  </div>
+
+</div>

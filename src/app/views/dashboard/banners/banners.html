@@ -41,6 +41,9 @@
           <span class="badge" [class.badge-active]="item.is_active" [class.badge-inactive]="!item.is_active">
             {{ item.is_active ? 'Active' : 'Inactive' }}
           </span>
+          <span class="chip">{{ item.slot === 'explore_top' ? 'Top rail' : 'In-feed' }}</span>
+          <span class="chip chip-gold" *ngIf="item.kind === 'sponsored'">Sponsored</span>
+          <span class="chip" *ngIf="item.media_type === 'video'">Video</span>
           <span class="banner-date">{{ item.created_at | date:'mediumDate' }}</span>
         </div>
 
@@ -60,7 +63,10 @@
             </svg>
             <span class="meta-text">{{ item.phone }}</span>
           </div>
-          <p class="no-meta" *ngIf="!item.link && !item.phone">No link or phone</p>
+          <div class="meta-row" *ngIf="item.caption_en || item.caption_ar">
+            <span class="meta-text" [title]="item.caption_en || item.caption_ar">{{ item.caption_en || item.caption_ar }}</span>
+          </div>
+          <p class="no-meta" *ngIf="!item.link && !item.phone && !item.caption_en && !item.caption_ar">No caption, link or phone</p>
         </div>
       </div>
 

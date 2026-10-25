@@ -1,5 +1,7 @@
 export type NotificationAudience = 'all' | 'registered_between' | 'user_type' | 'single_user';
-export type NotificationType    = 'general' | 'subscription' | 'property';
+export type NotificationType    = 'general' | 'subscription' | 'property' | 'project' | 'developer' | 'news' | 'ad';
+/** What a user can switch off in the app (see the backend's notificationCategories). */
+export type NotificationCategory = 'saved' | 'plan' | 'listing' | 'news' | 'ai' | 'place' | 'general';
 
 export interface NotificationTarget {
   audience:  NotificationAudience;
@@ -16,6 +18,7 @@ export interface Notification {
   body_en:    string;
   body_ar:    string;
   type:       NotificationType;
+  category?:  NotificationCategory;
   entity_id:  number | null;
   target:     NotificationTarget;
   created_at: string;
@@ -27,8 +30,18 @@ export interface SendNotificationDto {
   body_en:   string;
   body_ar:   string;
   type:      NotificationType;
+  category?: NotificationCategory;
   entity_id: number | null;
   target:    NotificationTarget;
+}
+
+/** Who a broadcast would reach, before sending it. */
+export interface ReachPreview {
+  category:              NotificationCategory;
+  matched:               number;
+  will_receive:          number;
+  skipped_by_preference: number;
+  without_push_token:    number;
 }
 
 export interface NotificationListResponse {
@@ -40,5 +53,6 @@ export interface NotificationListResponse {
 
 export interface SendNotificationResponse {
   success: boolean;
-  message: string;
+  message?: string;
+  data?: { skipped_by_preference?: number };
 }

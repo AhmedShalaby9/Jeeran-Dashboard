@@ -1,0 +1,41 @@
+<div class="pf">
+  <h2 class="pf-title">Reference &amp; location</h2>
+  <p class="pf-desc">Used by search, the voice assistant and the AI answers. Nothing here draws a map yet — the coordinates and master plan are kept for later.</p>
+
+  <div class="pf-block">
+    <label class="pf-label">Other names</label>
+    <p class="pf-hint">How people write or say the name — “Madinty”, “مدينتي”, “Rehab”. One per line; the compound is found by any of them.</p>
+    <app-text-list-editor name="aliases" placeholder="Madinty"
+      [value]="form.aliases" (valueChange)="form.aliases = $event"></app-text-list-editor>
+  </div>
+
+  <div class="pf-grid">
+    <label class="pf-field">
+      <span>Latitude</span>
+      <input class="pf-input" type="number" step="any" [(ngModel)]="form.latitude" name="latitude" placeholder="30.0947700" />
+    </label>
+    <label class="pf-field">
+      <span>Longitude</span>
+      <input class="pf-input" type="number" step="any" [(ngModel)]="form.longitude" name="longitude" placeholder="31.6289890" />
+    </label>
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">Master plan (image)</label>
+    <input class="pf-input" type="text" [(ngModel)]="form.master_plan" name="master_plan" placeholder="https://…/master-plan.jpg" />
+    <app-media-uploader folder="compounds" (uploaded)="onMasterPlan($event)"></app-media-uploader>
+    <img class="pf-preview" *ngIf="form.master_plan" [src]="form.master_plan" alt="master plan preview" />
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">Brochure link</label>
+    <input class="pf-input" type="text" [(ngModel)]="form.brochure_url" name="brochure_url" placeholder="https://…/brochure.pdf" />
+  </div>
+
+  <div class="pf-block">
+    <label class="pf-label">FAQs</label>
+    <p class="pf-hint">Real questions buyers ask, with a short answer. The assistant prefers these over guessing. Rows missing a question or an answer are dropped.</p>
+    <app-row-list-editor name="faqs" [fields]="faqFields" addLabel="Add question"
+      [value]="form.faqs" (valueChange)="form.faqs = $event"></app-row-list-editor>
+  </div>
+</div>

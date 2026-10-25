@@ -1,0 +1,155 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Compounds</h1>
+      <p>Manage real-estate compounds and their features</p>
+    </div>
+    <button class="btn-primary" (click)="goToNew()">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
+      New Compound
+    </button>
+  </div>
+
+  <div class="list-tools" *ngIf="!isLoading || meta">
+    <input class="search-box" type="search" [(ngModel)]="search" (ngModelChange)="onSearchInput()" name="search"
+      placeholder="Search by name, developer, area, other name or ref #…" />
+    <select class="area-select" [(ngModel)]="developerId" (ngModelChange)="reset()" name="developer">
+      <option value="">All developers</option>
+      <option *ngFor="let d of developers" [ngValue]="d.id">{{ d.name }}</option>
+    </select>
+    <select class="area-select" [(ngModel)]="areaId" (ngModelChange)="reset()" name="area">
+      <option value="">All areas</option>
+      <option *ngFor="let a of areas" [ngValue]="a.id">{{ a.name }}</option>
+    </select>
+    <select class="area-select" [(ngModel)]="sort" (ngModelChange)="reset()" name="sort" aria-label="Sort">
+      <option *ngFor="let s of sorts" [ngValue]="s.id">{{ s.label }}</option>
+    </select>
+    <div class="filter-chips">
+      <button type="button" class="chip" *ngFor="let f of filters" [class.on]="filter === f.id" (click)="filter = f.id; reset()">
+        {{ f.label }} <span class="chip-n">{{ count(f.id) }}</span>
+      </button>
+    </div>
+    <span class="result-count">
+      {{ from }}–{{ to }} of {{ total }}
+      <button type="button" class="link-btn" *ngIf="hasFilters" (click)="clearFilters()">Clear</button>
+    </span>
+  </div>
+
+  <div class="load-failed" *ngIf="failed && !isLoading">
+    <p>Couldn't load compounds.</p>
+    <button class="btn-primary" (click)="retry()">Try again</button>
+  </div>
+
+  <!-- first load: the page's shape while the first 20 arrive -->
+  <div class="compounds-grid" *ngIf="isLoading" aria-busy="true">
+    <div class="compound-card skeleton" *ngFor="let _ of placeholders">
+      <div class="card-cover sk-block"></div>
+      <div class="card-body">
+        <div class="sk-line w40"></div><div class="sk-line w80"></div><div class="sk-line w60"></div><div class="sk-line w70"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="compounds-grid" *ngIf="!isLoading && !failed" [class.refreshing]="isRefreshing">
+
+    <div class="compound-card" *ngFor="let item of compounds" (click)="goToDetail(item.id)">
+
+      <!-- Cover image: main_image → gallery[0] → placeholder -->
+      <div class="card-cover">
+        <img *ngIf="item.main_image || (item.gallery && item.gallery.length > 0)"
+          [src]="item.main_image || item.gallery[0]" [alt]="item.name_en" class="cover-img" />
+        <div *ngIf="!item.main_image && (!item.gallery || item.gallery.length === 0)" class="cover-placeholder">
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+        <span class="gallery-count" *ngIf="item.gallery && item.gallery.length > 1">
+          +{{ item.gallery.length - 1 }}
+        </span>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="card-top">
+          <span class="badge" [class.badge-active]="item.is_active" [class.badge-inactive]="!item.is_active">
+            {{ item.is_active ? 'Active' : 'Inactive' }}
+          </span>
+          <span class="badge badge-ref" *ngIf="item.nawy_id" title="Imported — reference id">Ref #{{ item.nawy_id }}</span>
+          <span class="card-date">{{ item.created_at | date:'mediumDate' }}</span>
+        </div>
+
+        <h3 class="card-name-en">{{ item.name_en || '—' }}</h3>
+        <p class="card-name-ar" dir="rtl">{{ item.name_ar }}</p>
+        <p class="card-dev" *ngIf="item.developer">
+          {{ item.developer.name_en || item.developer.name_ar }}
+          <span class="launch-chip" *ngIf="item.promotion" [class.offer]="item.promotion.type === 'offer'">{{ item.promotion.type === 'offer' ? 'Offer' : 'New launch' }}</span>
+          <span class="follow-count">{{ item.followers_count || 0 }} follower{{ (item.followers_count || 0) === 1 ? '' : 's' }}</span>
+        </p>
+
+        <p class="card-area" *ngIf="item.area">{{ item.area.name_en || item.area.name_ar }}</p>
+
+        <div class="card-flags">
+          <span class="flag" [class.off]="!item.desc_en" title="English description">EN</span>
+          <span class="flag" [class.off]="!item.desc_ar" title="Arabic description">AR</span>
+          <span class="flag" [class.off]="!item.faqs?.length" title="FAQs">FAQ {{ item.faqs?.length || 0 }}</span>
+          <span class="flag" [class.off]="!item.latitude" title="Coordinates">Pin</span>
+          <span class="flag" [class.off]="!item.master_plan" title="Master plan">Plan</span>
+          <span class="flag" [class.off]="!item.aliases?.length" title="Other names">Names {{ item.aliases?.length || 0 }}</span>
+        </div>
+
+        <div class="card-stats">
+          <span class="stat" *ngIf="item.units_count !== undefined">{{ item.units_count }} listing{{ item.units_count === 1 ? '' : 's' }}</span>
+          <span class="stat">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            {{ item.gallery?.length || 0 }} photo{{ (item.gallery?.length || 0) !== 1 ? 's' : '' }}
+          </span>
+          <span class="stat">
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 11 12 14 22 4"/>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+            </svg>
+            {{ item.features?.length || 0 }} feature{{ (item.features?.length || 0) !== 1 ? 's' : '' }}
+          </span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="empty-state" *ngIf="total === 0 && hasFilters">
+      <p>No compound matches.</p>
+      <button class="btn-primary" (click)="clearFilters()">Clear filters</button>
+    </div>
+
+    <div class="empty-state" *ngIf="total === 0 && !hasFilters">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+      <p>No compounds yet.</p>
+      <button class="btn-primary" (click)="goToNew()">Create First Compound</button>
+    </div>
+
+  </div>
+
+  <div class="pager" *ngIf="!isLoading && !failed && total > 0">
+    <button type="button" class="chip" [disabled]="page <= 1" (click)="go(page - 1)">‹ Previous</button>
+    <span class="pager-info">Page {{ page }} of {{ totalPages }}</span>
+    <button type="button" class="chip" [disabled]="page >= totalPages" (click)="go(page + 1)">Next ›</button>
+    <select class="area-select per-page" [(ngModel)]="pageSize" (ngModelChange)="reset()" name="pageSize" aria-label="Per page">
+      <option *ngFor="let n of pageSizes" [ngValue]="n">{{ n }} per page</option>
+    </select>
+  </div>
+
+</div>

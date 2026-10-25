@@ -7,10 +7,12 @@ import { TranslationService } from '../../../../core/services/translation.servic
 import { News, CreateNewsDto } from '../../../../core/models/news.model';
 import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
+import { NewsLinkFieldsComponent } from '../../../../shared/components/news-link-fields/news-link-fields';
+
 @Component({
   selector: 'app-news-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, MediaUploaderComponent],
+  imports: [CommonModule, FormsModule, MediaUploaderComponent, NewsLinkFieldsComponent],
   templateUrl: './news-detail.html',
   styleUrl: './news-detail.scss',
 })
@@ -37,6 +39,8 @@ export class NewsDetailComponent implements OnInit {
     is_active:    true,
     published_at: '',
     published_by: '',
+    compound_id:   null,
+    developer_id: null,
   };
 
   constructor(
@@ -134,6 +138,8 @@ export class NewsDetailComponent implements OnInit {
         ? this.article.published_at.slice(0, 16)
         : '',
       published_by: this.article.published_by,
+      compound_id:   this.article.compound_id ?? null,
+      developer_id: this.article.developer_id ?? null,
     };
     this.errorMessage = '';
     this.isEditMode   = true;
@@ -190,6 +196,8 @@ export class NewsDetailComponent implements OnInit {
       is_active:    this.editForm.is_active,
       published_at: this.editForm.published_at,
       published_by: this.editForm.published_by,
+      compound_id:   this.editForm.compound_id,
+      developer_id: this.editForm.developer_id,
     };
 
     this.newsService.update(this.article!.id, payload).subscribe({

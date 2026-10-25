@@ -1,0 +1,99 @@
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1>Call Requests</h1>
+      <p>Buyers who asked Jeeran to call them about a primary unit</p>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button *ngFor="let t of tabs" [class.on]="status === t.key" (click)="status = t.key; reset()">
+      {{ t.label }}<em>{{ countOf(t.key) }}</em>
+    </button>
+  </div>
+
+  <div class="filters-bar">
+    <input class="search" type="search" placeholder="Search name, phone, unit or reference" [(ngModel)]="search" (ngModelChange)="onSearch()" name="search" />
+  </div>
+
+  <div class="error-bar" *ngIf="errorMsg">{{ errorMsg }} <button (click)="errorMsg = ''">×</button></div>
+
+  <div class="loading-state" *ngIf="isLoading">
+    <div class="spinner-lg"></div>
+    <p>Loading requests...</p>
+  </div>
+
+  <div class="loading-state" *ngIf="!isLoading && failed">
+    <p>Couldn't load the requests.</p>
+    <button class="btn-view" (click)="retry()">Try again</button>
+  </div>
+
+  <div class="table-card" *ngIf="!isLoading && !failed" [style.opacity]="isRefreshing ? 0.55 : 1">
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Buyer</th>
+          <th>Unit</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Follow up</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of requests">
+          <td class="td-id">{{ r.id }}</td>
+          <td>
+            <div class="person">
+              <span class="td-name">{{ r.user?.name || '—' }}</span>
+              <a *ngIf="telHref(phoneOf(r)) as href; else noPhone" [href]="href">{{ phoneOf(r) }}</a>
+              <ng-template #noPhone><small>No phone</small></ng-template>
+              <span class="phone-flag" *ngIf="phoneOf(r) && r.phone_verified === false">Not verified</span>
+              <small *ngIf="r.user?.email">{{ r.user?.email }}</small>
+            </div>
+          </td>
+          <td>
+            <div class="unit">
+              <a [routerLink]="['/dashboard/properties', r.property_id]">{{ r.property_title || ('Unit #' + r.property_id) }}</a>
+              <small>{{ r.reference_code || '' }}<ng-container *ngIf="r.price"> · EGP {{ +r.price | number:'1.0-0' }}</ng-container></small>
+            </div>
+          </td>
+          <td><span class="badge" [ngClass]="'badge-' + r.status">{{ statusLabel(r.status) }}</span></td>
+          <td class="td-muted">{{ r.created_at | date:'medium' }}</td>
+          <td>
+            <div class="row-actions">
+              <select [(ngModel)]="draftStatus[r.id]" [name]="'st' + r.id">
+                <option *ngFor="let s of statuses" [value]="s">{{ statusLabel(s) }}</option>
+              </select>
+              <textarea placeholder="Note (visible to admins only)" [(ngModel)]="draftNote[r.id]" [name]="'nt' + r.id"></textarea>
+              <button class="save" [disabled]="!dirty(r) || saving.has(r.id)" (click)="save(r)">{{ saving.has(r.id) ? 'Saving…' : 'Save' }}</button>
+              <span class="handled" *ngIf="r.handled_at">Updated {{ r.handled_at | date:'short' }}</span>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="requests.length === 0">
+          <td colspan="6" class="empty-row">No requests here.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="pagination-bar" *ngIf="!isLoading && !failed && total > 0">
+    <div class="pagination-info">
+      Showing <strong>{{ rangeStart }}–{{ rangeEnd }}</strong> of <strong>{{ total }}</strong> requests
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">‹</button>
+      <span class="page-gap">{{ currentPage }} / {{ totalPages }}</span>
+      <button class="page-btn page-btn-nav" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">›</button>
+    </div>
+    <div class="pagination-size">
+      <label>Per page</label>
+      <select [(ngModel)]="limit" (change)="reset()">
+        <option *ngFor="let s of pageSizes" [ngValue]="s">{{ s }}</option>
+      </select>
+    </div>
+  </div>
+
+</div>

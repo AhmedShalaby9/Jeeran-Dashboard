@@ -78,6 +78,34 @@
               </span>
             </div>
             <div class="info-item">
+              <span class="info-label">Slot</span>
+              <span class="info-value">{{ slotLabel(banner.slot) }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Type</span>
+              <span class="info-value">{{ banner.kind === 'sponsored' ? 'Sponsored' + (banner.sponsor_name ? ' · ' + banner.sponsor_name : '') : 'Internal' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Media</span>
+              <span class="info-value">{{ banner.media_type === 'video' ? 'Video' + (banner.video_duration ? ' · ' + banner.video_duration + 's' : '') : 'Image' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Caption</span>
+              <span class="info-value">{{ banner.caption_en || banner.caption_ar || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Opens</span>
+              <span class="info-value">{{ targetLabel(banner.target_type) }}{{ banner.target_id ? ' #' + banner.target_id : '' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Order</span>
+              <span class="info-value">{{ banner.sort_order }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Schedule</span>
+              <span class="info-value">{{ banner.starts_at ? (banner.starts_at | date:'medium') : 'Anytime' }} → {{ banner.ends_at ? (banner.ends_at | date:'medium') : 'No end' }}</span>
+            </div>
+            <div class="info-item">
               <span class="info-label">Phone</span>
               <span class="info-value">{{ banner.phone || '—' }}</span>
             </div>
@@ -115,44 +143,7 @@
 
       <form class="form-card" (ngSubmit)="saveEdit()">
 
-        <div class="form-section">
-          <h2 class="section-title">Edit Image</h2>
-
-          <div class="form-group">
-            <label>Image URL <span class="required">*</span></label>
-            <input type="text" [(ngModel)]="editForm.image_url" name="image_url"
-              placeholder="https://example.com/banner.jpg" />
-          </div>
-
-          <div class="image-preview" *ngIf="editForm.image_url">
-            <img [src]="editForm.image_url" alt="preview" class="preview-img"
-              (error)="$any($event.target).style.display='none'" />
-          </div>
-        </div>
-
-        <div class="form-divider"></div>
-
-        <div class="form-section">
-          <h2 class="section-title">Settings</h2>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Link URL</label>
-              <input type="text" [(ngModel)]="editForm.link" name="link"
-                placeholder="https://example.com" />
-            </div>
-            <div class="form-group">
-              <label>Phone Number</label>
-              <input type="tel" [(ngModel)]="editForm.phone" name="phone"
-                placeholder="+20 100 000 0000" />
-            </div>
-            <div class="form-group check-group">
-              <label class="checkbox-label">
-                <input type="checkbox" [(ngModel)]="editForm.is_active" name="is_active" />
-                <span>Active</span>
-              </label>
-            </div>
-          </div>
-        </div>
+        <app-banner-fields [form]="editForm" [developers]="developers"></app-banner-fields>
 
         <div class="form-divider"></div>
 

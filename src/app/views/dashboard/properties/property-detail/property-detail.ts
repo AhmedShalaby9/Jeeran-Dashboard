@@ -4,12 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../../../core/services/property.service';
 import { TranslationService } from '../../../../core/services/translation.service';
-import { Property, CreatePropertyDto, PropertyType, PropertyStatus, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS } from '../../../../core/models/property.model';
+import { UnitDetailsFieldsComponent } from '../../../../shared/components/unit-details-fields/unit-details-fields';
+import { ListingAttributesFieldsComponent } from '../../../../shared/components/listing-attributes-fields/listing-attributes-fields';
+import { AMENITIES, FINISHINGS, PAYMENT_OPTIONS } from '../../../../core/models/listing-options';
+import { PhaseService } from '../../../../core/services/phase.service';
+import { Phase } from '../../../../core/models/phase.model';
+import { CompoundService } from '../../../../core/services/compound.service';
+import { Compound } from '../../../../core/models/compound.model';
+import { Property, CreatePropertyDto, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../../core/models/property.model';
 
 @Component({
   selector: 'app-property-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, UnitDetailsFieldsComponent],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.scss',
 })
@@ -53,6 +60,15 @@ export class PropertyDetailComponent implements OnInit {
       value: key, ...PROPERTY_STATUS_LABELS[key],
     }));
 
+  readonly listingTypes: { value: ListingType; en: string; ar: string }[] =
+    (Object.keys(LISTING_TYPE_LABELS) as ListingType[]).map(key => ({
+      value: key, ...LISTING_TYPE_LABELS[key],
+    }));
+
+  listingLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
+    return LISTING_TYPE_LABELS[type as ListingType]?.[lang] ?? type;
+  }
+
   typeLabel(type: string, lang: 'en' | 'ar' = 'en'): string {
     return PROPERTY_TYPE_LABELS[type as PropertyType]?.[lang] ?? type;
   }
@@ -75,12 +91,42 @@ export class PropertyDetailComponent implements OnInit {
     private router: Router,
     private propertyService: PropertyService,
     private translationService: TranslationService,
+    private compoundService: CompoundService,
+    private phaseService: PhaseService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  compounds: Compound[] = [];
+
+  phases: Phase[] = [];
+
+  /** Phases of the chosen compound; a unit can sit in one of them. */
+  loadPhases(compoundId: number | null | undefined, keep = true): void {
+    if (!compoundId) { this.phases = []; return; }
+    this.phaseService.getForCompound(compoundId).subscribe({
+      next: (res) => {
+        this.phases = res.data;
+        if (!keep) this.editForm.phase_id = null;
+        this.cdr.detectChanges();
+      },
+      error: () => {},
+    });
+  }
+
+  onCompoundChange(): void { this.loadPhases(this.editForm.compound_id, false); }
+
+  compoundName(id: number | null | undefined): string {
+    const c = this.compounds.find((x) => x.id === id);
+    return c ? (c.name_en || c.name_ar) : (id ? `#${id}` : '—');
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.load(id);
+    this.compoundService.getAll().subscribe({
+      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
+      error: () => {},
+    });
   }
 
   load(id: number): void {
@@ -101,6 +147,7 @@ export class PropertyDetailComponent implements OnInit {
 
   enableEdit(): void {
     if (!this.property) return;
+    this.loadPhases(this.property.compound_id);
     this.editForm = {
       title:           this.property.title,
       title_ar:        this.property.title_ar,
@@ -112,13 +159,27 @@ export class PropertyDetailComponent implements OnInit {
       content_html:    this.property.content_html,
       property_type:   this.property.property_type,
       property_status: this.property.property_status,
+      listing_type:    this.property.listing_type,
       price:           this.property.price,
       size:            this.property.size,
       bedrooms:        this.property.bedrooms,
       bathrooms:       this.property.bathrooms,
       country:         this.property.country,
       state:           this.property.state,
-      project_id:      this.property.project_id,
+      compound_id:      this.property.compound_id,
+      phase_id:         this.property.phase_id ?? null,
+      delivery_date:    this.property.delivery_date ?? null,
+      finishing:        this.property.finishing ?? null,
+      payment_options:  this.property.payment_options ?? null,
+      down_payment_percent: this.property.down_payment_percent == null ? null : Number(this.property.down_payment_percent),
+      installment_years:    this.property.installment_years ?? null,
+      features:         this.property.features ?? null,
+      garden_size:      this.property.garden_size == null ? null : Number(this.property.garden_size),
+      level_ar:         this.property.level_ar ?? '',
+      level_en:         this.property.level_en ?? '',
+      floor_plan:       this.property.floor_plan ?? '',
+      maintenance_ar:   this.property.maintenance_ar ?? '',
+      maintenance_en:   this.property.maintenance_en ?? '',
       images:          [...(this.property.images || [])],
       video_url:       this.property.video_url,
       is_featured:     this.property.is_featured,
@@ -225,6 +286,39 @@ export class PropertyDetailComponent implements OnInit {
       error: (err) => {
         this.isSubmitting = false;
         this.errorMessage = err.error?.message || 'Failed to update property.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  finishingLabel(v?: string | null): string { return FINISHINGS.find((f) => f.value === v)?.label ?? '—'; }
+  tagLabels(v?: string[] | null): string {
+    return v?.length ? v.map((x) => AMENITIES.find((a) => a.value === x)?.label ?? x).join(', ') : '—';
+  }
+  paymentLabels(v?: string[] | null): string {
+    return v?.length ? v.map((x) => PAYMENT_OPTIONS.find((p) => p.value === x)?.label ?? x).join(', ') : '—';
+  }
+
+  isTogglingSold = false;
+
+  toggleSold(): void {
+    if (!this.property || this.isTogglingSold) return;
+    const sold = !this.property.sold_at;
+    this.isTogglingSold = true;
+    this.errorMessage = '';
+    this.propertyService.markSold(this.property.id, sold).subscribe({
+      next: (res) => {
+        this.property       = { ...this.property!, sold_at: res.data.sold_at ?? null };
+        this.isTogglingSold = false;
+        this.successMessage = sold
+          ? 'Marked as sold. People who saved it were notified and it is hidden from the app lists.'
+          : 'Listing reopened.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 4000);
+      },
+      error: (err) => {
+        this.isTogglingSold = false;
+        this.errorMessage = err.error?.message || 'Failed to update the sold status.';
         this.cdr.detectChanges();
       },
     });

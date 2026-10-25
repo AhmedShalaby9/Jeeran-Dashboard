@@ -19,8 +19,7 @@
   <div class="filters-bar">
     <select [(ngModel)]="filterType" (ngModelChange)="onFilterChange()" name="filterType">
       <option value="">All Types</option>
-      <option value="buyer">Buyer</option>
-      <option value="seller">Seller</option>
+      <option value="customer">Customer</option>
       <option value="admin">Admin</option>
       <option value="super_admin">Super Admin</option>
     </select>
@@ -56,7 +55,9 @@
           <th>Name</th>
           <th>Email</th>
           <th>Phone</th>
+          <th>Provider</th>
           <th>Type</th>
+          <th>Profile</th>
           <th>Status</th>
           <th></th>
         </tr>
@@ -74,7 +75,17 @@
             <ng-template #rawPhone>{{ user.phone || '—' }}</ng-template>
           </td>
           <td>
+            <span class="provider-badge provider-{{ user.auth_provider || 'phone' }}">
+              {{ (user.auth_provider || 'phone') | titlecase }}
+            </span>
+          </td>
+          <td>
             <span class="type-badge type-{{ user.user_type }}">{{ user.user_type | titlecase }}</span>
+          </td>
+          <td>
+            <span class="badge" [class.badge-active]="user.is_profile_complete" [class.badge-inactive]="!user.is_profile_complete">
+              {{ user.is_profile_complete ? 'Complete' : 'Incomplete' }}
+            </span>
           </td>
           <td>
             <span class="badge" [class.badge-active]="user.is_active" [class.badge-inactive]="!user.is_active">
@@ -92,7 +103,7 @@
           </td>
         </tr>
         <tr *ngIf="users.length === 0">
-          <td colspan="7" class="empty-row">No users found.</td>
+          <td colspan="9" class="empty-row">No users found.</td>
         </tr>
       </tbody>
     </table>

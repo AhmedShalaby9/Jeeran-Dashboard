@@ -135,7 +135,12 @@
         </div>
       </div>
 
-      <div class="form-row">
+      <div class="form-group" style="margin-bottom:0.5rem">
+  <label>Related to</label>
+  <app-news-link-fields [form]="form"></app-news-link-fields>
+</div>
+
+<div class="form-row">
         <div class="form-group">
           <label>Published By</label>
           <input type="text" [(ngModel)]="form.published_by" name="published_by" placeholder="Author name" />

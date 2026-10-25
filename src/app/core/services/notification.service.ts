@@ -4,6 +4,10 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthService } from './auth.service';
 import {
+  NotificationCategory,
+  NotificationTarget,
+  NotificationType,
+  ReachPreview,
   Notification,
   NotificationListResponse,
   SendNotificationDto,
@@ -31,6 +35,13 @@ export class NotificationService {
   // Admin: send a notification
   send(dto: SendNotificationDto): Observable<SendNotificationResponse> {
     return this.http.post<SendNotificationResponse>(this.url, dto, { headers: this.headers() });
+  }
+
+  // Admin: how many people a broadcast would reach (those who turned the category off are left out)
+  preview(type: NotificationType, target: NotificationTarget, category?: NotificationCategory): Observable<{ success: boolean; data: ReachPreview }> {
+    return this.http.post<{ success: boolean; data: ReachPreview }>(
+      `${this.url}/preview`, { type, target, ...(category && { category }) }, { headers: this.headers() },
+    );
   }
 
   // User: my notifications

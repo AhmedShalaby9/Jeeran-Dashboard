@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { LangService, Lang } from '../../core/services/lang.service';
-import { SubscriptionService } from '../../core/services/subscription.service';
+// PACKAGES DISABLED: import { SubscriptionService } from '../../core/services/subscription.service';
 import { User } from '../../core/models/user.model';
 
 @Component({
@@ -20,22 +20,23 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     public langService: LangService,
-    private subscriptionService: SubscriptionService,
+    // PACKAGES DISABLED: private subscriptionService: SubscriptionService,
   ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    this.loadPendingCount();
+    // PACKAGES DISABLED: this.loadPendingCount();
   }
 
-  private loadPendingCount(): void {
-    this.subscriptionService.getAdminAll({ status: 'pending_approval', limit: 1 }).subscribe({
-      next: (res) => {
-        this.pendingApprovalCount = res.meta?.total ?? res.pagination?.total ?? 0;
-      },
-      error: () => {},
-    });
-  }
+  // PACKAGES DISABLED
+  // private loadPendingCount(): void {
+  //   this.subscriptionService.getAdminAll({ status: 'pending_approval', limit: 1 }).subscribe({
+  //     next: (res) => {
+  //       this.pendingApprovalCount = res.meta?.total ?? res.pagination?.total ?? 0;
+  //     },
+  //     error: () => {},
+  //   });
+  // }
 
   logout(): void {
     this.authService.logout();

@@ -120,3 +120,11 @@ $border:    #e5e7eb;
 
   p { margin: 0; font-size: 0.95rem; }
 }
+
+.chip {
+  display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; margin-left: 0.35rem;
+  font-size: 0.68rem; font-weight: 600; background: #eef1f6; color: #4b5563;
+  &.chip-gold { background: #f6ecd7; color: #8a5f12; }
+}
+.banner-top { flex-wrap: wrap; gap: 0.15rem; }
+.banner-date { margin-left: auto; }

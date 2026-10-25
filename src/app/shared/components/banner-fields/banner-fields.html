@@ -1,0 +1,178 @@
+<div class="bf">
+
+  <!-- Placement -->
+  <div class="form-section">
+    <h2 class="section-title">Placement</h2>
+    <p class="section-desc">{{ slotHint }}</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Slot</label>
+        <select [(ngModel)]="form.slot" name="slot">
+          <option *ngFor="let s of slots" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Type</label>
+        <select [(ngModel)]="form.kind" name="kind">
+          <option value="internal">Internal (Jeeran promo)</option>
+          <option value="sponsored">Sponsored (shows an “Ad” label)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Order</label>
+        <input type="number" [(ngModel)]="form.sort_order" name="sort_order" min="0" />
+      </div>
+      <div class="form-group check-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="form.is_active" name="is_active" />
+          <span>Active</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row" *ngIf="form.kind === 'sponsored'">
+      <div class="form-group">
+        <label>Sponsor name <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.sponsor_name" name="sponsor_name" placeholder="Emaar Misr" />
+      </div>
+      <div class="form-group">
+        <label>Developer (optional)</label>
+        <select [(ngModel)]="form.developer_id" name="developer_id">
+          <option [ngValue]="null">— none —</option>
+          <option *ngFor="let d of developers" [ngValue]="d.id">{{ d.name_en || d.name_ar }}</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <!-- Media -->
+  <div class="form-section">
+    <h2 class="section-title">Media</h2>
+    <div class="seg">
+      <button type="button" [class.on]="form.media_type === 'image'" (click)="form.media_type = 'image'">Image</button>
+      <button type="button" [class.on]="form.media_type === 'video'" (click)="form.media_type = 'video'">Video</button>
+    </div>
+
+    <div class="form-group">
+      <label>{{ form.media_type === 'video' ? 'Poster image' : 'Image' }} <span class="required">*</span></label>
+      <app-media-uploader folder="banners" [multiple]="false" (uploaded)="onImageUploaded($event)"></app-media-uploader>
+      <div class="url-fallback">
+        <span class="or-label">or paste URL</span>
+        <input type="text" [(ngModel)]="form.image_url" name="image_url" placeholder="https://example.com/banner.jpg" />
+      </div>
+    </div>
+
+    <ng-container *ngIf="form.media_type === 'video'">
+      <div class="form-group">
+        <label>Video <span class="required">*</span> <small>(mp4 / mov)</small></label>
+        <app-media-uploader folder="banners" accept="video/mp4,video/quicktime" [multiple]="false"
+          (uploaded)="onVideoUploaded($event)"></app-media-uploader>
+        <div class="url-fallback">
+          <span class="or-label">or paste URL</span>
+          <input type="text" [(ngModel)]="form.video_url" name="video_url" placeholder="https://example.com/clip.mp4" />
+        </div>
+      </div>
+      <div class="form-group narrow">
+        <label>Length (seconds)</label>
+        <input type="number" [(ngModel)]="form.video_duration" name="video_duration" min="0" placeholder="18" />
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <!-- Caption -->
+  <div class="form-section">
+    <h2 class="section-title">Caption</h2>
+    <p class="section-desc">Shown over the media. Leave empty for a picture-only banner.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Caption (English)</label>
+        <input type="text" [(ngModel)]="form.caption_en" name="caption_en" maxlength="255" />
+      </div>
+      <div class="form-group">
+        <label>Caption (Arabic)</label>
+        <input type="text" [(ngModel)]="form.caption_ar" name="caption_ar" dir="rtl" maxlength="255" />
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Sub-line (English)</label>
+        <input type="text" [(ngModel)]="form.sub_en" name="sub_en" maxlength="255" />
+      </div>
+      <div class="form-group">
+        <label>Sub-line (Arabic)</label>
+        <input type="text" [(ngModel)]="form.sub_ar" name="sub_ar" dir="rtl" maxlength="255" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <!-- Target -->
+  <div class="form-section">
+    <h2 class="section-title">When tapped</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Opens</label>
+        <select [(ngModel)]="form.target_type" name="target_type" (ngModelChange)="onTargetChange()">
+          <option *ngFor="let t of targets" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </div>
+      <div class="form-group" *ngIf="needsId">
+        <label>{{ idLabel }} <span class="required">*</span></label>
+        <input type="number" [(ngModel)]="form.target_id" name="target_id" min="1" />
+      </div>
+      <div class="form-group" *ngIf="form.target_type === 'url'">
+        <label>Link URL <span class="required">*</span></label>
+        <input type="text" [(ngModel)]="form.link" name="link" placeholder="https://example.com" />
+      </div>
+      <div class="form-group" *ngIf="form.target_type === 'phone'">
+        <label>Phone number <span class="required">*</span></label>
+        <input type="tel" [(ngModel)]="form.phone" name="phone" placeholder="+20 100 000 0000" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <!-- Schedule -->
+  <div class="form-section">
+    <h2 class="section-title">Schedule</h2>
+    <p class="section-desc">Optional. Outside this window the banner is hidden even if Active.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Starts</label>
+        <input type="datetime-local" [(ngModel)]="form.starts_at" name="starts_at" />
+      </div>
+      <div class="form-group">
+        <label>Ends</label>
+        <input type="datetime-local" [(ngModel)]="form.ends_at" name="ends_at" />
+      </div>
+    </div>
+  </div>
+
+  <div class="form-divider"></div>
+
+  <!-- Preview -->
+  <div class="form-section">
+    <h2 class="section-title">Preview</h2>
+    <p class="section-desc">Approximate look in the app ({{ form.slot === 'explore_top' ? 'top rail card' : 'in-feed slot' }}).</p>
+    <div class="phone-card" [class.rail]="form.slot === 'explore_top'" [style.height.px]="previewHeight">
+      <img *ngIf="form.image_url" [src]="form.image_url" alt="preview" (error)="$any($event.target).style.display='none'" />
+      <div class="shade"></div>
+      <span class="ad-tag" *ngIf="form.kind === 'sponsored'">Ad · {{ sponsorLabel || 'Sponsor' }}</span>
+      <span class="play" *ngIf="form.media_type === 'video'">
+        <svg width="14" height="16" viewBox="0 0 12 14" fill="#fff"><path d="M1.5 1.2v11.6L11 7 1.5 1.2z"/></svg>
+      </span>
+      <span class="dur" *ngIf="form.media_type === 'video' && duration">{{ duration }}</span>
+      <div class="cap" *ngIf="form.caption_en || form.sub_en">
+        <div class="cap-title">{{ form.caption_en }}</div>
+        <div class="cap-sub">{{ form.sub_en }}</div>
+      </div>
+    </div>
+  </div>
+
+</div>

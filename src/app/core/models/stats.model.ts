@@ -1,8 +1,7 @@
 export interface DashboardStats {
   users: {
     total: number;
-    buyers: number;
-    sellers: number;
+    customers: number;
     admins: number;
     super_admins: number;
     active: number;
@@ -25,13 +24,7 @@ export interface DashboardStats {
     expired: number;
     cancelled: number;
   };
-  seller_requests: {
-    total: number;
-    pending: number;
-    approved: number;
-    rejected: number;
-  };
-  projects: {
+  compounds: {
     total: number;
     active: number;
   };
@@ -49,6 +42,10 @@ export interface DashboardStats {
   };
   favorites: {
     total: number;
+  };
+  developers: {
+    total: number;
+    active: number;
   };
 }
 

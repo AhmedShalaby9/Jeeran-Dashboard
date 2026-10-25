@@ -60,7 +60,7 @@
             <th>Type</th>
             <th>Price</th>
             <th>Agent</th>
-            <th>Project</th>
+            <th>Compound</th>
             <th>Submitted</th>
             <th>Status</th>
             <th class="th-actions">Actions</th>
@@ -117,8 +117,8 @@
               <span class="muted-dash" *ngIf="!prop.agent_name && !prop.agent_mobile">—</span>
             </td>
 
-            <!-- Project -->
-            <td class="project-cell">{{ projectName(prop.project_id) }}</td>
+            <!-- Compound -->
+            <td class="compound-cell">{{ compoundName(prop.compound_id) }}</td>
 
             <!-- Submitted date -->
             <td class="date-cell">{{ prop.created_at | date:'mediumDate' }}</td>

@@ -1,0 +1,39 @@
+<div class="phases">
+  <div class="head">
+    <h2 class="section-title">Phases</h2>
+    <button class="btn-secondary" type="button" (click)="add()" *ngIf="!draft">Add phase</button>
+  </div>
+  <p class="note">Availability, starting price and the status label are worked out from the units assigned to each phase. Assign units from the property form.</p>
+
+  <p class="err" *ngIf="error">{{ error }}</p>
+
+  <div class="row" *ngFor="let p of phases" [class.off]="!p.is_active">
+    <div class="main">
+      <strong>{{ p.name_en || p.name_ar }}</strong>
+      <span class="sub">{{ p.delivery_label_en || p.delivery_label_ar || 'No delivery label' }}</span>
+    </div>
+    <span class="count">{{ p.available_count ?? 0 }} available</span>
+    <span class="count" *ngIf="p.min_price">from {{ p.min_price | number }}</span>
+    <span class="status" [ngClass]="p.status">{{ p.status ? statusLabels[p.status] : '' }}</span>
+    <span class="status off" *ngIf="!p.is_active">Hidden</span>
+    <button class="link" type="button" (click)="edit(p)">Edit</button>
+    <button class="link danger" type="button" (click)="remove(p)">Delete</button>
+  </div>
+  <p class="empty" *ngIf="!phases.length && !draft">No phases yet — the app shows an empty state on the Phases tab.</p>
+
+  <div class="draft" *ngIf="draft">
+    <div class="grid">
+      <label><span>Name (Arabic) *</span><input type="text" [(ngModel)]="draft.name_ar" name="ph_name_ar" dir="rtl" /></label>
+      <label><span>Name (English)</span><input type="text" [(ngModel)]="draft.name_en" name="ph_name_en" /></label>
+      <label><span>Delivery label (Arabic)</span><input type="text" [(ngModel)]="draft.delivery_label_ar" name="ph_del_ar" dir="rtl" placeholder="تسليم 2028" /></label>
+      <label><span>Delivery label (English)</span><input type="text" [(ngModel)]="draft.delivery_label_en" name="ph_del_en" placeholder="Delivery 2028" /></label>
+      <label><span>Order</span><input type="number" [(ngModel)]="draft.sort_order" name="ph_sort" /></label>
+    </div>
+    <label class="check"><input type="checkbox" [(ngModel)]="draft.is_active" name="ph_active" /> Visible in the app</label>
+    <label class="check" *ngIf="!draft.id"><input type="checkbox" [(ngModel)]="draft.notify" name="ph_notify" /> Notify followers of this compound</label>
+    <div class="actions">
+      <button class="btn-primary" type="button" (click)="save()" [disabled]="saving">{{ saving ? 'Saving…' : 'Save phase' }}</button>
+      <button class="btn-secondary" type="button" (click)="cancel()">Cancel</button>
+    </div>
+  </div>
+</div>
