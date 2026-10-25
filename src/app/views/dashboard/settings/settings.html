@@ -49,6 +49,17 @@
       <hr class="section-divider" />
 
       <div class="settings-section">
+        <p class="section-title">Network Inspector</p>
+        <p class="section-desc">Turns on the app's in-app HTTP inspector (floating bug button + call log) remotely, on every environment — useful to debug a live issue without a rebuild. Leave off otherwise: it shows raw request/response bodies on the device.</p>
+        <label class="toggle-row">
+          <input type="checkbox" [(ngModel)]="form.network_inspector_enabled" />
+          <span class="toggle-label">Network inspector enabled</span>
+        </label>
+      </div>
+
+      <hr class="section-divider" />
+
+      <div class="settings-section">
         <p class="section-title">Contact phone</p>
         <p class="section-desc">Every “Call us” and “Call to book a viewing” button in the app dials this number. Leave it empty to hide those buttons.</p>
         <div class="form-row">
