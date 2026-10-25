@@ -20,6 +20,7 @@ export interface AppSettings {
   promo_seller_order: number;
   ai_guide_video_url?: string;
   ai_guide_video_visible: boolean;
+  network_inspector_enabled: boolean;
 }
 
 export interface SettingsResponse {

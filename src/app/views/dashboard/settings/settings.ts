@@ -43,6 +43,7 @@ export class SettingsComponent implements OnInit {
     promo_seller_order:   2,
     ai_guide_video_url:     '',
     ai_guide_video_visible: false,
+    network_inspector_enabled: false,
   };
 
   constructor(private settingService: SettingService, private cdr: ChangeDetectorRef) {}
