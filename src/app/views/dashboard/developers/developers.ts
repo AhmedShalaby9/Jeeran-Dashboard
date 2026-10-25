@@ -37,7 +37,7 @@ export class DevelopersComponent implements OnInit {
   private matches(d: Developer, f: DeveloperFilter): boolean {
     switch (f) {
       case 'top': return !!d.is_top;
-      case 'with-compounds': return !!d.compounds?.length;
+      case 'with-compounds': return !!d.compounds_count;
       case 'no-logo': return !d.logo;
       case 'verified': return !!d.is_verified;
       case 'inactive': return !d.is_active;

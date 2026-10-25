@@ -28,7 +28,8 @@ export interface Developer {
   trust_items?: Record<string, string>[] | null;
   created_at: string;
   updated_at: string;
-  compounds?:  any[];
+  /** From `GET /developers` (list) — a count, not the compounds themselves. */
+  compounds_count?: number;
 }
 
 export interface CreateDeveloperDto {
