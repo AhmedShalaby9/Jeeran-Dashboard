@@ -38,6 +38,23 @@
       <span>Level (Arabic)</span>
       <input class="pf-input" type="text" maxlength="100" dir="rtl" [(ngModel)]="form.level_ar" name="level_ar" placeholder="أرضي" />
     </label>
+    <div class="pf-field pf-span-all">
+      <div class="pf-translate-row">
+        <button type="button" class="pf-btn-translate"
+          (click)="translateLevelToAr()"
+          [disabled]="translatingLevel.toAr || !form.level_en?.trim()">
+          <span *ngIf="!translatingLevel.toAr">← Translate EN to AR</span>
+          <span *ngIf="translatingLevel.toAr" class="pf-spinner-xs"></span>
+        </button>
+        <button type="button" class="pf-btn-translate"
+          (click)="translateLevelToEn()"
+          [disabled]="translatingLevel.toEn || !form.level_ar?.trim()">
+          <span *ngIf="!translatingLevel.toEn">Translate AR to EN →</span>
+          <span *ngIf="translatingLevel.toEn" class="pf-spinner-xs"></span>
+        </button>
+      </div>
+      <p class="pf-translate-error" *ngIf="levelTranslateError">Translation failed — please try again.</p>
+    </div>
     <label class="pf-field">
       <span>Maintenance (English)</span>
       <input class="pf-input" type="text" maxlength="255" [(ngModel)]="form.maintenance_en" name="maintenance_en" placeholder="8% on delivery" />

@@ -2,6 +2,7 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MediaUploaderComponent } from '../media-uploader/media-uploader';
+import { TranslationService } from '../../../core/services/translation.service';
 
 /** Optional extras on a unit's page: garden / land / outdoor areas (by type), level, floor plan, maintenance. Mutates `form` in place. */
 @Component({
@@ -13,6 +14,33 @@ import { MediaUploaderComponent } from '../media-uploader/media-uploader';
 })
 export class UnitDetailsFieldsComponent {
   @Input({ required: true }) form!: any;
+
+  constructor(private translationService: TranslationService) {}
+
+  translatingLevel = { toEn: false, toAr: false };
+  levelTranslateError = false;
+
+  translateLevelToEn(): void {
+    if (!this.form.level_ar?.trim() || this.translatingLevel.toEn) return;
+    this.translatingLevel.toEn = true;
+    this.levelTranslateError    = false;
+    this.translationService.translate(this.form.level_ar, 'ar', 'en').subscribe(result => {
+      if (result !== null) this.form.level_en = result;
+      else this.levelTranslateError = true;
+      this.translatingLevel.toEn = false;
+    });
+  }
+
+  translateLevelToAr(): void {
+    if (!this.form.level_en?.trim() || this.translatingLevel.toAr) return;
+    this.translatingLevel.toAr = true;
+    this.levelTranslateError    = false;
+    this.translationService.translate(this.form.level_en, 'en', 'ar').subscribe(result => {
+      if (result !== null) this.form.level_ar = result;
+      else this.levelTranslateError = true;
+      this.translatingLevel.toAr = false;
+    });
+  }
 
   private static readonly VILLAS = ['villa', 'townhouse', 'twinhouse', 'family_house'];
   private static readonly GARDEN_CHOICE = ['apartment', 'chalet', 'duplex'];

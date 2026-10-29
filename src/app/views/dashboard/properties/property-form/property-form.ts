@@ -300,8 +300,10 @@ export class PropertyFormComponent implements OnInit {
         this.stepErrors[0] = 'A valid price is required.';
         return false;
       }
+    }
+    if (step === 1) {
       if (!this.form.compound_id) {
-        this.stepErrors[0] = 'Choose the compound this property belongs to.';
+        this.stepErrors[1] = 'Choose the compound this property belongs to.';
         return false;
       }
     }
