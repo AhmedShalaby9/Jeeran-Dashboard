@@ -12,11 +12,12 @@ import { Phase } from '../../../../core/models/phase.model';
 import { CompoundService } from '../../../../core/services/compound.service';
 import { Compound } from '../../../../core/models/compound.model';
 import { Property, CreatePropertyDto, PropertyType, PropertyStatus, ListingType, PROPERTY_TYPE_LABELS, PROPERTY_STATUS_LABELS, LISTING_TYPE_LABELS } from '../../../../core/models/property.model';
+import { MediaUploaderComponent } from '../../../../shared/components/media-uploader/media-uploader';
 
 @Component({
   selector: 'app-property-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, UnitDetailsFieldsComponent],
+  imports: [CommonModule, FormsModule, ListingAttributesFieldsComponent, UnitDetailsFieldsComponent, MediaUploaderComponent],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.scss',
 })
@@ -215,6 +216,10 @@ export class PropertyDetailComponent implements OnInit {
 
   onImageKeydown(e: KeyboardEvent): void {
     if (e.key === 'Enter') { e.preventDefault(); this.addImage(); }
+  }
+
+  onImagesUploaded(urls: string[]): void {
+    this.editForm.images = [...(this.editForm.images || []), ...urls];
   }
 
   translateTitleToEn(): void {

@@ -37,7 +37,10 @@ export class BannerFieldsComponent {
     return this.slots.find((s) => s.value === this.form.slot)?.hint ?? '';
   }
 
-  get previewHeight(): number { return this.form.slot === 'explore_top' ? 158 : 172; }
+  // Both slots render in the same home carousel at the same ~2.8:1 box (banners_carousel_widget.dart) —
+  // previously this showed 1.8:1 / 2.1:1, well off the real app, which is why delivered creatives ended up
+  // too wide and got cropped on-device. Heights are each card's own max CSS width (286 / 360) ÷ 2.8.
+  get previewHeight(): number { return this.form.slot === 'explore_top' ? 102 : 129; }
 
   get duration(): string {
     const s = this.form.video_duration;
