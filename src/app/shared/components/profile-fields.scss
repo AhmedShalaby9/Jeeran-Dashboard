@@ -16,3 +16,21 @@
 .pf-preview { margin-top: 0.7rem; max-width: 100%; max-height: 160px; border-radius: 10px; object-fit: cover; }
 .pf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
 @media (max-width: 700px) { .pf-two { grid-template-columns: 1fr; } }
+
+.pf-span-all { grid-column: 1 / -1; }
+
+.pf-translate-row { display: flex; gap: 0.6rem; margin-top: -0.3rem; }
+.pf-btn-translate {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
+  padding: 0.45rem 0.8rem; background: #eef1f8; color: #1e3a6e;
+  border: 1px solid #dbe1ee; border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: background 0.2s;
+  &:hover:not(:disabled) { background: #e2e7f3; }
+  &:disabled { opacity: 0.5; cursor: default; }
+}
+.pf-spinner-xs {
+  width: 12px; height: 12px; border: 2px solid #c7cfe0; border-top-color: #1e3a6e;
+  border-radius: 50%; display: inline-block; animation: pf-spin 0.7s linear infinite;
+}
+@keyframes pf-spin { to { transform: rotate(360deg); } }
+.pf-translate-error { font-size: 0.78rem; color: #c0392b; margin: 0.4rem 0 0; }
