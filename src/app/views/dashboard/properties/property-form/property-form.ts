@@ -80,8 +80,12 @@ export class PropertyFormComponent implements OnInit {
     { value: 'egypt', label: 'Egypt' },
   ];
 
-  // ── Compounds for dropdown ─────────────────────────────────
-  compounds: Compound[] = [];
+  // ── Compound search (there are 800+, far too many for a plain <select>) ────
+  compoundQuery       = '';
+  compoundResults: Compound[] = [];
+  compoundDropdownOpen = false;
+  compoundSearching    = false;
+  private compoundDebounce?: ReturnType<typeof setTimeout>;
 
   // ── Default agent ─────────────────────────────────────────
   readonly defaultAgent = DEFAULT_AGENT;
@@ -163,9 +167,7 @@ export class PropertyFormComponent implements OnInit {
     private cdr:               ChangeDetectorRef,
   ) {}
 
-  ngOnInit(): void {
-    this.loadCompounds();
-  }
+  ngOnInit(): void {}
 
 
   phases: Phase[] = [];
@@ -183,13 +185,48 @@ export class PropertyFormComponent implements OnInit {
     });
   }
 
-  onCompoundChange(): void { this.loadPhases(this.form.compound_id, false); }
+  // ── Compound search ──────────────────────────────────────────
+  onCompoundQueryChange(v: string): void {
+    this.compoundQuery        = v;
+    this.compoundDropdownOpen = true;
+    if (this.form.compound_id) { this.form.compound_id = null; this.phases = []; }
+    if (this.compoundDebounce) clearTimeout(this.compoundDebounce);
+    this.compoundDebounce = setTimeout(() => this.searchCompounds(v), 300);
+  }
 
-  loadCompounds(): void {
-    this.compoundService.getAll().subscribe({
-      next: (res) => { this.compounds = res.data; this.cdr.detectChanges(); },
-      error: () => {},
+  searchCompounds(q: string): void {
+    this.compoundSearching = true;
+    this.compoundService.getPage({ page: 1, limit: 20, q, sort: 'name-az' }).subscribe({
+      next: (res) => {
+        this.compoundResults   = res.data;
+        this.compoundSearching = false;
+        this.cdr.detectChanges();
+      },
+      error: () => { this.compoundSearching = false; this.cdr.detectChanges(); },
     });
+  }
+
+  selectCompound(c: Compound): void {
+    this.form.compound_id     = c.id;
+    this.compoundQuery        = c.name_en || c.name_ar;
+    this.compoundDropdownOpen = false;
+    this.loadPhases(c.id, false);
+  }
+
+  clearCompound(): void {
+    this.form.compound_id = null;
+    this.compoundQuery    = '';
+    this.phases           = [];
+  }
+
+  onCompoundFocus(): void {
+    this.compoundDropdownOpen = true;
+    if (!this.compoundResults.length && !this.compoundQuery) this.searchCompounds('');
+  }
+
+  onCompoundBlur(): void {
+    // let a click on a dropdown option register before closing it
+    setTimeout(() => (this.compoundDropdownOpen = false), 150);
   }
 
   // ── Helpers ───────────────────────────────────────────────

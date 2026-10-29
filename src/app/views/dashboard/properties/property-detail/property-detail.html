@@ -490,6 +490,11 @@
         <!-- Images -->
         <div class="form-section">
           <h2 class="section-title">Images</h2>
+          <app-media-uploader
+            folder="properties"
+            [multiple]="true"
+            (uploaded)="onImagesUploaded($event)">
+          </app-media-uploader>
           <div class="url-input-row">
             <input type="text" [(ngModel)]="imageInput" name="imageInput"
               placeholder="https://example.com/photo.jpg"

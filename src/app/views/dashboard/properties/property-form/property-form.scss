@@ -396,6 +396,31 @@ $border:       #e5e7eb;
   &:hover { background: $primary-dark; }
 }
 
+.compound-typeahead {
+  position: relative;
+}
+
+.compound-input-row {
+  display: flex; gap: 0.75rem;
+}
+
+.compound-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+  margin-top: 0.3rem; max-height: 260px; overflow-y: auto;
+  background: $white; border: 1.5px solid $border; border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+.compound-dropdown-item {
+  padding: 0.65rem 0.9rem; font-size: 0.875rem; color: $text-dark; cursor: pointer;
+  &:hover { background: rgba(30,58,110,0.06); }
+}
+
+.compound-dropdown-empty {
+  color: $text-muted; cursor: default;
+  &:hover { background: none; }
+}
+
 .image-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));

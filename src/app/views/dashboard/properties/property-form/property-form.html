@@ -337,14 +337,33 @@
             </select>
           </div>
 
-          <div class="field-group">
+          <div class="field-group compound-typeahead">
             <label>Compound <span class="required">*</span></label>
-            <select [(ngModel)]="form.compound_id" name="compound_id" (ngModelChange)="onCompoundChange()">
-              <option [ngValue]="null" disabled>Select a compound…</option>
-              <option *ngFor="let p of compounds" [ngValue]="p.id">
-                {{ p.name_en || p.name_ar }}
-              </option>
-            </select>
+            <div class="compound-input-row">
+              <input type="text" name="compound_search" autocomplete="off"
+                [(ngModel)]="compoundQuery"
+                (ngModelChange)="onCompoundQueryChange($event)"
+                (focus)="onCompoundFocus()"
+                (blur)="onCompoundBlur()"
+                placeholder="Search compounds by name…" class="url-input" />
+              <button type="button" class="btn-add" *ngIf="form.compound_id" (click)="clearCompound()">
+                Clear
+              </button>
+            </div>
+            <div class="compound-dropdown" *ngIf="compoundDropdownOpen">
+              <div class="compound-dropdown-item compound-dropdown-empty" *ngIf="compoundSearching">
+                Searching…
+              </div>
+              <ng-container *ngIf="!compoundSearching">
+                <div class="compound-dropdown-item" *ngFor="let c of compoundResults"
+                  (mousedown)="selectCompound(c)">
+                  {{ c.name_en || c.name_ar }}
+                </div>
+                <div class="compound-dropdown-item compound-dropdown-empty" *ngIf="!compoundResults.length">
+                  No compounds match that search.
+                </div>
+              </ng-container>
+            </div>
           </div>
 
           <div class="field-group" *ngIf="phases.length">
