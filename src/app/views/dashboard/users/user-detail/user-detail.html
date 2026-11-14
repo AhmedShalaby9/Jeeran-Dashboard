@@ -280,6 +280,17 @@
                 <span class="toggle-label">{{ editIsActive ? 'Active' : 'Inactive' }}</span>
               </div>
             </div>
+
+            <div class="form-group" *ngIf="isSuperAdmin">
+              <label>Role</label>
+              <select [(ngModel)]="editUserType" name="editUserType">
+                <option value="customer">Customer</option>
+                <option value="admin">Admin</option>
+              </select>
+              <small class="verify-note" *ngIf="user!.user_type === 'customer' && editUserType === 'admin'">
+                This will give {{ user!.name || 'this user' }} admin access to the dashboard.
+              </small>
+            </div>
           </div>
         </div>
 

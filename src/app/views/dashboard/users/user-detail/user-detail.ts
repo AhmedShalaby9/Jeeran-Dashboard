@@ -3,9 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../../core/services/user.service';
-import { User } from '../../../../core/models/user.model';
+import { User, UserType, UpdateUserDto } from '../../../../core/models/user.model';
 import { FavoriteService } from '../../../../core/services/favorite.service';
 import { FavoriteItem, FavoritesResponse } from '../../../../core/models/favorite.model';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-user-detail',
@@ -25,6 +26,8 @@ export class UserDetailComponent implements OnInit {
   successMessage       = '';
 
   editIsActive = false;
+  editUserType: UserType = 'customer';
+  isSuperAdmin = false;
 
   // ── Favourites ─────────────────────────────────────────────
   favorites:       FavoriteItem[] = [];
@@ -42,9 +45,11 @@ export class UserDetailComponent implements OnInit {
     private userService: UserService,
     private favoriteService: FavoriteService,
     private cdr: ChangeDetectorRef,
+    private authService: AuthService,
   ) {}
 
   ngOnInit(): void {
+    this.isSuperAdmin = this.authService.getCurrentUser()?.user_type === 'super_admin';
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.loadUser(id);
   }
@@ -125,6 +130,7 @@ export class UserDetailComponent implements OnInit {
   enableEdit(): void {
     if (!this.user) return;
     this.editIsActive  = this.user.is_active ?? true;
+    this.editUserType  = this.user.user_type;
     this.errorMessage  = '';
     this.isEditMode    = true;
     this.cdr.detectChanges();
@@ -162,7 +168,10 @@ export class UserDetailComponent implements OnInit {
     this.isSubmitting = true;
     this.errorMessage = '';
 
-    this.userService.update(this.user!.id, { is_active: this.editIsActive }).subscribe({
+    const payload: UpdateUserDto = { is_active: this.editIsActive };
+    if (this.isSuperAdmin) payload.user_type = this.editUserType;
+
+    this.userService.update(this.user!.id, payload).subscribe({
       next: (res) => {
         this.user           = res.data;
         this.isSubmitting   = false;
