@@ -37,6 +37,7 @@ import { AiAdsComponent } from './views/dashboard/ai-ads/ai-ads';
 import { AiAdFormComponent } from './views/dashboard/ai-ads/ai-ad-form/ai-ad-form';
 import { AiAdDetailComponent } from './views/dashboard/ai-ads/ai-ad-detail/ai-ad-detail';
 import { authGuard } from './core/guards/auth.guard';
+import { superAdminGuard } from './core/guards/super-admin.guard';
 import { HomeComponent } from './views/dashboard/home/home';
 import { AreasComponent } from './views/dashboard/areas/areas';
 import { PromotionsComponent } from './views/dashboard/promotions/promotions';
@@ -86,7 +87,7 @@ export const routes: Routes = [
 
       // Users
       { path: 'users',             component: UsersComponent },
-      { path: 'users/new',         component: UserFormComponent },
+      { path: 'users/new',         component: UserFormComponent, canActivate: [superAdminGuard] },
       { path: 'users/:id',         component: UserDetailComponent },
 
       // Properties

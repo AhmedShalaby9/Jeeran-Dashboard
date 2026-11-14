@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UserService } from '../../../core/services/user.service';
 import { User, UserType } from '../../../core/models/user.model';
 import { FilterStateService } from '../../../core/services/filter-state.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-users',
@@ -21,12 +22,17 @@ export class UsersComponent implements OnInit {
   filterActive: '' | 'true' | 'false' = '';
   filterSearch = '';
 
+  isSuperAdmin = false;
+
   constructor(
     private userService:  UserService,
     private filterState:  FilterStateService,
     private router:       Router,
     private cdr:          ChangeDetectorRef,
-  ) {}
+    private authService:  AuthService,
+  ) {
+    this.isSuperAdmin = this.authService.getCurrentUser()?.user_type === 'super_admin';
+  }
 
   ngOnInit(): void {
     this.restoreFilters();
