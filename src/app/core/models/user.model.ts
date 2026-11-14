@@ -50,6 +50,7 @@ export interface CreateAdminDto {
 
 export interface UpdateUserDto {
   is_active?: boolean;
+  user_type?: UserType;
 }
 
 export interface UsersResponse {
