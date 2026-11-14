@@ -65,7 +65,11 @@ import { AMENITIES, FINISHINGS, PAYMENT_OPTIONS } from '../../../core/models/lis
     :host { display: block; }
     .note { margin: 0 0 1rem; font-size: 0.82rem; color: #6b7280; }
     .hint { color: #6b7280; font-size: 0.78rem; margin-top: 0.35rem; }
-    select {
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media (max-width: 700px) { .form-row { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.8rem; font-weight: 600; color: #374151; }
+    select, input {
       padding: 0.7rem 0.9rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem;
       color: #1a1f2e; width: 100%; box-sizing: border-box; background: #fff; font-family: inherit; outline: none;
       &:focus { border-color: #1e3a6e; box-shadow: 0 0 0 3px #e8ecf5; }
