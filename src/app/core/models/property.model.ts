@@ -116,6 +116,7 @@ export interface Property {
   is_featured:      boolean;
   is_active:        boolean;
   is_approved:      boolean | null;
+  rejection_reason: string | null;
   published_at:     string | null;
   views_count:      number;
   sold_at?:         string | null;

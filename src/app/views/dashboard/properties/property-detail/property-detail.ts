@@ -31,6 +31,12 @@ export class PropertyDetailComponent implements OnInit {
   errorMessage    = '';
   successMessage  = '';
 
+  // Approve / reject
+  showRejectModal = false;
+  rejectionReason = '';
+  isApproving     = false;
+  isRejecting     = false;
+
   editForm: Partial<CreatePropertyDto> = {};
   imageInput = '';
 
@@ -324,6 +330,56 @@ export class PropertyDetailComponent implements OnInit {
       error: (err) => {
         this.isTogglingSold = false;
         this.errorMessage = err.error?.message || 'Failed to update the sold status.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  approveProperty(): void {
+    if (!this.property || this.isApproving) return;
+    this.isApproving = true;
+    this.errorMessage = '';
+    this.propertyService.approve(this.property.id).subscribe({
+      next: (res) => {
+        this.property       = res.data;
+        this.isApproving     = false;
+        this.successMessage = 'Property approved.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+      },
+      error: (err) => {
+        this.isApproving  = false;
+        this.errorMessage = err.error?.message || 'Failed to approve the property.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  openRejectModal(): void {
+    this.rejectionReason = '';
+    this.showRejectModal = true;
+  }
+
+  closeRejectModal(): void {
+    if (this.isRejecting) return;
+    this.showRejectModal = false;
+  }
+
+  rejectProperty(): void {
+    if (!this.property || this.isRejecting || !this.rejectionReason.trim()) return;
+    this.isRejecting = true;
+    this.propertyService.reject(this.property.id, this.rejectionReason.trim()).subscribe({
+      next: (res) => {
+        this.property        = res.data;
+        this.isRejecting     = false;
+        this.showRejectModal = false;
+        this.successMessage  = 'Property rejected. The owner was notified with the reason.';
+        this.cdr.detectChanges();
+        setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 4000);
+      },
+      error: (err) => {
+        this.isRejecting  = false;
+        this.errorMessage = err.error?.message || 'Failed to reject the property.';
         this.cdr.detectChanges();
       },
     });
