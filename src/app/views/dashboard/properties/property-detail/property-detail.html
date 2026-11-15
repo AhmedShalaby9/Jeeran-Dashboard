@@ -16,6 +16,20 @@
       </div>
     </div>
     <div class="header-actions" *ngIf="property && !isEditMode">
+      <button class="btn-secondary" *ngIf="!property.is_approved" (click)="approveProperty()" [disabled]="isApproving">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ isApproving ? 'Approving…' : 'Approve' }}
+      </button>
+      <button class="btn-danger" (click)="openRejectModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+        {{ property.is_approved ? 'Unpublish' : 'Reject' }}
+      </button>
       <button class="btn-secondary" (click)="enableEdit()">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -100,7 +114,14 @@
                 <span class="featured-pill" *ngIf="property.is_featured">
                   ★ Featured
                 </span>
+                <span class="badge" [class.badge-active]="property.is_approved" [class.badge-inactive]="!property.is_approved">
+                  {{ property.is_approved ? 'Approved' : (property.rejection_reason ? 'Rejected' : 'Pending approval') }}
+                </span>
               </div>
+            </div>
+
+            <div class="error-msg" *ngIf="property.rejection_reason" style="margin-top: 0.75rem">
+              <strong>Rejection reason:</strong> {{ property.rejection_reason }}
             </div>
 
             <div class="specs-row">
@@ -606,6 +627,36 @@
       </svg>
     </button>
 
+  </div>
+
+  <!-- Reject / Unpublish Modal -->
+  <div class="modal-overlay" *ngIf="showRejectModal">
+    <div class="modal-confirm">
+      <div class="modal-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </div>
+      <h3>{{ property?.is_approved ? 'Unpublish Property' : 'Reject Property' }}</h3>
+      <p>
+        {{ property?.is_approved ? 'This will unpublish' : 'Reject' }}
+        <strong>{{ property?.title_ar || property?.title_en || property?.title }}</strong>.
+        The owner will be notified with the reason below.
+      </p>
+      <div class="form-group" style="text-align: left; margin-top: 0.5rem">
+        <label>Rejection reason <span class="required">*</span></label>
+        <textarea [(ngModel)]="rejectionReason" name="rejectionReason" rows="3"
+          placeholder="e.g. Photos don't match the unit description"></textarea>
+      </div>
+      <div class="modal-btns">
+        <button class="btn-secondary" (click)="closeRejectModal()">Cancel</button>
+        <button class="btn-danger-solid" (click)="rejectProperty()" [disabled]="isRejecting || !rejectionReason.trim()">
+          <span *ngIf="!isRejecting">{{ property?.is_approved ? 'Unpublish' : 'Reject' }}</span>
+          <span *ngIf="isRejecting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Delete Modal -->
