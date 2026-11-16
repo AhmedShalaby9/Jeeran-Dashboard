@@ -147,14 +147,14 @@
                 Approve
               </button>
               <button class="btn-reject"
-                *ngIf="approvalStatus(prop) === 'pending'"
+                *ngIf="approvalStatus(prop) !== 'rejected'"
                 (click)="openReject(prop)"
-                title="Reject this property">
+                [title]="approvalStatus(prop) === 'approved' ? 'Unpublish this property' : 'Reject this property'">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none"
                   stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
                 </svg>
-                Reject
+                {{ approvalStatus(prop) === 'approved' ? 'Unpublish' : 'Reject' }}
               </button>
             </td>
 
@@ -213,7 +213,7 @@
     </div>
 
     <h3 class="modal-title">
-      {{ modal.action === 'approve' ? 'Approve Property' : 'Reject Property' }}
+      {{ modal.action === 'approve' ? 'Approve Property' : (modal.property && approvalStatus(modal.property) === 'approved' ? 'Unpublish Property' : 'Reject Property') }}
     </h3>
 
     <p class="modal-body" dir="rtl">
@@ -223,12 +223,12 @@
       This listing will become visible to users on the platform.
     </p>
     <p class="modal-sub" *ngIf="modal.action === 'reject'">
-      The seller will be notified that their listing was not approved.
+      The owner will be notified with the reason below.
     </p>
 
     <!-- Rejection reason -->
     <div class="rejection-reason-wrap" *ngIf="modal.action === 'reject'">
-      <label class="rejection-label">Rejection Reason <span class="rejection-optional">(optional)</span></label>
+      <label class="rejection-label">Rejection Reason <span class="rejection-optional">*</span></label>
       <textarea
         [(ngModel)]="modal.rejectionReason"
         name="rejectionReason"
@@ -244,7 +244,7 @@
         [class.btn-confirm-approve]="modal.action === 'approve'"
         [class.btn-confirm-reject]="modal.action === 'reject'"
         (click)="executeAction()"
-        [disabled]="isActioning">
+        [disabled]="isActioning || (modal.action === 'reject' && !modal.rejectionReason.trim())">
         <span *ngIf="!isActioning">
           {{ modal.action === 'approve' ? 'Yes, Approve' : 'Yes, Reject' }}
         </span>
