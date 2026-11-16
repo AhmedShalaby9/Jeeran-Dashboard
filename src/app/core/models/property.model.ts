@@ -112,6 +112,7 @@ export interface Property {
   reference_code?:  string | null;
   price_per_m2?:    number | null;
   images:           string[];
+  cover_is_ai:      boolean;
   video_url:        string | null;
   is_featured:      boolean;
   is_active:        boolean;
@@ -159,6 +160,7 @@ export interface CreatePropertyDto {
   installment_years?:    number | null;
   features?:             Amenity[] | null;
   images:           string[];
+  cover_is_ai?:     boolean;
   garden_size?:     number | null;
   has_garden?:      boolean | null;
   land_size?:       number | null;
