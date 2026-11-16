@@ -81,4 +81,16 @@ export class PropertyService {
     const body = rejectionReason?.trim() ? { rejection_reason: rejectionReason.trim() } : {};
     return this.http.patch<PropertyResponse>(`${this.url}/${id}/reject`, body, { headers: this.headers() });
   }
+
+  /** Makes a fresh Jeeran cover from the given source photos + listing facts. Admins aren't rate-limited. */
+  generateCover(
+    sourceImages: string[],
+    details: Record<string, unknown>,
+  ): Observable<{ success: boolean; data: { url: string; remaining_today: number | null } }> {
+    return this.http.post<{ success: boolean; data: { url: string; remaining_today: number | null } }>(
+      `${environment.apiUrl}/listing-covers`,
+      { source_images: sourceImages, details },
+      { headers: this.headers() },
+    );
+  }
 }

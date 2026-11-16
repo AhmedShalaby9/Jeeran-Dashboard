@@ -37,6 +37,9 @@ export class PropertyDetailComponent implements OnInit {
   isApproving     = false;
   isRejecting     = false;
 
+  // Cover
+  isRegeneratingCover = false;
+
   editForm: Partial<CreatePropertyDto> = {};
   imageInput = '';
 
@@ -380,6 +383,54 @@ export class PropertyDetailComponent implements OnInit {
       error: (err) => {
         this.isRejecting  = false;
         this.errorMessage = err.error?.message || 'Failed to reject the property.';
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  /** Makes a fresh Jeeran cover from the listing's own photos; no other field is touched. */
+  regenerateCover(): void {
+    if (!this.property || this.isRegeneratingCover) return;
+    const sources = this.property.cover_is_ai ? this.property.images.slice(1) : this.property.images;
+    if (!sources.length) {
+      this.errorMessage = 'This property has no photos to make a cover from.';
+      this.cdr.detectChanges();
+      return;
+    }
+
+    this.isRegeneratingCover = true;
+    this.errorMessage = '';
+    const p = this.property;
+    const details = {
+      compound_id: p.compound_id ?? undefined,
+      price:       p.price ?? undefined,
+      type:        p.property_type,
+      purpose:     p.property_status,
+      bedrooms:    p.bedrooms ?? undefined,
+      bathrooms:   p.bathrooms ?? undefined,
+      size:        p.size ?? undefined,
+    };
+
+    this.propertyService.generateCover(sources, details).subscribe({
+      next: (coverRes) => {
+        this.propertyService.update(p.id, { images: [coverRes.data.url, ...sources], cover_is_ai: true }).subscribe({
+          next: (res) => {
+            this.property            = res.data;
+            this.isRegeneratingCover = false;
+            this.successMessage      = 'Cover regenerated.';
+            this.cdr.detectChanges();
+            setTimeout(() => { this.successMessage = ''; this.cdr.detectChanges(); }, 3000);
+          },
+          error: (err) => {
+            this.isRegeneratingCover = false;
+            this.errorMessage = err.error?.message || 'The cover was made but saving it to the listing failed.';
+            this.cdr.detectChanges();
+          },
+        });
+      },
+      error: (err) => {
+        this.isRegeneratingCover = false;
+        this.errorMessage = err.error?.message || 'Failed to regenerate the cover.';
         this.cdr.detectChanges();
       },
     });
